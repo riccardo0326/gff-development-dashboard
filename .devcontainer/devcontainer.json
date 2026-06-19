@@ -1,0 +1,11 @@
+{
+  "name": "GFF Dashboard",
+  "postCreateCommand": "cd gff-dashboard && npm install && npm run import",
+  "forwardPorts": [3000],
+  "portsAttributes": {
+    "3000": {
+      "label": "GFF Dashboard",
+      "onAutoForward": "openBrowser"
+    }
+  }
+}
