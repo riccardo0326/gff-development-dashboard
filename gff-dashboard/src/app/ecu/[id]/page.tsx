@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
+import { BackToDashboard } from "@/components/back-to-dashboard";
 import { CoverageBadge } from "@/components/coverage-badge";
 import { PriorityBadge } from "@/components/priority-badge";
 import { ProgressBar } from "@/components/progress-bar";
@@ -46,6 +46,7 @@ export default function EcuDetailPage() {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [savingId, setSavingId] = useState<number | null>(null);
+  const [notice, setNotice] = useState("");
 
   const loadData = useCallback(async () => {
     const paramsObj = new URLSearchParams({
@@ -74,11 +75,25 @@ export default function EcuDetailPage() {
     status: CoverageStatus,
   ) {
     setSavingId(dtcId);
-    await fetch(`/api/ecus/${ecuId}/dtcs/${dtcId}`, {
+    const response = await fetch(`/api/ecus/${ecuId}/dtcs/${dtcId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ project: projectName, status }),
     });
+    const payload = (await response.json()) as {
+      dailyUpdate?: { impl_for_day: number; impl_for_day_auto?: number };
+    };
+
+    if (payload.dailyUpdate) {
+      const autoCount =
+        payload.dailyUpdate.impl_for_day_auto ?? payload.dailyUpdate.impl_for_day;
+      setNotice(
+        status === "covered"
+          ? `Daily count updated: ${autoCount} GFF(s) covered today (auto-tracked).`
+          : `Daily count updated: ${autoCount} GFF(s) covered today after revert.`,
+      );
+    }
+
     await loadData();
     setSavingId(null);
   }
@@ -98,9 +113,7 @@ export default function EcuDetailPage() {
     return (
       <div>
         <PageHeader title="ECU not found" />
-        <Link href="/" className="text-accent text-sm hover:underline">
-          Back to dashboard
-        </Link>
+        <BackToDashboard />
       </div>
     );
   }
@@ -112,12 +125,14 @@ export default function EcuDetailPage() {
       <PageHeader
         title={`ECU ${data.ecu.code}`}
         description="Review and update DTC coverage per vehicle project. Empty cells mean the DTC does not exist for that project."
-        actions={
-          <Link href="/" className="text-accent text-sm hover:underline">
-            Back to dashboard
-          </Link>
-        }
+        actions={<BackToDashboard />}
       />
+
+      {notice ? (
+        <Card>
+          <p className="text-success text-sm">{notice}</p>
+        </Card>
+      ) : null}
 
       <div className="grid gap-4 lg:grid-cols-4">
         <Card>

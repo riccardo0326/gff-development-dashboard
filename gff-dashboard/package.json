@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "import": "node scripts/import-xlsm.mjs",
-    "setup": "npm run import"
+    "setup": "npm run import",
+    "smoke:daily": "node scripts/smoke-daily-coverage.mjs"
   },
   "dependencies": {
     "better-sqlite3": "^12.11.1",

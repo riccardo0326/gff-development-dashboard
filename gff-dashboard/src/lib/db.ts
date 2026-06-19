@@ -20,6 +20,29 @@ export function getDb(): Database.Database {
   return db;
 }
 
+function migrateDailyStatsColumns(database: Database.Database) {
+  const columns = database
+    .prepare("PRAGMA table_info(daily_stats)")
+    .all() as Array<{ name: string }>;
+  const names = new Set(columns.map((c) => c.name));
+
+  if (!names.has("impl_for_day_auto")) {
+    database.exec(
+      "ALTER TABLE daily_stats ADD COLUMN impl_for_day_auto INTEGER NOT NULL DEFAULT 0",
+    );
+  }
+  if (!names.has("impl_for_day_manual")) {
+    database.exec(
+      "ALTER TABLE daily_stats ADD COLUMN impl_for_day_manual INTEGER NOT NULL DEFAULT 0",
+    );
+    database.exec(`
+      UPDATE daily_stats
+      SET impl_for_day_manual = impl_for_day
+      WHERE impl_for_day_manual = 0 AND impl_for_day > 0
+    `);
+  }
+}
+
 function initSchema(database: Database.Database) {
   database.exec(`
     CREATE TABLE IF NOT EXISTS vehicle_projects (
@@ -83,11 +106,28 @@ function initSchema(database: Database.Database) {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       stat_date TEXT NOT NULL UNIQUE,
       implemented_count INTEGER NOT NULL,
-      impl_for_day INTEGER NOT NULL
+      impl_for_day INTEGER NOT NULL,
+      impl_for_day_auto INTEGER NOT NULL DEFAULT 0,
+      impl_for_day_manual INTEGER NOT NULL DEFAULT 0
+    );
+
+    CREATE TABLE IF NOT EXISTS coverage_changes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      dtc_id INTEGER NOT NULL,
+      ecu_id TEXT NOT NULL,
+      project TEXT NOT NULL,
+      from_status TEXT NOT NULL,
+      to_status TEXT NOT NULL,
+      stat_date TEXT NOT NULL,
+      changed_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
 
     CREATE INDEX IF NOT EXISTS idx_daily_date ON daily_stats(stat_date);
+    CREATE INDEX IF NOT EXISTS idx_coverage_changes_date ON coverage_changes(stat_date);
+    CREATE INDEX IF NOT EXISTS idx_coverage_changes_dtc ON coverage_changes(dtc_id);
   `);
+
+  migrateDailyStatsColumns(database);
 
   const projectCount = database
     .prepare("SELECT COUNT(*) as c FROM vehicle_projects")

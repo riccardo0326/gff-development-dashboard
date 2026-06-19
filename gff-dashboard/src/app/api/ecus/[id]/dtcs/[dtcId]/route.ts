@@ -20,10 +20,13 @@ export async function PATCH(
     return NextResponse.json({ error: "Invalid status" }, { status: 400 });
   }
 
-  const updated = updateDtcCoverage(Number(dtcId), body.project, body.status);
-  if (!updated) {
+  const result = updateDtcCoverage(Number(dtcId), body.project, body.status);
+  if (!result) {
     return NextResponse.json({ error: "DTC not found" }, { status: 404 });
   }
 
-  return NextResponse.json(updated);
+  return NextResponse.json({
+    dtc: result.dtc,
+    dailyUpdate: result.dailyStat,
+  });
 }
