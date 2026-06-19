@@ -58,7 +58,7 @@ export default function DailyGffsPage() {
     <div className="space-y-6">
       <PageHeader
         title="Add daily GFFs"
-        description="Record how many DTCs were covered today. This feeds the statistics trend and forecast."
+        description="Coverage changes from Pending to Covered are tracked automatically. Use this form to add extra manual counts when needed."
         actions={<BackToDashboard />}
       />
 
@@ -70,7 +70,11 @@ export default function DailyGffsPage() {
 
       <Card>
         <form onSubmit={addDailyEntry} className="grid max-w-xl gap-4">
-          <h3 className="font-medium">Daily covered count</h3>
+          <h3 className="font-medium">Manual daily adjustment</h3>
+          <p className="text-muted text-sm">
+            Auto-tracked changes from ECU edits are counted separately. This
+            field adds on top of today&apos;s automatic count.
+          </p>
           <label className="grid gap-1 text-sm">
             <span className="text-muted">Date</span>
             <input
@@ -103,7 +107,9 @@ export default function DailyGffsPage() {
               <tr className="text-muted border-card-border border-b text-left">
                 <th className="px-2 py-2">Date</th>
                 <th className="px-2 py-2">Covered total</th>
-                <th className="px-2 py-2">Covered for day</th>
+                <th className="px-2 py-2">Auto</th>
+                <th className="px-2 py-2">Manual</th>
+                <th className="px-2 py-2">Total for day</th>
               </tr>
             </thead>
             <tbody>
@@ -117,6 +123,12 @@ export default function DailyGffsPage() {
                   </td>
                   <td className="px-2 py-2">
                     {formatNumber(row.implemented_count)}
+                  </td>
+                  <td className="px-2 py-2">
+                    {formatNumber(row.impl_for_day_auto ?? 0)}
+                  </td>
+                  <td className="px-2 py-2">
+                    {formatNumber(row.impl_for_day_manual ?? 0)}
                   </td>
                   <td className="px-2 py-2">{formatNumber(row.impl_for_day)}</td>
                 </tr>

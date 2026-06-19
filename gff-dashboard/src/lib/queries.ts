@@ -1,5 +1,11 @@
 import { getDb } from "./db";
 import {
+  addManualDailyCount,
+  normalizeDailyStat,
+  recordCoverageTransition,
+} from "./daily-coverage-sync";
+import { isTrackableTransition } from "./daily-coverage";
+import {
   buildForecastTable,
   buildPriorityStats,
   computeEcuProjectCompletion,
@@ -134,39 +140,18 @@ export function getStatisticsSummary() {
 
 export function getDailyStats(): DailyStat[] {
   const db = getDb();
-  return db
-    .prepare("SELECT * FROM daily_stats ORDER BY stat_date ASC")
-    .all() as DailyStat[];
+  return (
+    db
+      .prepare("SELECT * FROM daily_stats ORDER BY stat_date ASC")
+      .all() as DailyStat[]
+  ).map(normalizeDailyStat);
 }
 
 export function addDailyStat(input: {
   stat_date: string;
   impl_for_day: number;
 }): DailyStat {
-  const db = getDb();
-  const last = db
-    .prepare("SELECT * FROM daily_stats ORDER BY stat_date DESC LIMIT 1")
-    .get() as DailyStat | undefined;
-
-  const settings = getSettings();
-  const implemented_count =
-    (last?.implemented_count ?? settings.baseline_implemented) +
-    input.impl_for_day;
-
-  const result = db
-    .prepare(
-      `
-      INSERT INTO daily_stats (stat_date, implemented_count, impl_for_day)
-      VALUES (?, ?, ?)
-      ON CONFLICT(stat_date) DO UPDATE SET
-        implemented_count = excluded.implemented_count,
-        impl_for_day = excluded.impl_for_day
-      RETURNING *
-    `,
-    )
-    .get(input.stat_date, implemented_count, input.impl_for_day) as DailyStat;
-
-  return result;
+  return addManualDailyCount(input);
 }
 
 const PROJECT_COLUMN: Record<
@@ -234,7 +219,7 @@ export function updateDtcCoverage(
   dtcId: number,
   project: VehicleProjectId,
   status: "pending" | "covered" | null,
-): Dtc | null {
+): { dtc: Dtc; dailyStat: DailyStat | null } | null {
   const db = getDb();
   const column = PROJECT_COLUMN[project];
   const existing = db
@@ -244,11 +229,33 @@ export function updateDtcCoverage(
 
   const currentValue = existing[column];
   if (status === null && currentValue === null) {
-    return existing;
+    return { dtc: existing, dailyStat: null };
+  }
+  if (status === currentValue) {
+    return { dtc: existing, dailyStat: null };
   }
 
   db.prepare(`UPDATE dtcs SET ${column} = ? WHERE id = ?`).run(status, dtcId);
-  return db.prepare("SELECT * FROM dtcs WHERE id = ?").get(dtcId) as Dtc;
+  const updated = db
+    .prepare("SELECT * FROM dtcs WHERE id = ?")
+    .get(dtcId) as Dtc;
+
+  let dailyStat: DailyStat | null = null;
+  if (
+    isTrackableTransition(currentValue, status) &&
+    (status === "pending" || status === "covered") &&
+    (currentValue === "pending" || currentValue === "covered")
+  ) {
+    dailyStat = recordCoverageTransition({
+      dtcId,
+      ecuId: existing.ecu_id,
+      project,
+      fromStatus: currentValue,
+      toStatus: status,
+    });
+  }
+
+  return { dtc: updated, dailyStat };
 }
 
 export function getFaultyDtcs(filters?: {

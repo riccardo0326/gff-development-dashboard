@@ -48,6 +48,8 @@ export interface DailyStat {
   stat_date: string;
   implemented_count: number;
   impl_for_day: number;
+  impl_for_day_auto?: number;
+  impl_for_day_manual?: number;
 }
 
 export interface Settings {
