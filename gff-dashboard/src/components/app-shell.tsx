@@ -28,9 +28,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             GFF Tracker
           </p>
           <h1 className="mt-1 text-lg font-semibold">Development Dashboard</h1>
-          <p className="text-muted mt-2 text-sm">
-            Automotive diagnostic coverage
-          </p>
         </div>
         <nav className="flex gap-1 overflow-x-auto px-3 pb-4 lg:flex-col">
           {NAV.map(({ href, label, icon: Icon }) => {

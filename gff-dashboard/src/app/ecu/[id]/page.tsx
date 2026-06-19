@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
+import { BackToDashboard } from "@/components/back-to-dashboard";
 import { CoverageBadge } from "@/components/coverage-badge";
 import { PriorityBadge } from "@/components/priority-badge";
 import { ProgressBar } from "@/components/progress-bar";
@@ -98,9 +98,7 @@ export default function EcuDetailPage() {
     return (
       <div>
         <PageHeader title="ECU not found" />
-        <Link href="/" className="text-accent text-sm hover:underline">
-          Back to dashboard
-        </Link>
+        <BackToDashboard />
       </div>
     );
   }
@@ -112,11 +110,7 @@ export default function EcuDetailPage() {
       <PageHeader
         title={`ECU ${data.ecu.code}`}
         description="Review and update DTC coverage per vehicle project. Empty cells mean the DTC does not exist for that project."
-        actions={
-          <Link href="/" className="text-accent text-sm hover:underline">
-            Back to dashboard
-          </Link>
-        }
+        actions={<BackToDashboard />}
       />
 
       <div className="grid gap-4 lg:grid-cols-4">
