@@ -1,6 +1,6 @@
 {
   "name": "GFF Dashboard",
-  "postCreateCommand": "cd gff-dashboard && npm install && npm run import",
+  "postCreateCommand": "cd gff-dashboard && cp -n .env.example .env.local 2>/dev/null || true && npm install && npm run import",
   "forwardPorts": [3000],
   "portsAttributes": {
     "3000": {

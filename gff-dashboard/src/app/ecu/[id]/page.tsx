@@ -2,6 +2,7 @@
 
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
+import { toast } from "sonner";
 import { BackToDashboard } from "@/components/back-to-dashboard";
 import { CoverageBadge } from "@/components/coverage-badge";
 import { PriorityBadge } from "@/components/priority-badge";
@@ -46,7 +47,6 @@ export default function EcuDetailPage() {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [savingId, setSavingId] = useState<number | null>(null);
-  const [notice, setNotice] = useState("");
 
   const loadData = useCallback(async () => {
     const paramsObj = new URLSearchParams({
@@ -87,11 +87,17 @@ export default function EcuDetailPage() {
     if (payload.dailyUpdate) {
       const autoCount =
         payload.dailyUpdate.impl_for_day_auto ?? payload.dailyUpdate.impl_for_day;
-      setNotice(
-        status === "covered"
-          ? `Daily count updated: ${autoCount} GFF(s) covered today (auto-tracked).`
-          : `Daily count updated: ${autoCount} GFF(s) covered today after revert.`,
-      );
+      if (status === "covered") {
+        toast.success("GFF covered", {
+          description: `Today's auto-tracked count: ${autoCount}`,
+        });
+      } else {
+        toast.info("Coverage reverted", {
+          description: `Today's auto-tracked count: ${autoCount}`,
+        });
+      }
+    } else if (status === "covered") {
+      toast.success("GFF covered");
     }
 
     await loadData();
@@ -127,12 +133,6 @@ export default function EcuDetailPage() {
         description="Review and update DTC coverage per vehicle project. Empty cells mean the DTC does not exist for that project."
         actions={<BackToDashboard />}
       />
-
-      {notice ? (
-        <Card>
-          <p className="text-success text-sm">{notice}</p>
-        </Card>
-      ) : null}
 
       <div className="grid gap-4 lg:grid-cols-4">
         <Card>

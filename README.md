@@ -13,4 +13,6 @@ npm run dev
 
 Open port **3000** in the browser.
 
+**Login (demo):** username `admin`, password `gff-admin-change-me` — set in `gff-dashboard/.env.local` (see `.env.example`).
+
 The Excel source file is in the repo root: `GFF_development - internal copy.xlsm`

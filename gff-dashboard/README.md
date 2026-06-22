@@ -29,9 +29,29 @@ npm run import
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000](http://localhost:3000) and sign in.
 
-### Import source
+### Authentication
+
+Copy `.env.example` to `.env.local` and set admin credentials:
+
+```
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=your-password
+NEXTAUTH_SECRET=your-secret
+NEXTAUTH_URL=http://localhost:3000
+```
+
+### Workbook import / export
+
+From **Settings** in the app:
+
+- **Export workbook** — downloads an updated `.xlsm` (macros + charts preserved via template merge)
+- **Import workbook** — replaces all SQLite data from `.xlsx` / `.xlsm`
+
+Faulty DTCs can be exported separately from the **Faulty DTCs** page.
+
+### Import source (CLI)
 
 `npm run import` reads:
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Download } from "lucide-react";
 import {
   Button,
   Card,
@@ -21,6 +22,7 @@ export default function FaultyPage() {
   const [daOptions, setDaOptions] = useState<string[]>([]);
   const [issueOptions, setIssueOptions] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  const [exporting, setExporting] = useState(false);
 
   useEffect(() => {
     fetch("/api/faulty?options=1")
@@ -49,11 +51,39 @@ export default function FaultyPage() {
 
   const totalPages = Math.max(1, Math.ceil(total / 50));
 
+  async function handleExport() {
+    setExporting(true);
+    const params = new URLSearchParams();
+    if (search) params.set("search", search);
+    if (daCode) params.set("da_code", daCode);
+    if (issue) params.set("issue", issue);
+
+    const response = await fetch(`/api/faulty/export?${params.toString()}`);
+    if (response.ok) {
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = `faulty_dtcs_${new Date().toISOString().slice(0, 10)}.xlsx`;
+      anchor.click();
+      URL.revokeObjectURL(url);
+    }
+    setExporting(false);
+  }
+
   return (
     <div>
       <PageHeader
         title="Faulty DTCs"
         description="Read-only list of DTC records flagged with data quality issues."
+        actions={
+          <Button variant="secondary" onClick={handleExport} disabled={exporting}>
+            <span className="inline-flex items-center gap-2">
+              <Download className="h-4 w-4" />
+              {exporting ? "Exporting..." : "Export to Excel"}
+            </span>
+          </Button>
+        }
       />
 
       <Card className="mb-6 grid gap-3 lg:grid-cols-3">

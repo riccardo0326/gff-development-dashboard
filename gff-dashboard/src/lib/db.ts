@@ -125,6 +125,13 @@ function initSchema(database: Database.Database) {
     CREATE INDEX IF NOT EXISTS idx_daily_date ON daily_stats(stat_date);
     CREATE INDEX IF NOT EXISTS idx_coverage_changes_date ON coverage_changes(stat_date);
     CREATE INDEX IF NOT EXISTS idx_coverage_changes_dtc ON coverage_changes(dtc_id);
+
+    CREATE TABLE IF NOT EXISTS users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      username TEXT NOT NULL UNIQUE,
+      password_hash TEXT NOT NULL,
+      role TEXT NOT NULL DEFAULT 'admin'
+    );
   `);
 
   migrateDailyStatsColumns(database);
@@ -154,6 +161,25 @@ function initSchema(database: Database.Database) {
     insert.run("forecast_start_date", "2026-03-26");
     insert.run("baseline_implemented", "22167");
   }
+
+  seedAdminUser(database);
+}
+
+function seedAdminUser(database: Database.Database) {
+  const count = database
+    .prepare("SELECT COUNT(*) as c FROM users")
+    .get() as { c: number };
+  if (count.c > 0) return;
+
+  // Lazy import to avoid bcrypt at module load in edge cases
+  const bcrypt = require("bcryptjs") as typeof import("bcryptjs");
+  const username = process.env.ADMIN_USERNAME ?? "admin";
+  const password =
+    process.env.ADMIN_PASSWORD ?? "gff-admin-change-me";
+  const hash = bcrypt.hashSync(password, 10);
+  database
+    .prepare("INSERT INTO users (username, password_hash, role) VALUES (?, ?, ?)")
+    .run(username, hash, "admin");
 }
 
 export function resetDb() {
