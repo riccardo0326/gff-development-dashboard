@@ -20,6 +20,29 @@ export function getDb(): Database.Database {
   return db;
 }
 
+function migrateDtcApplicableColumns(database: Database.Database) {
+  const columns = database
+    .prepare("PRAGMA table_info(dtcs)")
+    .all() as Array<{ name: string }>;
+  const names = new Set(columns.map((c) => c.name));
+
+  if (!names.has("applicable_lb74x")) {
+    database.exec(
+      "ALTER TABLE dtcs ADD COLUMN applicable_lb74x INTEGER NOT NULL DEFAULT 0",
+    );
+  }
+  if (!names.has("applicable_lb636")) {
+    database.exec(
+      "ALTER TABLE dtcs ADD COLUMN applicable_lb636 INTEGER NOT NULL DEFAULT 0",
+    );
+  }
+  if (!names.has("applicable_lb63x")) {
+    database.exec(
+      "ALTER TABLE dtcs ADD COLUMN applicable_lb63x INTEGER NOT NULL DEFAULT 0",
+    );
+  }
+}
+
 function migrateCoverageChangesColumns(database: Database.Database) {
   const columns = database
     .prepare("PRAGMA table_info(coverage_changes)")
@@ -173,6 +196,7 @@ function initSchema(database: Database.Database) {
   `);
 
   migrateDailyStatsColumns(database);
+  migrateDtcApplicableColumns(database);
   migrateCoverageChangesColumns(database);
 
   const projectCount = database

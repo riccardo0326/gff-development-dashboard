@@ -1,16 +1,39 @@
-export function mapImportCoverage(value: unknown): "pending" | "covered" | null {
-  if (value === null || value === undefined || value === "") return null;
-  const text = String(value).trim().toLowerCase();
-  if (text === "used") return "covered";
-  if (text === "x") return "pending";
-  if (text.includes("np")) return null;
-  return null;
+export interface ClassifiedCoverage {
+  applicable: boolean;
+  status: "pending" | "covered" | null;
 }
 
-export function mapExportCoverage(value: string | null): string {
+/** Matches Excel H1/I1/J1: non-empty cells excluding *NP* markers. */
+export function classifyCoverageCell(value: unknown): ClassifiedCoverage {
+  if (value === null || value === undefined || value === "") {
+    return { applicable: false, status: null };
+  }
+
+  const text = String(value).trim();
+  if (/np/i.test(text)) {
+    return { applicable: false, status: null };
+  }
+
+  const lower = text.toLowerCase();
+  if (lower === "used") return { applicable: true, status: "covered" };
+  if (lower === "x") return { applicable: true, status: "pending" };
+
+  // Values such as "1" count toward the Excel total but are neither used nor x.
+  return { applicable: true, status: null };
+}
+
+export function mapImportCoverage(value: unknown): "pending" | "covered" | null {
+  return classifyCoverageCell(value).status;
+}
+
+export function mapExportCoverage(
+  value: string | null,
+  applicable = false,
+): string {
+  if (!applicable) return "";
   if (value === "covered") return "used";
   if (value === "pending") return "x";
-  return "";
+  return "1";
 }
 
 export function cellString(value: unknown): string | null {

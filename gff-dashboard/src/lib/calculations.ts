@@ -18,7 +18,7 @@ const PROJECT_COLUMNS: Record<
   LB63x: "coverage_lb63x",
 };
 
-const APPLICABLE_COLUMNS: Record<
+const ECU_APPLICABLE_COLUMNS: Record<
   VehicleProjectId,
   "lb74x_applicable" | "lb636_applicable" | "lb63x_applicable"
 > = {
@@ -31,23 +31,41 @@ export interface CoverageRow {
   coverage_lb74x: string | null;
   coverage_lb636: string | null;
   coverage_lb63x: string | null;
+  applicable_lb74x?: number;
+  applicable_lb636?: number;
+  applicable_lb63x?: number;
 }
+
+const SLOT_APPLICABLE_COLUMNS: Record<
+  VehicleProjectId,
+  "applicable_lb74x" | "applicable_lb636" | "applicable_lb63x"
+> = {
+  LB74x: "applicable_lb74x",
+  LB636: "applicable_lb636",
+  LB63x: "applicable_lb63x",
+};
 
 export function countProjectCoverage(
   rows: CoverageRow[],
   project: VehicleProjectId,
 ): ProjectCompletion {
   const column = PROJECT_COLUMNS[project];
+  const applicableColumn = SLOT_APPLICABLE_COLUMNS[project];
   let covered = 0;
   let pending = 0;
+  let neutral = 0;
 
   for (const row of rows) {
+    const applicable = row[applicableColumn] ?? (row[column] ? 1 : 0);
+    if (!applicable) continue;
+
     const value = row[column];
     if (value === "covered") covered += 1;
     else if (value === "pending") pending += 1;
+    else neutral += 1;
   }
 
-  const total = covered + pending;
+  const total = covered + pending + neutral;
   return {
     project,
     total,
@@ -64,7 +82,7 @@ export function computeEcuProjectCompletion(
   const result = {} as Record<VehicleProjectId, ProjectCompletion | null>;
 
   for (const project of VEHICLE_PROJECTS) {
-    if (!ecu[APPLICABLE_COLUMNS[project]]) {
+    if (!ecu[ECU_APPLICABLE_COLUMNS[project]]) {
       result[project] = null;
       continue;
     }
@@ -96,32 +114,38 @@ export function aggregateCoverageStats(
   let pending = 0;
   const perProject: Record<
     VehicleProjectId,
-    { covered: number; pending: number }
+    { covered: number; pending: number; neutral: number }
   > = {
-    LB74x: { covered: 0, pending: 0 },
-    LB636: { covered: 0, pending: 0 },
-    LB63x: { covered: 0, pending: 0 },
+    LB74x: { covered: 0, pending: 0, neutral: 0 },
+    LB636: { covered: 0, pending: 0, neutral: 0 },
+    LB63x: { covered: 0, pending: 0, neutral: 0 },
   };
 
   for (const row of rows) {
     for (const project of VEHICLE_PROJECTS) {
+      const applicable =
+        row[SLOT_APPLICABLE_COLUMNS[project]] ??
+        (row[PROJECT_COLUMNS[project]] ? 1 : 0);
+      if (!applicable) continue;
+
       const value = row[PROJECT_COLUMNS[project]];
+      total += 1;
       if (value === "covered") {
         implemented += 1;
-        total += 1;
         perProject[project].covered += 1;
       } else if (value === "pending") {
         pending += 1;
-        total += 1;
         perProject[project].pending += 1;
+      } else {
+        perProject[project].neutral += 1;
       }
     }
   }
 
   const completion = {} as Record<VehicleProjectId, number>;
   for (const project of VEHICLE_PROJECTS) {
-    const { covered, pending: p } = perProject[project];
-    const denom = covered + p;
+    const { covered, pending: p, neutral } = perProject[project];
+    const denom = covered + p + neutral;
     completion[project] = denom > 0 ? covered / denom : 0;
   }
 

@@ -30,6 +30,28 @@ interface SearchRow {
   coverage_lb74x: CoverageStatus | null;
   coverage_lb636: CoverageStatus | null;
   coverage_lb63x: CoverageStatus | null;
+  applicable_lb74x?: number;
+  applicable_lb636?: number;
+  applicable_lb63x?: number;
+}
+
+function projectFields(row: SearchRow, projectName: VehicleProjectId) {
+  if (projectName === "LB74x") {
+    return {
+      coverage: row.coverage_lb74x,
+      applicable: !!row.applicable_lb74x,
+    };
+  }
+  if (projectName === "LB636") {
+    return {
+      coverage: row.coverage_lb636,
+      applicable: !!row.applicable_lb636,
+    };
+  }
+  return {
+    coverage: row.coverage_lb63x,
+    applicable: !!row.applicable_lb63x,
+  };
 }
 
 function rowKey(dtcId: number, project: VehicleProjectId) {
@@ -89,13 +111,8 @@ export default function SearchPage() {
     const next = new Set(selected);
     for (const row of items) {
       for (const projectName of PROJECTS) {
-        const col =
-          projectName === "LB74x"
-            ? row.coverage_lb74x
-            : projectName === "LB636"
-              ? row.coverage_lb636
-              : row.coverage_lb63x;
-        if (col) next.add(rowKey(row.id, projectName));
+        const { applicable } = projectFields(row, projectName);
+        if (applicable) next.add(rowKey(row.id, projectName));
       }
     }
     setSelected(next);
@@ -310,14 +327,12 @@ export default function SearchPage() {
                     </td>
                     <td className="max-w-xs px-3 py-3">{row.dtc_text}</td>
                     {PROJECTS.map((projectName) => {
-                      const col =
-                        projectName === "LB74x"
-                          ? row.coverage_lb74x
-                          : projectName === "LB636"
-                            ? row.coverage_lb636
-                            : row.coverage_lb63x;
+                      const { coverage, applicable } = projectFields(
+                        row,
+                        projectName,
+                      );
 
-                      if (!col) {
+                      if (!applicable) {
                         return (
                           <td key={projectName} className="text-muted px-3 py-3">
                             —
@@ -339,7 +354,11 @@ export default function SearchPage() {
                               }
                               className="h-4 w-4"
                             />
-                            <CoverageBadge status={col} />
+                            {coverage ? (
+                              <CoverageBadge status={coverage} />
+                            ) : (
+                              <span className="text-muted text-xs">Unset</span>
+                            )}
                           </label>
                         </td>
                       );

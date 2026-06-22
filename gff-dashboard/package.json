@@ -9,6 +9,7 @@
     "lint": "eslint",
     "import": "npx tsx scripts/import-cli.ts",
     "setup": "npm run import",
+    "verify:stats": "npx tsx scripts/verify-excel-stats.ts",
     "smoke:daily": "node scripts/smoke-daily-coverage.mjs"
   },
   "dependencies": {

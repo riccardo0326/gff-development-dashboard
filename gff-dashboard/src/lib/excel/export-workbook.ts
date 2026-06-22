@@ -40,9 +40,9 @@ function updateEcuSheet(sheet: XLSX.WorkSheet, ecu: Ecu, dtcs: Dtc[]) {
     setCell(sheet, `D${row}`, dtc.error_handling);
     setCell(sheet, `E${row}`, dtc.error_setting_conditions);
     setCell(sheet, `G${row}`, dtc.gff_program);
-    setCell(sheet, `H${row}`, mapExportCoverage(dtc.coverage_lb74x));
-    setCell(sheet, `I${row}`, mapExportCoverage(dtc.coverage_lb636));
-    setCell(sheet, `J${row}`, mapExportCoverage(dtc.coverage_lb63x));
+    setCell(sheet, `H${row}`, mapExportCoverage(dtc.coverage_lb74x, !!dtc.applicable_lb74x));
+    setCell(sheet, `I${row}`, mapExportCoverage(dtc.coverage_lb636, !!dtc.applicable_lb636));
+    setCell(sheet, `J${row}`, mapExportCoverage(dtc.coverage_lb63x, !!dtc.applicable_lb63x));
     if (dtc.category != null) setCell(sheet, `K${row}`, dtc.category);
     if (dtc.label != null) setCell(sheet, `L${row}`, dtc.label);
 

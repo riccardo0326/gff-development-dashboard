@@ -61,13 +61,20 @@ export async function PATCH(request: Request) {
 
     items = matches
       .filter((d) => {
+        const project = body.bulkProject!;
         const col =
-          body.bulkProject === "LB74x"
+          project === "LB74x"
             ? d.coverage_lb74x
-            : body.bulkProject === "LB636"
+            : project === "LB636"
               ? d.coverage_lb636
               : d.coverage_lb63x;
-        return col && col !== body.bulkStatus;
+        const applicable =
+          project === "LB74x"
+            ? d.applicable_lb74x
+            : project === "LB636"
+              ? d.applicable_lb636
+              : d.applicable_lb63x;
+        return applicable && col !== body.bulkStatus;
       })
       .map((d) => ({
         dtcId: d.id,

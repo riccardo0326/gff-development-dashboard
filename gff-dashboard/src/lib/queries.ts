@@ -87,7 +87,8 @@ export function getEcuCompletions(filters?: {
   const db = getDb();
 
   const stmt = db.prepare(`
-    SELECT coverage_lb74x, coverage_lb636, coverage_lb63x
+    SELECT coverage_lb74x, coverage_lb636, coverage_lb63x,
+           applicable_lb74x, applicable_lb636, applicable_lb63x
     FROM dtcs WHERE ecu_id = ?
   `);
 
@@ -99,6 +100,9 @@ export function getEcuCompletions(filters?: {
         coverage_lb74x: string | null;
         coverage_lb636: string | null;
         coverage_lb63x: string | null;
+        applicable_lb74x: number;
+        applicable_lb636: number;
+        applicable_lb63x: number;
       }>,
     ),
   }));
@@ -110,6 +114,7 @@ export function getAllCoverageRows() {
     .prepare(
       `
       SELECT d.coverage_lb74x, d.coverage_lb636, d.coverage_lb63x,
+             d.applicable_lb74x, d.applicable_lb636, d.applicable_lb63x,
              d.ecu_id, e.priority
       FROM dtcs d
       JOIN ecus e ON e.id = d.ecu_id
@@ -119,6 +124,9 @@ export function getAllCoverageRows() {
     coverage_lb74x: string | null;
     coverage_lb636: string | null;
     coverage_lb63x: string | null;
+    applicable_lb74x: number;
+    applicable_lb636: number;
+    applicable_lb63x: number;
     ecu_id: string;
     priority: number;
   }>;
@@ -163,6 +171,15 @@ const PROJECT_COLUMN: Record<
   LB74x: "coverage_lb74x",
   LB636: "coverage_lb636",
   LB63x: "coverage_lb63x",
+};
+
+const APPLICABLE_COLUMN: Record<
+  VehicleProjectId,
+  "applicable_lb74x" | "applicable_lb636" | "applicable_lb63x"
+> = {
+  LB74x: "applicable_lb74x",
+  LB636: "applicable_lb636",
+  LB63x: "applicable_lb63x",
 };
 
 export function getDtcsForEcu(
@@ -372,8 +389,10 @@ export function bulkUpdateDtcCoverage(
       }
 
       const column = PROJECT_COLUMN[item.project];
+      const applicableColumn = APPLICABLE_COLUMN[item.project];
       const currentValue = existing[column];
-      if (!currentValue || currentValue === item.status) {
+      const isApplicable = !!existing[applicableColumn];
+      if (!isApplicable || currentValue === item.status) {
         skipped += 1;
         continue;
       }

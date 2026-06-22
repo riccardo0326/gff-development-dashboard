@@ -30,6 +30,9 @@ export interface Dtc {
   coverage_lb74x: CoverageStatus | null;
   coverage_lb636: CoverageStatus | null;
   coverage_lb63x: CoverageStatus | null;
+  applicable_lb74x?: number;
+  applicable_lb636?: number;
+  applicable_lb63x?: number;
 }
 
 export interface FaultyDtc {

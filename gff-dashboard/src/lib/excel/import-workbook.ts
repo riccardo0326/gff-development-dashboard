@@ -4,7 +4,7 @@ import { getDb } from "../db";
 import { excelDateToIso } from "./dates";
 import {
   cellString,
-  mapImportCoverage,
+  classifyCoverageCell,
   normalizeDaCode,
   toDaId,
 } from "./mappers";
@@ -112,14 +112,20 @@ function importEcuSheet(
     INSERT INTO dtcs (
       ecu_id, symptom, trouble_code, dtc_text, error_handling,
       error_setting_conditions, gff_program, category, label,
-      coverage_lb74x, coverage_lb636, coverage_lb63x
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      coverage_lb74x, coverage_lb636, coverage_lb63x,
+      applicable_lb74x, applicable_lb636, applicable_lb63x
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `);
 
   let count = 0;
   for (let i = 4; i < rows.length; i++) {
     const row = rows[i];
-    if (!row || (!row[0] && !row[1] && !row[2])) continue;
+    const hasIdentity = !!(row?.[0] || row?.[1] || row?.[2]);
+    const hasCoverage = [7, 8, 9].some((col) => {
+      const value = row?.[col];
+      return value !== null && value !== undefined && value !== "";
+    });
+    if (!row || (!hasIdentity && !hasCoverage)) continue;
 
     const categoryRaw = row[10];
     const labelRaw = row[11];
@@ -132,6 +138,10 @@ function importEcuSheet(
         ? null
         : Number(labelRaw);
 
+    const lb74x = classifyCoverageCell(row[7]);
+    const lb636 = classifyCoverageCell(row[8]);
+    const lb63x = classifyCoverageCell(row[9]);
+
     insert.run(
       ecuId,
       cellString(row[0]),
@@ -142,9 +152,12 @@ function importEcuSheet(
       cellString(row[5]),
       Number.isFinite(category) ? category : null,
       Number.isFinite(label) ? label : null,
-      mapImportCoverage(row[7]),
-      mapImportCoverage(row[8]),
-      mapImportCoverage(row[9]),
+      lb74x.status,
+      lb636.status,
+      lb63x.status,
+      lb74x.applicable ? 1 : 0,
+      lb636.applicable ? 1 : 0,
+      lb63x.applicable ? 1 : 0,
     );
     count += 1;
   }

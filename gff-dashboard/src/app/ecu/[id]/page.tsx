@@ -71,13 +71,13 @@ export default function EcuDetailPage() {
     const next = new Set(selected);
     for (const dtc of data.items) {
       for (const projectName of PROJECTS) {
-        const col =
+        const applicable =
           projectName === "LB74x"
-            ? dtc.coverage_lb74x
+            ? dtc.applicable_lb74x
             : projectName === "LB636"
-              ? dtc.coverage_lb636
-              : dtc.coverage_lb63x;
-        if (col) next.add(rowKey(dtc.id, projectName));
+              ? dtc.applicable_lb636
+              : dtc.applicable_lb63x;
+        if (applicable) next.add(rowKey(dtc.id, projectName));
       }
     }
     setSelected(next);
@@ -413,8 +413,14 @@ export default function EcuDetailPage() {
                           : projectName === "LB636"
                             ? dtc.coverage_lb636
                             : dtc.coverage_lb63x;
+                      const applicable =
+                        projectName === "LB74x"
+                          ? dtc.applicable_lb74x
+                          : projectName === "LB636"
+                            ? dtc.applicable_lb636
+                            : dtc.applicable_lb63x;
 
-                      if (!column) {
+                      if (!applicable) {
                         return (
                           <td key={projectName} className="text-muted px-3 py-3">
                             —
@@ -434,10 +440,14 @@ export default function EcuDetailPage() {
                                 }
                                 className="h-4 w-4"
                               />
-                              <CoverageBadge status={column} />
+                              {column ? (
+                                <CoverageBadge status={column} />
+                              ) : (
+                                <span className="text-muted text-xs">Unset</span>
+                              )}
                             </label>
                             <select
-                              value={column}
+                              value={column ?? "pending"}
                               disabled={savingId === dtc.id}
                               onChange={(e) =>
                                 updateCoverage(
