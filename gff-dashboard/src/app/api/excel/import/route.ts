@@ -1,7 +1,12 @@
 import { NextResponse } from "next/server";
+import { requireSession, sessionToAuditUser } from "@/lib/auth";
+import { logAuditEvent } from "@/lib/audit";
 import { importWorkbookFromBuffer } from "@/lib/excel/import-workbook";
 
 export async function POST(request: Request) {
+  const session = await requireSession();
+  const auditUser = sessionToAuditUser(session);
+
   const formData = await request.formData();
   const file = formData.get("file");
 
@@ -20,6 +25,14 @@ export async function POST(request: Request) {
   try {
     const buffer = Buffer.from(await file.arrayBuffer());
     const summary = importWorkbookFromBuffer(buffer);
+
+    logAuditEvent({
+      eventType: "import",
+      summary: `Workbook imported: ${summary.ecus} ECUs, ${summary.dtcs} DTCs`,
+      user: auditUser,
+      details: { filename: file.name, ...summary },
+    });
+
     return NextResponse.json({ ok: true, summary });
   } catch (error) {
     const message =

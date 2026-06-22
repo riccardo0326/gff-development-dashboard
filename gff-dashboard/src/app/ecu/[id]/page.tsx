@@ -47,6 +47,92 @@ export default function EcuDetailPage() {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [savingId, setSavingId] = useState<number | null>(null);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [bulkProject, setBulkProject] = useState<VehicleProjectId>("LB74x");
+  const [bulkStatus, setBulkStatus] = useState<CoverageStatus>("covered");
+  const [applyingBulk, setApplyingBulk] = useState(false);
+
+  function rowKey(dtcId: number, projectName: VehicleProjectId) {
+    return `${dtcId}:${projectName}`;
+  }
+
+  function toggleSelect(dtcId: number, projectName: VehicleProjectId) {
+    const key = rowKey(dtcId, projectName);
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  }
+
+  function selectAllVisible() {
+    if (!data?.items) return;
+    const next = new Set(selected);
+    for (const dtc of data.items) {
+      for (const projectName of PROJECTS) {
+        const col =
+          projectName === "LB74x"
+            ? dtc.coverage_lb74x
+            : projectName === "LB636"
+              ? dtc.coverage_lb636
+              : dtc.coverage_lb63x;
+        if (col) next.add(rowKey(dtc.id, projectName));
+      }
+    }
+    setSelected(next);
+  }
+
+  async function applyBulk(selectedOnly: boolean) {
+    setApplyingBulk(true);
+    try {
+      const payload = selectedOnly
+        ? {
+            items: [...selected].map((key) => {
+              const [dtcId, proj] = key.split(":");
+              return {
+                dtcId: Number(dtcId),
+                project: proj as VehicleProjectId,
+                status: bulkStatus,
+              };
+            }),
+          }
+        : {
+            applyToAllMatching: true,
+            bulkProject,
+            bulkStatus,
+            filters: {
+              search: search || undefined,
+              ecuId,
+              category: category ? Number(category) : undefined,
+              coverage: (coverage as CoverageStatus) || undefined,
+              project: (project as VehicleProjectId) || undefined,
+            },
+          };
+
+      const response = await fetch("/api/dtcs/search", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const result = (await response.json()) as {
+        error?: string;
+        updated?: number;
+        skipped?: number;
+      };
+
+      if (!response.ok) {
+        toast.error(result.error ?? "Bulk update failed");
+        return;
+      }
+
+      toast.success(`Updated ${result.updated ?? 0} row(s)`);
+      setSelected(new Set());
+      await loadData();
+    } finally {
+      setApplyingBulk(false);
+    }
+  }
 
   const loadData = useCallback(async () => {
     const paramsObj = new URLSearchParams({
@@ -218,6 +304,47 @@ export default function EcuDetailPage() {
         />
       </Card>
 
+      <Card>
+        <h3 className="mb-3 font-medium">Bulk update</h3>
+        <div className="flex flex-wrap items-end gap-3">
+          <label className="grid gap-1 text-sm">
+            <span className="text-muted">Project</span>
+            <SelectInput
+              value={bulkProject}
+              onChange={(v) => setBulkProject(v as VehicleProjectId)}
+              options={PROJECTS.map((p) => ({ value: p, label: p }))}
+            />
+          </label>
+          <label className="grid gap-1 text-sm">
+            <span className="text-muted">Set status</span>
+            <SelectInput
+              value={bulkStatus}
+              onChange={(v) => setBulkStatus(v as CoverageStatus)}
+              options={[
+                { value: "pending", label: "Pending" },
+                { value: "covered", label: "Covered" },
+              ]}
+            />
+          </label>
+          <Button
+            disabled={applyingBulk || selected.size === 0}
+            onClick={() => applyBulk(true)}
+          >
+            Apply to selected ({selected.size})
+          </Button>
+          <Button
+            variant="secondary"
+            disabled={applyingBulk || data.total === 0}
+            onClick={() => applyBulk(false)}
+          >
+            Apply to all matching ({formatNumber(data.total)})
+          </Button>
+          <Button variant="secondary" onClick={selectAllVisible}>
+            Select visible
+          </Button>
+        </div>
+      </Card>
+
       <Card className="overflow-hidden p-0">
         <div className="border-card-border flex items-center justify-between border-b px-4 py-3">
           <p className="text-muted text-sm">
@@ -298,7 +425,17 @@ export default function EcuDetailPage() {
                       return (
                         <td key={projectName} className="px-3 py-3">
                           <div className="flex flex-col gap-2">
-                            <CoverageBadge status={column} />
+                            <label className="flex items-center gap-2">
+                              <input
+                                type="checkbox"
+                                checked={selected.has(rowKey(dtc.id, projectName))}
+                                onChange={() =>
+                                  toggleSelect(dtc.id, projectName)
+                                }
+                                className="h-4 w-4"
+                              />
+                              <CoverageBadge status={column} />
+                            </label>
                             <select
                               value={column}
                               disabled={savingId === dtc.id}

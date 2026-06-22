@@ -113,15 +113,22 @@ export function recordCoverageTransition(input: {
   fromStatus: CoverageStatus;
   toStatus: CoverageStatus;
   statDate?: string;
-}): DailyStat {
+  userId?: number | null;
+  username?: string | null;
+  troubleCode?: string | null;
+  symptom?: string | null;
+  changeSource?: "manual" | "bulk";
+  syncDaily?: boolean;
+}): DailyStat | null {
   const db = getDb();
   const statDate = input.statDate ?? todayIsoDate();
 
   db.prepare(
     `
     INSERT INTO coverage_changes (
-      dtc_id, ecu_id, project, from_status, to_status, stat_date
-    ) VALUES (?, ?, ?, ?, ?, ?)
+      dtc_id, ecu_id, project, from_status, to_status, stat_date,
+      user_id, username, trouble_code, symptom, change_source
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `,
   ).run(
     input.dtcId,
@@ -130,8 +137,14 @@ export function recordCoverageTransition(input: {
     input.fromStatus,
     input.toStatus,
     statDate,
+    input.userId ?? null,
+    input.username ?? null,
+    input.troubleCode ?? null,
+    input.symptom ?? null,
+    input.changeSource ?? "manual",
   );
 
+  if (input.syncDaily === false) return null;
   return syncDailyStatsForDate(statDate);
 }
 

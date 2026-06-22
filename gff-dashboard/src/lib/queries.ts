@@ -3,8 +3,10 @@ import {
   addManualDailyCount,
   normalizeDailyStat,
   recordCoverageTransition,
+  syncDailyStatsForDate,
 } from "./daily-coverage-sync";
-import { isTrackableTransition } from "./daily-coverage";
+import { isTrackableTransition, todayIsoDate } from "./daily-coverage";
+import { logAuditEvent, type AuditUser } from "./audit";
 import {
   buildForecastTable,
   buildPriorityStats,
@@ -219,6 +221,7 @@ export function updateDtcCoverage(
   dtcId: number,
   project: VehicleProjectId,
   status: "pending" | "covered" | null,
+  auditUser?: AuditUser,
 ): { dtc: Dtc; dailyStat: DailyStat | null } | null {
   const db = getDb();
   const column = PROJECT_COLUMN[project];
@@ -252,10 +255,191 @@ export function updateDtcCoverage(
       project,
       fromStatus: currentValue,
       toStatus: status,
+      userId: auditUser?.userId ?? null,
+      username: auditUser?.username ?? null,
+      troubleCode: existing.trouble_code,
+      symptom: existing.symptom,
+      changeSource: "manual",
     });
   }
 
   return { dtc: updated, dailyStat };
+}
+
+export interface DtcSearchRow extends Dtc {
+  ecu_code: string;
+  ecu_priority: number;
+}
+
+export function searchDtcs(filters?: {
+  search?: string;
+  ecuId?: string;
+  category?: number;
+  coverage?: "pending" | "covered";
+  project?: VehicleProjectId;
+  page?: number;
+  pageSize?: number;
+}) {
+  const db = getDb();
+  let query = `
+    SELECT d.*, e.code as ecu_code, e.priority as ecu_priority
+    FROM dtcs d
+    JOIN ecus e ON e.id = d.ecu_id
+    WHERE 1=1
+  `;
+  const params: Array<string | number> = [];
+
+  if (filters?.search) {
+    query += ` AND (
+      d.symptom LIKE ? OR d.trouble_code LIKE ? OR d.dtc_text LIKE ?
+      OR d.gff_program LIKE ? OR CAST(d.category AS TEXT) LIKE ?
+      OR e.code LIKE ?
+    )`;
+    const term = `%${filters.search}%`;
+    params.push(term, term, term, term, term, term);
+  }
+
+  if (filters?.ecuId) {
+    query += " AND d.ecu_id = ?";
+    params.push(filters.ecuId);
+  }
+
+  if (filters?.category !== undefined) {
+    query += " AND d.category = ?";
+    params.push(filters.category);
+  }
+
+  if (filters?.project && filters?.coverage) {
+    query += ` AND d.${PROJECT_COLUMN[filters.project]} = ?`;
+    params.push(filters.coverage);
+  } else if (filters?.coverage) {
+    query +=
+      " AND (d.coverage_lb74x = ? OR d.coverage_lb636 = ? OR d.coverage_lb63x = ?)";
+    params.push(filters.coverage, filters.coverage, filters.coverage);
+  }
+
+  const countQuery = query.replace(
+    "SELECT d.*, e.code as ecu_code, e.priority as ecu_priority",
+    "SELECT COUNT(*) as count",
+  );
+  const total = (
+    db.prepare(countQuery).get(...params) as { count: number }
+  ).count;
+
+  query += " ORDER BY e.priority ASC, e.code ASC, d.id ASC";
+
+  const page = filters?.page ?? 1;
+  const pageSize = filters?.pageSize ?? 50;
+  query += " LIMIT ? OFFSET ?";
+  params.push(pageSize, (page - 1) * pageSize);
+
+  const items = db.prepare(query).all(...params) as DtcSearchRow[];
+  return { items, total, page, pageSize };
+}
+
+export interface BulkUpdateItem {
+  dtcId: number;
+  project: VehicleProjectId;
+  status: "pending" | "covered";
+}
+
+export function bulkUpdateDtcCoverage(
+  items: BulkUpdateItem[],
+  auditUser?: AuditUser,
+  meta?: { source?: string; filters?: Record<string, unknown> },
+): {
+  updated: number;
+  skipped: number;
+  dailyStat: DailyStat | null;
+} {
+  const db = getDb();
+  const statDate = todayIsoDate();
+  let updated = 0;
+  let skipped = 0;
+  const ecuIds = new Set<string>();
+  const projectCounts: Record<string, number> = {};
+  let toCovered = 0;
+  let toPending = 0;
+
+  const updateStmt = db.prepare("SELECT * FROM dtcs WHERE id = ?");
+
+  const applyBulk = db.transaction(() => {
+    for (const item of items) {
+      const existing = updateStmt.get(item.dtcId) as Dtc | undefined;
+      if (!existing) {
+        skipped += 1;
+        continue;
+      }
+
+      const column = PROJECT_COLUMN[item.project];
+      const currentValue = existing[column];
+      if (!currentValue || currentValue === item.status) {
+        skipped += 1;
+        continue;
+      }
+
+      db.prepare(`UPDATE dtcs SET ${column} = ? WHERE id = ?`).run(
+        item.status,
+        item.dtcId,
+      );
+
+      if (
+        isTrackableTransition(currentValue, item.status) &&
+        (currentValue === "pending" || currentValue === "covered")
+      ) {
+        recordCoverageTransition({
+          dtcId: item.dtcId,
+          ecuId: existing.ecu_id,
+          project: item.project,
+          fromStatus: currentValue,
+          toStatus: item.status,
+          statDate,
+          userId: auditUser?.userId ?? null,
+          username: auditUser?.username ?? null,
+          troubleCode: existing.trouble_code,
+          symptom: existing.symptom,
+          changeSource: "bulk",
+          syncDaily: false,
+        });
+        ecuIds.add(existing.ecu_id);
+        projectCounts[item.project] = (projectCounts[item.project] ?? 0) + 1;
+        if (item.status === "covered") toCovered += 1;
+        else toPending += 1;
+      }
+
+      updated += 1;
+    }
+  });
+
+  applyBulk();
+
+  let dailyStat: DailyStat | null = null;
+  if (updated > 0) {
+    dailyStat = syncDailyStatsForDate(statDate);
+
+    const projectSummary = Object.entries(projectCounts)
+      .map(([p, c]) => `${p}: ${c}`)
+      .join(", ");
+
+    logAuditEvent({
+      eventType: "bulk_update",
+      summary: `Bulk update: ${updated} coverage change(s) across ${ecuIds.size} ECU(s)`,
+      user: auditUser,
+      details: {
+        updated,
+        skipped,
+        ecuCount: ecuIds.size,
+        toCovered,
+        toPending,
+        projects: projectCounts,
+        projectSummary,
+        source: meta?.source ?? "manual_selection",
+        filters: meta?.filters ?? null,
+      },
+    });
+  }
+
+  return { updated, skipped, dailyStat };
 }
 
 export function getFaultyDtcs(filters?: {

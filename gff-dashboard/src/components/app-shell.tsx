@@ -6,16 +6,24 @@ import { signOut } from "next-auth/react";
 import {
   Activity,
   AlertTriangle,
+  BarChart3,
+  CalendarDays,
+  FileBarChart,
   LayoutDashboard,
   LogOut,
+  Search,
   Settings,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NAV = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/statistics", label: "Statistics", icon: Activity },
+  { href: "/statistics", label: "Statistics", icon: BarChart3 },
+  { href: "/search", label: "Search", icon: Search },
   { href: "/faulty", label: "Faulty DTCs", icon: AlertTriangle },
+  { href: "/activity", label: "Activity", icon: Activity },
+  { href: "/reports", label: "Reports", icon: FileBarChart },
+  { href: "/daily-gffs", label: "Daily GFFs", icon: CalendarDays },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 

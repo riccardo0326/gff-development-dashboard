@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { requireSession, sessionToAuditUser } from "@/lib/auth";
 import { updateDtcCoverage } from "@/lib/queries";
 import type { VehicleProjectId } from "@/lib/types";
 
@@ -6,6 +7,8 @@ export async function PATCH(
   request: Request,
   context: { params: Promise<{ id: string; dtcId: string }> },
 ) {
+  const session = await requireSession();
+  const auditUser = sessionToAuditUser(session);
   const { dtcId } = await context.params;
   const body = (await request.json()) as {
     project: VehicleProjectId;
@@ -20,7 +23,12 @@ export async function PATCH(
     return NextResponse.json({ error: "Invalid status" }, { status: 400 });
   }
 
-  const result = updateDtcCoverage(Number(dtcId), body.project, body.status);
+  const result = updateDtcCoverage(
+    Number(dtcId),
+    body.project,
+    body.status,
+    auditUser,
+  );
   if (!result) {
     return NextResponse.json({ error: "DTC not found" }, { status: 404 });
   }

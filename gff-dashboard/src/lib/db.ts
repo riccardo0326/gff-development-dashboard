@@ -20,6 +20,31 @@ export function getDb(): Database.Database {
   return db;
 }
 
+function migrateCoverageChangesColumns(database: Database.Database) {
+  const columns = database
+    .prepare("PRAGMA table_info(coverage_changes)")
+    .all() as Array<{ name: string }>;
+  const names = new Set(columns.map((c) => c.name));
+
+  if (!names.has("user_id")) {
+    database.exec("ALTER TABLE coverage_changes ADD COLUMN user_id INTEGER");
+  }
+  if (!names.has("username")) {
+    database.exec("ALTER TABLE coverage_changes ADD COLUMN username TEXT");
+  }
+  if (!names.has("trouble_code")) {
+    database.exec("ALTER TABLE coverage_changes ADD COLUMN trouble_code TEXT");
+  }
+  if (!names.has("symptom")) {
+    database.exec("ALTER TABLE coverage_changes ADD COLUMN symptom TEXT");
+  }
+  if (!names.has("change_source")) {
+    database.exec(
+      "ALTER TABLE coverage_changes ADD COLUMN change_source TEXT NOT NULL DEFAULT 'manual'",
+    );
+  }
+}
+
 function migrateDailyStatsColumns(database: Database.Database) {
   const columns = database
     .prepare("PRAGMA table_info(daily_stats)")
@@ -132,9 +157,23 @@ function initSchema(database: Database.Database) {
       password_hash TEXT NOT NULL,
       role TEXT NOT NULL DEFAULT 'admin'
     );
+
+    CREATE TABLE IF NOT EXISTS audit_events (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      event_type TEXT NOT NULL,
+      user_id INTEGER,
+      username TEXT,
+      summary TEXT NOT NULL,
+      details_json TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_audit_events_created ON audit_events(created_at);
+    CREATE INDEX IF NOT EXISTS idx_audit_events_type ON audit_events(event_type);
   `);
 
   migrateDailyStatsColumns(database);
+  migrateCoverageChangesColumns(database);
 
   const projectCount = database
     .prepare("SELECT COUNT(*) as c FROM vehicle_projects")
