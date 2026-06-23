@@ -55,7 +55,8 @@ export function cellString(value: unknown): string | null {
 export function normalizeDaCode(value: unknown): string {
   if (value === null || value === undefined) return "";
   if (typeof value === "number") {
-    return value.toString(16).toUpperCase().padStart(4, "0");
+    // Dashboard stores codes as Excel numbers (e.g. 8104 → sheet "DA8104", not hex 1FA8).
+    return String(Math.trunc(value)).padStart(4, "0");
   }
   const text = String(value).trim().toUpperCase();
   if (/^\d+$/.test(text)) return text.padStart(4, "0");

@@ -18,15 +18,6 @@ const PROJECT_COLUMNS: Record<
   LB63x: "coverage_lb63x",
 };
 
-const ECU_APPLICABLE_COLUMNS: Record<
-  VehicleProjectId,
-  "lb74x_applicable" | "lb636_applicable" | "lb63x_applicable"
-> = {
-  LB74x: "lb74x_applicable",
-  LB636: "lb636_applicable",
-  LB63x: "lb63x_applicable",
-};
-
 export interface CoverageRow {
   coverage_lb74x: string | null;
   coverage_lb636: string | null;
@@ -76,17 +67,14 @@ export function countProjectCoverage(
 }
 
 export function computeEcuProjectCompletion(
-  ecu: Ecu,
+  _ecu: Ecu,
   rows: CoverageRow[],
 ): Record<VehicleProjectId, ProjectCompletion | null> {
   const result = {} as Record<VehicleProjectId, ProjectCompletion | null>;
 
   for (const project of VEHICLE_PROJECTS) {
-    if (!ecu[ECU_APPLICABLE_COLUMNS[project]]) {
-      result[project] = null;
-      continue;
-    }
-    result[project] = countProjectCoverage(rows, project);
+    const stats = countProjectCoverage(rows, project);
+    result[project] = stats.total > 0 ? stats : null;
   }
 
   return result;

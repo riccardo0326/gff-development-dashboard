@@ -13,7 +13,10 @@ import {
 
 export interface ImportSummary {
   ecus: number;
+  /** One row per DTC identity on an ECU sheet. */
   dtcs: number;
+  /** Applicable LB74x/LB636/LB63x coverage cells (matches Excel Statistiche TOT). */
+  coverageSlots: number;
   faulty: number;
   daily: number;
   dailyEstimate: number;
@@ -266,7 +269,7 @@ export function importWorkbook(workbook: WorkBook): ImportSummary {
     clearAllData(db);
     seedProjects(db);
 
-    const ecuCount = importDashboard(db, workbook);
+    importDashboard(db, workbook);
 
     let dtcCount = 0;
     for (const sheetName of workbook.SheetNames) {
@@ -278,9 +281,21 @@ export function importWorkbook(workbook: WorkBook): ImportSummary {
     const faultyCount = importFaulty(db, workbook);
     const stats = importStatistics(db, workbook);
 
+    const actualEcuCount = (
+      db.prepare("SELECT COUNT(*) as c FROM ecus").get() as { c: number }
+    ).c;
+    const coverageSlots = (
+      db
+        .prepare(
+          `SELECT SUM(applicable_lb74x + applicable_lb636 + applicable_lb63x) as c FROM dtcs`,
+        )
+        .get() as { c: number | null }
+    ).c ?? 0;
+
     return {
-      ecus: ecuCount,
+      ecus: actualEcuCount,
       dtcs: dtcCount,
+      coverageSlots,
       faulty: faultyCount,
       daily: stats.daily,
       dailyEstimate: stats.dailyEstimate,

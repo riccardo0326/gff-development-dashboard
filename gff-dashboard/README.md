@@ -136,3 +136,5 @@ npm run import
 ```
 
 This replaces the database with fresh data from the Excel file.
+
+Import output distinguishes **DTC rows** (one per symptom/code on an ECU sheet) from **coverage slots** (applicable LB74x/LB636/LB63x cells — matches Excel Statistiche TOT).
