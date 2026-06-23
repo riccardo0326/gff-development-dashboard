@@ -33,14 +33,28 @@ Open [http://localhost:3000](http://localhost:3000) and sign in.
 
 ### Authentication
 
-Copy `.env.example` to `.env.local` and set admin credentials:
+Copy `.env.example` to `.env.local` and adjust credentials if needed:
 
 ```
 ADMIN_USERNAME=admin
-ADMIN_PASSWORD=your-password
+ADMIN_PASSWORD=gff-admin-change-me
+USER_USERNAME=user
+USER_PASSWORD=gff-user-change-me
+LAMBO_USERNAME=lambo
+LAMBO_PASSWORD=gff-lambo-change-me
 NEXTAUTH_SECRET=your-secret
 NEXTAUTH_URL=http://localhost:3000
 ```
+
+On first startup (or when a role is missing), the app seeds **one demo account per role**:
+
+| Role | Username | Default password | Access |
+|------|----------|------------------|--------|
+| **admin** | `admin` | `gff-admin-change-me` | Full access: all pages, Reports, Activity, Settings (forecast parameters + workbook import/export) |
+| **user** | `user` | `gff-user-change-me` | Dashboard, Statistics, Search, Faulty DTCs, ECU detail, Activity, Settings (workbook import/export only — no forecast parameters) |
+| **lambo** | `lambo` | `gff-lambo-change-me` | Dashboard, Statistics, Search, Faulty DTCs, ECU detail only (no Reports, Activity, or Settings) |
+
+Existing databases that already have an admin account get the `user` and `lambo` accounts added automatically on the next app start.
 
 ### Workbook import / export
 
