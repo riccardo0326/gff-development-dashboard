@@ -52,7 +52,6 @@ export default function EcuDetailPage() {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<Set<string>>(new Set());
-  const [bulkProject, setBulkProject] = useState<VehicleProjectId>("LB74x");
   const [bulkStatus, setBulkStatus] = useState<CoverageStatus>("covered");
   const [applyingBulk, setApplyingBulk] = useState(false);
   const [modalDtc, setModalDtc] = useState<DtcRowData | null>(null);
@@ -103,6 +102,10 @@ export default function EcuDetailPage() {
       }
     }
     setSelected(next);
+  }
+
+  function unselectAll() {
+    setSelected(new Set());
   }
 
   async function applyBulk() {
@@ -188,11 +191,8 @@ export default function EcuDetailPage() {
       />
 
       <div className="grid gap-4 lg:grid-cols-4">
-        <Card>
-          <p className="text-muted text-sm">Priority</p>
-          <div className="mt-2">
-            <PriorityBadge priority={data.ecu.priority} />
-          </div>
+        <Card className="flex items-center justify-center py-6">
+          <PriorityBadge priority={data.ecu.priority} size="lg" />
         </Card>
         <Card className="lg:col-span-3">
           <p className="text-muted mb-3 text-sm">Project completion</p>
@@ -276,14 +276,6 @@ export default function EcuDetailPage() {
         <h3 className="mb-3 font-medium">Bulk update</h3>
         <div className="flex flex-wrap items-end gap-3">
           <label className="grid gap-1 text-sm">
-            <span className="text-muted">Project</span>
-            <SelectInput
-              value={bulkProject}
-              onChange={(v) => setBulkProject(v as VehicleProjectId)}
-              options={DTC_PROJECTS.map((p) => ({ value: p, label: p }))}
-            />
-          </label>
-          <label className="grid gap-1 text-sm">
             <span className="text-muted">Set status</span>
             <SelectInput
               value={bulkStatus}
@@ -303,6 +295,11 @@ export default function EcuDetailPage() {
           <Button variant="secondary" onClick={selectFiltered}>
             Select filtered
           </Button>
+          {selected.size > 0 ? (
+            <Button variant="secondary" onClick={unselectAll}>
+              Unselect
+            </Button>
+          ) : null}
         </div>
       </Card>
 

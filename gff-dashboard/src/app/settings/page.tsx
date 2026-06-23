@@ -9,9 +9,11 @@ import {
   FilterInput,
   PageHeader,
 } from "@/components/ui";
+import { filenameDateStamp } from "@/lib/datetime";
 import {
-  canAccessWorkbookImportExport,
   canEditForecastParameters,
+  canExportWorkbook,
+  canImportWorkbook,
 } from "@/lib/roles";
 import type { Settings } from "@/lib/types";
 
@@ -32,7 +34,8 @@ export default function SettingsPage() {
   const [exporting, setExporting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const showWorkbook = canAccessWorkbookImportExport(role);
+  const showExport = canExportWorkbook(role);
+  const showImport = canImportWorkbook(role);
   const showForecast = canEditForecastParameters(role);
 
   useEffect(() => {
@@ -59,17 +62,32 @@ export default function SettingsPage() {
     setError("");
     try {
       const response = await fetch("/api/excel/export");
-      if (!response.ok) throw new Error("Export failed");
+      if (!response.ok) {
+        const payload = (await response.json().catch(() => null)) as {
+          error?: string;
+        } | null;
+        throw new Error(payload?.error ?? "Export failed");
+      }
+
+      const contentType = response.headers.get("content-type") ?? "";
+      if (!contentType.includes("spreadsheet") && !contentType.includes("excel")) {
+        throw new Error("Unexpected export response");
+      }
+
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
       const anchor = document.createElement("a");
       anchor.href = url;
-      anchor.download = `GFF_development_export_${new Date().toISOString().slice(0, 10)}.xlsm`;
+      anchor.download = `GFF_development_export_${filenameDateStamp()}.xlsm`;
       anchor.click();
       URL.revokeObjectURL(url);
       setMessage("Workbook exported with macros and charts preserved.");
-    } catch {
-      setError("Could not export the workbook.");
+    } catch (exportError) {
+      setError(
+        exportError instanceof Error
+          ? exportError.message
+          : "Could not export the workbook.",
+      );
     } finally {
       setExporting(false);
     }
@@ -142,7 +160,7 @@ export default function SettingsPage() {
         </Card>
       ) : null}
 
-      {showWorkbook ? (
+      {showExport || showImport ? (
         <Card>
           <h3 className="mb-2 font-medium">Workbook import / export</h3>
           <p className="text-muted mb-4 text-sm">
@@ -150,32 +168,38 @@ export default function SettingsPage() {
             charts preserved). Import replaces all database content.
           </p>
           <div className="flex flex-wrap gap-3">
-            <Button onClick={handleExport} disabled={exporting}>
-              <span className="inline-flex items-center gap-2">
-                <Download className="h-4 w-4" />
-                {exporting ? "Exporting..." : "Export workbook"}
-              </span>
-            </Button>
-            <Button
-              variant="secondary"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={importing}
-            >
-              <span className="inline-flex items-center gap-2">
-                <Upload className="h-4 w-4" />
-                {importing ? "Importing..." : "Import workbook"}
-              </span>
-            </Button>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".xlsx,.xlsm"
-              className="hidden"
-              onChange={(event) => {
-                const file = event.target.files?.[0];
-                if (file) void handleImport(file);
-              }}
-            />
+            {showExport ? (
+              <Button onClick={handleExport} disabled={exporting}>
+                <span className="inline-flex items-center gap-2">
+                  <Download className="h-4 w-4" />
+                  {exporting ? "Exporting..." : "Export workbook"}
+                </span>
+              </Button>
+            ) : null}
+            {showImport ? (
+              <>
+                <Button
+                  variant="secondary"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={importing}
+                >
+                  <span className="inline-flex items-center gap-2">
+                    <Upload className="h-4 w-4" />
+                    {importing ? "Importing..." : "Import workbook"}
+                  </span>
+                </Button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".xlsx,.xlsm"
+                  className="hidden"
+                  onChange={(event) => {
+                    const file = event.target.files?.[0];
+                    if (file) void handleImport(file);
+                  }}
+                />
+              </>
+            ) : null}
           </div>
         </Card>
       ) : null}

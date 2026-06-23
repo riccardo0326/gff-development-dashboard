@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Card, PageHeader, SelectInput } from "@/components/ui";
+import { formatDateInRome } from "@/lib/datetime";
 import { formatNumber } from "@/lib/utils";
 
 interface ActivityItem {
@@ -19,6 +20,7 @@ export default function ActivityPage() {
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [eventType, setEventType] = useState("");
+  const [role, setRole] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -27,6 +29,7 @@ export default function ActivityPage() {
       pageSize: "50",
     });
     if (eventType) params.set("eventType", eventType);
+    if (role) params.set("role", role);
 
     setLoading(true);
     fetch(`/api/audit?${params.toString()}`)
@@ -36,7 +39,7 @@ export default function ActivityPage() {
         setTotal(data.total ?? 0);
       })
       .finally(() => setLoading(false));
-  }, [page, eventType]);
+  }, [page, eventType, role]);
 
   const totalPages = Math.max(1, Math.ceil(total / 50));
 
@@ -47,7 +50,7 @@ export default function ActivityPage() {
         description="Coverage changes, bulk updates, imports, exports, and report downloads."
       />
 
-      <Card className="max-w-xs">
+      <Card className="grid max-w-2xl gap-3 sm:grid-cols-2">
         <SelectInput
           value={eventType}
           onChange={(value) => {
@@ -61,6 +64,19 @@ export default function ActivityPage() {
             { value: "import", label: "Imports" },
             { value: "export", label: "Exports" },
             { value: "report", label: "Reports" },
+          ]}
+        />
+        <SelectInput
+          value={role}
+          onChange={(value) => {
+            setPage(1);
+            setRole(value);
+          }}
+          options={[
+            { value: "", label: "All roles" },
+            { value: "admin", label: "Admin" },
+            { value: "user", label: "User" },
+            { value: "lambo", label: "Lambo" },
           ]}
         />
       </Card>
@@ -93,7 +109,7 @@ export default function ActivityPage() {
                         </span>
                       )}
                       {item.username ? `@${item.username}` : "system"} ·{" "}
-                      {item.timestamp.replace("T", " ").slice(0, 19)}
+                      {formatDateInRome(item.timestamp)}
                     </p>
                   </div>
                 </div>

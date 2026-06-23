@@ -6,11 +6,19 @@ import type { DailyStat, Dtc, Ecu, FaultyDtc, Settings } from "../types";
 import { isoToExcelDate } from "./dates";
 import { mapExportCoverage, mapExportGffAvailable } from "./mappers";
 
-const TEMPLATE_PATH = path.join(
-  process.cwd(),
-  "templates",
-  "workbook-template.xlsm",
-);
+const TEMPLATE_CANDIDATES = [
+  path.join(process.cwd(), "templates", "workbook-template.xlsm"),
+  path.join(process.cwd(), "..", "GFF_development - internal copy.xlsm"),
+];
+
+function resolveTemplatePath(): string {
+  for (const candidate of TEMPLATE_CANDIDATES) {
+    if (fs.existsSync(candidate)) return candidate;
+  }
+  throw new Error(
+    `Workbook template not found. Checked: ${TEMPLATE_CANDIDATES.join(", ")}`,
+  );
+}
 
 function setCell(
   sheet: XLSX.WorkSheet,
@@ -78,11 +86,8 @@ function updateFaultySheet(sheet: XLSX.WorkSheet, rows: FaultyDtc[]) {
 }
 
 export function exportWorkbookToBuffer(): Buffer {
-  if (!fs.existsSync(TEMPLATE_PATH)) {
-    throw new Error(`Workbook template not found at ${TEMPLATE_PATH}`);
-  }
-
-  const templateBuffer = fs.readFileSync(TEMPLATE_PATH);
+  const templatePath = resolveTemplatePath();
+  const templateBuffer = fs.readFileSync(templatePath);
   const workbook = XLSX.read(templateBuffer, {
     type: "buffer",
     bookVBA: true,

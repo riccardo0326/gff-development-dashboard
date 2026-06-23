@@ -52,7 +52,7 @@ On first startup (or when a role is missing), the app seeds **one demo account p
 |------|----------|------------------|--------|
 | **admin** | `admin` | `gff-admin-change-me` | Full access: all pages, Reports, Activity, Settings (forecast parameters + workbook import/export) |
 | **user** | `user` | `gff-user-change-me` | Dashboard, Statistics, Search, Faulty DTCs, ECU detail, Activity, Settings (workbook import/export only — no forecast parameters) |
-| **lambo** | `lambo` | `gff-lambo-change-me` | Dashboard, Statistics, Search, Faulty DTCs, ECU detail only (no Reports, Activity, or Settings) |
+| **lambo** | `lambo` | `gff-lambo-change-me` | Dashboard, Statistics, Search, Faulty DTCs, ECU detail, Settings (export workbook only — no import or forecast parameters) |
 
 Existing databases that already have an admin account get the `user` and `lambo` accounts added automatically on the next app start.
 

@@ -20,7 +20,7 @@ export function canAccessRoute(
   }
 
   if (pathname.startsWith("/settings")) {
-    return r === "admin" || r === "user";
+    return r === "admin" || r === "user" || r === "lambo";
   }
 
   if (pathname.startsWith("/daily-gffs")) {
@@ -41,9 +41,18 @@ export function canEditForecastParameters(role: string | undefined | null): bool
   return normalizeRole(role) === "admin";
 }
 
+export function canExportWorkbook(role: string | undefined | null): boolean {
+  const r = normalizeRole(role);
+  return r === "admin" || r === "user" || r === "lambo";
+}
+
+export function canImportWorkbook(role: string | undefined | null): boolean {
+  const r = normalizeRole(role);
+  return r === "admin" || r === "user";
+}
+
 export function canAccessWorkbookImportExport(
   role: string | undefined | null,
 ): boolean {
-  const r = normalizeRole(role);
-  return r === "admin" || r === "user";
+  return canExportWorkbook(role) || canImportWorkbook(role);
 }

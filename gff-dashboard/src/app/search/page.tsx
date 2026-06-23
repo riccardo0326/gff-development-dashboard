@@ -89,6 +89,10 @@ export default function SearchPage() {
     setSelected(next);
   }
 
+  function unselectAll() {
+    setSelected(new Set());
+  }
+
   async function applyBulk() {
     setApplying(true);
     try {
@@ -210,6 +214,11 @@ export default function SearchPage() {
           <Button variant="secondary" onClick={selectFiltered}>
             Select filtered
           </Button>
+          {selected.size > 0 ? (
+            <Button variant="secondary" onClick={unselectAll}>
+              Unselect
+            </Button>
+          ) : null}
         </div>
       </Card>
 

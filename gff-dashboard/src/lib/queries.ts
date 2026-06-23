@@ -13,6 +13,7 @@ import {
   computeEcuProjectCompletion,
   parseSettings,
 } from "./calculations";
+import { compareEcuCodeHex } from "./utils";
 import type {
   DailyStat,
   Dtc,
@@ -70,8 +71,10 @@ export function getEcus(filters?: {
     params.push(term, term);
   }
 
-  query += " ORDER BY priority ASC, code ASC";
-  return db.prepare(query).all(...params) as Ecu[];
+  query += " ORDER BY priority ASC";
+  const rows = db.prepare(query).all(...params) as Ecu[];
+  rows.sort((a, b) => a.priority - b.priority || compareEcuCodeHex(a.code, b.code));
+  return rows;
 }
 
 export function getEcuById(id: string): Ecu | null {

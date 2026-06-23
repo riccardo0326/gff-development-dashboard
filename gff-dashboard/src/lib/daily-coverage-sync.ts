@@ -1,4 +1,5 @@
 import { getDb } from "./db";
+import { nowSqliteDatetime } from "./datetime";
 import type { DailyStat, VehicleProjectId } from "./types";
 import { todayIsoDate } from "./daily-coverage";
 
@@ -127,8 +128,8 @@ export function recordCoverageTransition(input: {
     `
     INSERT INTO coverage_changes (
       dtc_id, ecu_id, project, from_status, to_status, stat_date,
-      user_id, username, trouble_code, symptom, change_source
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      user_id, username, trouble_code, symptom, change_source, changed_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `,
   ).run(
     input.dtcId,
@@ -142,6 +143,7 @@ export function recordCoverageTransition(input: {
     input.troubleCode ?? null,
     input.symptom ?? null,
     input.changeSource ?? "manual",
+    nowSqliteDatetime(),
   );
 
   if (input.syncDaily === false) return null;

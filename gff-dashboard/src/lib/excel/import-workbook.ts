@@ -1,6 +1,7 @@
 import type { WorkBook } from "xlsx";
 import * as XLSX from "xlsx";
 import { getDb } from "../db";
+import { todayIsoDate } from "../datetime";
 import { excelDateToIso } from "./dates";
 import {
   cellString,
@@ -204,7 +205,7 @@ function importStatistics(db: ReturnType<typeof getDb>, workbook: WorkBook) {
       daily: 0,
       dailyEstimate: 50,
       baselineImplemented: 22167,
-      startDate: new Date().toISOString().slice(0, 10),
+      startDate: todayIsoDate(),
     };
   }
 
@@ -213,7 +214,7 @@ function importStatistics(db: ReturnType<typeof getDb>, workbook: WorkBook) {
   const baselineImplemented = Number(rows[28]?.[1] ?? 22167);
   const startDate =
     excelDateToIso(rows[28]?.[0]) ??
-    new Date().toISOString().slice(0, 10);
+    todayIsoDate();
 
   const settingsInsert = db.prepare(
     "INSERT INTO settings (key, value) VALUES (?, ?)",

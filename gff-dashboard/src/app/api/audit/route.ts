@@ -6,7 +6,8 @@ export async function GET(request: Request) {
   const page = Number(searchParams.get("page") ?? "1");
   const pageSize = Number(searchParams.get("pageSize") ?? "50");
   const eventType = searchParams.get("eventType") ?? undefined;
+  const role = searchParams.get("role") ?? undefined;
 
-  const result = getActivityLog({ page, pageSize, eventType });
+  const result = getActivityLog({ page, pageSize, eventType, role });
   return NextResponse.json(result);
 }
