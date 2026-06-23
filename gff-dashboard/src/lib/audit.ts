@@ -1,4 +1,5 @@
 import { getDb } from "./db";
+import { nowSqliteDatetime } from "./datetime";
 
 export type AuditEventType =
   | "bulk_update"
@@ -21,8 +22,8 @@ export function logAuditEvent(input: {
   const result = db
     .prepare(
       `
-      INSERT INTO audit_events (event_type, user_id, username, summary, details_json)
-      VALUES (?, ?, ?, ?, ?)
+      INSERT INTO audit_events (event_type, user_id, username, summary, details_json, created_at)
+      VALUES (?, ?, ?, ?, ?, ?)
     `,
     )
     .run(
@@ -31,6 +32,7 @@ export function logAuditEvent(input: {
       input.user?.username ?? null,
       input.summary,
       input.details ? JSON.stringify(input.details) : null,
+      nowSqliteDatetime(),
     );
   return Number(result.lastInsertRowid);
 }
@@ -85,23 +87,40 @@ export function getActivityLog(filters?: {
   page?: number;
   pageSize?: number;
   eventType?: string;
+  role?: string;
 }) {
   const db = getDb();
   const page = filters?.page ?? 1;
   const pageSize = filters?.pageSize ?? 50;
   const offset = (page - 1) * pageSize;
 
+  let usernamesForRole: string[] | null = null;
+  if (filters?.role) {
+    usernamesForRole = (
+      db
+        .prepare("SELECT username FROM users WHERE role = ?")
+        .all(filters.role) as Array<{ username: string }>
+    ).map((row) => row.username);
+  }
+
+  function matchesRole(username: string | null): boolean {
+    if (!filters?.role) return true;
+    if (!username) return false;
+    return usernamesForRole?.includes(username) ?? false;
+  }
+
   const coverageRows = db
     .prepare(
       `
-      SELECT cc.*, e.code as ecu_code
+      SELECT cc.*, e.code as ecu_code, u.role as user_role
       FROM coverage_changes cc
       JOIN ecus e ON e.id = cc.ecu_id
+      LEFT JOIN users u ON u.username = cc.username
       ORDER BY cc.changed_at DESC
       LIMIT 500
     `,
     )
-    .all() as CoverageChangeRow[];
+    .all() as Array<CoverageChangeRow & { user_role?: string | null }>;
 
   let auditQuery =
     "SELECT * FROM audit_events WHERE 1=1";
@@ -122,6 +141,7 @@ export function getActivityLog(filters?: {
 
   if (!filters?.eventType || filters.eventType === "coverage_change") {
     for (const row of coverageRows) {
+      if (!matchesRole(row.username)) continue;
       entries.push({
         kind: "coverage_change",
         id: row.id,
@@ -135,6 +155,7 @@ export function getActivityLog(filters?: {
 
   if (!filters?.eventType || filters.eventType !== "coverage_change") {
     for (const row of auditRows) {
+      if (!matchesRole(row.username)) continue;
       entries.push({
         kind: "audit_event",
         id: row.id,

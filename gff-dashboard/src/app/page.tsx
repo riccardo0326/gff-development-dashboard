@@ -12,11 +12,11 @@ import {
   SelectInput,
 } from "@/components/ui";
 import type { EcuCompletion, VehicleProjectId } from "@/lib/types";
-import { cn, formatPercent } from "@/lib/utils";
+import { cn, compareEcuCodeHex, formatPercent } from "@/lib/utils";
 
 const PROJECTS: VehicleProjectId[] = ["LB74x", "LB636", "LB63x"];
 
-type SortField = "ecu" | "priority";
+type SortField = "priority";
 type SortDirection = "asc" | "desc";
 
 function SortHeader({
@@ -76,12 +76,10 @@ export default function DashboardPage() {
   const sortedEcus = useMemo(() => {
     const copy = [...ecus];
     copy.sort((a, b) => {
-      let cmp = 0;
-      if (sortField === "ecu") {
-        cmp = a.code.localeCompare(b.code, undefined, { numeric: true });
-      } else {
-        cmp = a.priority - b.priority || a.code.localeCompare(b.code, undefined, { numeric: true });
-      }
+      const cmp =
+        sortField === "priority"
+          ? a.priority - b.priority || compareEcuCodeHex(a.code, b.code)
+          : compareEcuCodeHex(a.code, b.code);
       return sortDirection === "asc" ? cmp : -cmp;
     });
     return copy;
@@ -109,23 +107,13 @@ export default function DashboardPage() {
       setSortDirection((d) => (d === "asc" ? "desc" : "asc"));
     } else {
       setSortField(field);
-      setSortDirection(field === "priority" ? "asc" : "asc");
+      setSortDirection("asc");
     }
   }
 
   return (
     <div>
-      <PageHeader
-        title="Dashboard"
-        actions={
-          <Link
-            href="/daily-gffs"
-            className="bg-accent hover:bg-blue-500 inline-flex items-center rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors"
-          >
-            Add daily GFFs
-          </Link>
-        }
-      />
+      <PageHeader title="Dashboard" />
 
       <div className="mb-6 grid gap-4 sm:grid-cols-3">
         <Card>
@@ -169,14 +157,7 @@ export default function DashboardPage() {
           <table className="min-w-full text-sm">
             <thead className="border-card-border bg-white/5 border-b">
               <tr className="text-left">
-                <th className="px-4 py-3">
-                  <SortHeader
-                    label="ECU"
-                    active={sortField === "ecu"}
-                    direction={sortDirection}
-                    onClick={() => toggleSort("ecu")}
-                  />
-                </th>
+                <th className="px-4 py-3 font-medium">ECU</th>
                 <th className="px-4 py-3">
                   <SortHeader
                     label="Priority"

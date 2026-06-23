@@ -1,5 +1,6 @@
 "use client";
 
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
@@ -7,13 +8,13 @@ import {
   Activity,
   AlertTriangle,
   BarChart3,
-  CalendarDays,
   FileBarChart,
   LayoutDashboard,
   LogOut,
   Search,
   Settings,
 } from "lucide-react";
+import { canAccessNav } from "@/lib/roles";
 import { cn } from "@/lib/utils";
 
 const NAV = [
@@ -23,12 +24,14 @@ const NAV = [
   { href: "/faulty", label: "Faulty DTCs", icon: AlertTriangle },
   { href: "/activity", label: "Activity", icon: Activity },
   { href: "/reports", label: "Reports", icon: FileBarChart },
-  { href: "/daily-gffs", label: "Daily GFFs", icon: CalendarDays },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const { data: session } = useSession();
+  const role = session?.user?.role;
+  const visibleNav = NAV.filter((item) => canAccessNav(role, item.href));
 
   return (
     <div className="min-h-screen lg:flex">
@@ -40,7 +43,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <h1 className="mt-1 text-lg font-semibold">Development Dashboard</h1>
         </div>
         <nav className="flex gap-1 overflow-x-auto px-3 pb-4 lg:flex-col">
-          {NAV.map(({ href, label, icon: Icon }) => {
+          {visibleNav.map(({ href, label, icon: Icon }) => {
             const active =
               href === "/"
                 ? pathname === "/"

@@ -6,11 +6,18 @@ const STYLES = {
   3: "bg-accent-soft text-blue-200 ring-accent/30",
 } as const;
 
-export function PriorityBadge({ priority }: { priority: number }) {
+export function PriorityBadge({
+  priority,
+  size = "sm",
+}: {
+  priority: number;
+  size?: "sm" | "lg";
+}) {
   return (
     <span
       className={cn(
-        "inline-flex rounded-full px-2 py-0.5 text-xs font-medium ring-1 ring-inset",
+        "inline-flex rounded-full font-semibold ring-1 ring-inset",
+        size === "lg" ? "px-4 py-2 text-lg" : "px-2 py-0.5 text-xs font-medium",
         STYLES[priority as keyof typeof STYLES] ?? STYLES[3],
       )}
     >

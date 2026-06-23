@@ -24,6 +24,7 @@ export interface Dtc {
   dtc_text: string | null;
   error_handling: string | null;
   error_setting_conditions: string | null;
+  gff_available: string | null;
   gff_program: string | null;
   category: number | null;
   label: number | null;
@@ -44,6 +45,18 @@ export interface FaultyDtc {
   ev_name: string | null;
   da_code: string | null;
   projects_impacted: string | null;
+  matched_dtc_id?: number | null;
+  gff_available?: string | null;
+  gff_program?: string | null;
+  error_handling?: string | null;
+  error_setting_conditions?: string | null;
+  coverage_lb74x?: string | null;
+  coverage_lb636?: string | null;
+  coverage_lb63x?: string | null;
+  applicable_lb74x?: number;
+  applicable_lb636?: number;
+  applicable_lb63x?: number;
+  ecu_code?: string | null;
 }
 
 export interface DailyStat {

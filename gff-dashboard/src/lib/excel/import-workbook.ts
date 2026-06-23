@@ -1,11 +1,13 @@
 import type { WorkBook } from "xlsx";
 import * as XLSX from "xlsx";
 import { getDb } from "../db";
+import { todayIsoDate } from "../datetime";
 import { excelDateToIso } from "./dates";
 import {
   cellString,
   classifyCoverageCell,
   normalizeDaCode,
+  parseGffAvailable,
   toDaId,
 } from "./mappers";
 
@@ -111,10 +113,10 @@ function importEcuSheet(
   const insert = db.prepare(`
     INSERT INTO dtcs (
       ecu_id, symptom, trouble_code, dtc_text, error_handling,
-      error_setting_conditions, gff_program, category, label,
+      error_setting_conditions, gff_available, gff_program, category, label,
       coverage_lb74x, coverage_lb636, coverage_lb63x,
       applicable_lb74x, applicable_lb636, applicable_lb63x
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `);
 
   let count = 0;
@@ -149,7 +151,8 @@ function importEcuSheet(
       cellString(row[2]),
       cellString(row[3]),
       cellString(row[4]),
-      cellString(row[5]),
+      parseGffAvailable(row[5]),
+      cellString(row[6]),
       Number.isFinite(category) ? category : null,
       Number.isFinite(label) ? label : null,
       lb74x.status,
@@ -202,7 +205,7 @@ function importStatistics(db: ReturnType<typeof getDb>, workbook: WorkBook) {
       daily: 0,
       dailyEstimate: 50,
       baselineImplemented: 22167,
-      startDate: new Date().toISOString().slice(0, 10),
+      startDate: todayIsoDate(),
     };
   }
 
@@ -211,7 +214,7 @@ function importStatistics(db: ReturnType<typeof getDb>, workbook: WorkBook) {
   const baselineImplemented = Number(rows[28]?.[1] ?? 22167);
   const startDate =
     excelDateToIso(rows[28]?.[0]) ??
-    new Date().toISOString().slice(0, 10);
+    todayIsoDate();
 
   const settingsInsert = db.prepare(
     "INSERT INTO settings (key, value) VALUES (?, ?)",

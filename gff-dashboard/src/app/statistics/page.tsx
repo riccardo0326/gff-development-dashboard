@@ -108,8 +108,16 @@ export default function StatisticsPage() {
       <div className="grid gap-4 xl:grid-cols-2 2xl:grid-cols-4">
         {pieRows.map((row) => {
           const chartData = [
-            { name: "Covered", value: row.implemented },
-            { name: "Pending", value: row.pending },
+            {
+              name: "Covered",
+              label: `Covered (${formatNumber(row.implemented)})`,
+              value: row.implemented,
+            },
+            {
+              name: "Pending",
+              label: `Pending (${formatNumber(row.pending)})`,
+              value: row.pending,
+            },
           ];
           return (
             <Card key={row.label}>
@@ -120,7 +128,7 @@ export default function StatisticsPage() {
                     <Pie
                       data={chartData}
                       dataKey="value"
-                      nameKey="name"
+                      nameKey="label"
                       innerRadius={50}
                       outerRadius={80}
                     >
@@ -294,11 +302,10 @@ export default function StatisticsPage() {
         <table className="min-w-full text-sm">
           <thead>
             <tr className="text-muted border-card-border border-b text-left">
-              <th className="px-2 py-2">Date</th>
-              <th className="px-2 py-2">Covered total</th>
-              <th className="px-2 py-2">Pending</th>
-              <th className="px-2 py-2">Covered for day</th>
-              <th className="px-2 py-2">Daily average</th>
+              <th className="min-w-[140px] px-3 py-2">Date</th>
+              <th className="min-w-[140px] px-3 py-2">Covered total</th>
+              <th className="min-w-[140px] px-3 py-2">Pending</th>
+              <th className="min-w-[140px] px-3 py-2">Covered for day</th>
             </tr>
           </thead>
           <tbody>
@@ -307,15 +314,14 @@ export default function StatisticsPage() {
                 key={row.stat_date}
                 className="border-card-border border-b last:border-b-0"
               >
-                <td className="px-2 py-2">
+                <td className="px-3 py-2">
                   {formatDisplayDate(row.stat_date)}
                 </td>
-                <td className="px-2 py-2">
+                <td className="px-3 py-2">
                   {formatNumber(row.implemented_count)}
                 </td>
-                <td className="px-2 py-2">{formatNumber(row.pending)}</td>
-                <td className="px-2 py-2">{formatNumber(row.impl_for_day)}</td>
-                <td className="px-2 py-2">{row.daily_average.toFixed(1)}</td>
+                <td className="px-3 py-2">{formatNumber(row.pending)}</td>
+                <td className="px-3 py-2">{formatNumber(row.impl_for_day)}</td>
               </tr>
             ))}
           </tbody>

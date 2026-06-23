@@ -13,6 +13,7 @@ import {
   computeEcuProjectCompletion,
   parseSettings,
 } from "./calculations";
+import { compareEcuCodeHex } from "./utils";
 import type {
   DailyStat,
   Dtc,
@@ -70,8 +71,10 @@ export function getEcus(filters?: {
     params.push(term, term);
   }
 
-  query += " ORDER BY priority ASC, code ASC";
-  return db.prepare(query).all(...params) as Ecu[];
+  query += " ORDER BY priority ASC";
+  const rows = db.prepare(query).all(...params) as Ecu[];
+  rows.sort((a, b) => a.priority - b.priority || compareEcuCodeHex(a.code, b.code));
+  return rows;
 }
 
 export function getEcuById(id: string): Ecu | null {
@@ -283,6 +286,68 @@ export function updateDtcCoverage(
   return { dtc: updated, dailyStat };
 }
 
+export function updateDtcDetails(
+  dtcId: number,
+  input: {
+    gff_available?: boolean;
+    gff_program?: string | null;
+    error_handling?: string | null;
+    error_setting_conditions?: string | null;
+    coverageUpdates?: Array<{
+      project: VehicleProjectId;
+      status: "pending" | "covered";
+    }>;
+  },
+  auditUser?: AuditUser,
+): { dtc: Dtc; dailyStat: DailyStat | null } | null {
+  const db = getDb();
+  const existing = db
+    .prepare("SELECT * FROM dtcs WHERE id = ?")
+    .get(dtcId) as Dtc | undefined;
+  if (!existing) return null;
+
+  if (input.gff_available !== undefined) {
+    db.prepare("UPDATE dtcs SET gff_available = ? WHERE id = ?").run(
+      input.gff_available ? "y" : null,
+      dtcId,
+    );
+  }
+  if (input.gff_program !== undefined) {
+    db.prepare("UPDATE dtcs SET gff_program = ? WHERE id = ?").run(
+      input.gff_program,
+      dtcId,
+    );
+  }
+  if (input.error_handling !== undefined) {
+    db.prepare("UPDATE dtcs SET error_handling = ? WHERE id = ?").run(
+      input.error_handling,
+      dtcId,
+    );
+  }
+  if (input.error_setting_conditions !== undefined) {
+    db.prepare(
+      "UPDATE dtcs SET error_setting_conditions = ? WHERE id = ?",
+    ).run(input.error_setting_conditions, dtcId);
+  }
+
+  let dailyStat: DailyStat | null = null;
+  for (const update of input.coverageUpdates ?? []) {
+    const result = updateDtcCoverage(
+      dtcId,
+      update.project,
+      update.status,
+      auditUser,
+    );
+    if (result?.dailyStat) dailyStat = result.dailyStat;
+  }
+
+  const updated = db
+    .prepare("SELECT * FROM dtcs WHERE id = ?")
+    .get(dtcId) as Dtc;
+
+  return { dtc: updated, dailyStat };
+}
+
 export interface DtcSearchRow extends Dtc {
   ecu_code: string;
   ecu_priority: number;
@@ -469,32 +534,57 @@ export function getFaultyDtcs(filters?: {
   pageSize?: number;
 }) {
   const db = getDb();
-  let query = "SELECT * FROM faulty_dtcs WHERE 1=1";
+  let query = `
+    SELECT f.*,
+      d.id as matched_dtc_id,
+      d.gff_available,
+      d.gff_program,
+      d.error_handling,
+      d.error_setting_conditions,
+      d.coverage_lb74x,
+      d.coverage_lb636,
+      d.coverage_lb63x,
+      d.applicable_lb74x,
+      d.applicable_lb636,
+      d.applicable_lb63x,
+      e.code as ecu_code
+    FROM faulty_dtcs f
+    LEFT JOIN ecus e ON e.code = REPLACE(UPPER(COALESCE(f.da_code, '')), 'DA', '')
+      OR e.id = UPPER(COALESCE(f.da_code, ''))
+    LEFT JOIN dtcs d ON d.ecu_id = e.id AND d.trouble_code = f.trouble_code
+    WHERE 1=1
+  `;
   const params: Array<string | number> = [];
 
   if (filters?.search) {
     query += ` AND (
-      symptom LIKE ? OR trouble_code LIKE ? OR dtc_text LIKE ?
-      OR issue_description LIKE ? OR ev_name LIKE ?
+      f.symptom LIKE ? OR f.trouble_code LIKE ? OR f.dtc_text LIKE ?
+      OR f.issue_description LIKE ? OR f.ev_name LIKE ?
     )`;
     const term = `%${filters.search}%`;
     params.push(term, term, term, term, term);
   }
   if (filters?.da_code) {
-    query += " AND da_code LIKE ?";
+    query += " AND f.da_code LIKE ?";
     params.push(`%${filters.da_code}%`);
   }
   if (filters?.issue) {
-    query += " AND issue_description LIKE ?";
+    query += " AND f.issue_description LIKE ?";
     params.push(`%${filters.issue}%`);
   }
 
-  const countQuery = query.replace("SELECT *", "SELECT COUNT(*) as count");
+  const whereClause = query.split("WHERE 1=1")[1] ?? "";
+  const countQuery = `
+    SELECT COUNT(DISTINCT f.id) as count
+    FROM faulty_dtcs f
+    WHERE 1=1
+    ${whereClause}
+  `;
   const total = (
     db.prepare(countQuery).get(...params) as { count: number }
   ).count;
 
-  query += " ORDER BY id ASC";
+  query += " ORDER BY f.id ASC";
   const page = filters?.page ?? 1;
   const pageSize = filters?.pageSize ?? 50;
   query += " LIMIT ? OFFSET ?";

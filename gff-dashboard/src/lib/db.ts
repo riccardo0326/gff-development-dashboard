@@ -20,6 +20,17 @@ export function getDb(): Database.Database {
   return db;
 }
 
+function migrateDtcGffAvailableColumn(database: Database.Database) {
+  const columns = database
+    .prepare("PRAGMA table_info(dtcs)")
+    .all() as Array<{ name: string }>;
+  const names = new Set(columns.map((c) => c.name));
+
+  if (!names.has("gff_available")) {
+    database.exec("ALTER TABLE dtcs ADD COLUMN gff_available TEXT");
+  }
+}
+
 function migrateDtcApplicableColumns(database: Database.Database) {
   const columns = database
     .prepare("PRAGMA table_info(dtcs)")
@@ -196,6 +207,7 @@ function initSchema(database: Database.Database) {
   `);
 
   migrateDailyStatsColumns(database);
+  migrateDtcGffAvailableColumn(database);
   migrateDtcApplicableColumns(database);
   migrateCoverageChangesColumns(database);
 
@@ -225,24 +237,58 @@ function initSchema(database: Database.Database) {
     insert.run("baseline_implemented", "22167");
   }
 
-  seedAdminUser(database);
+  seedDemoUsers(database);
 }
 
-function seedAdminUser(database: Database.Database) {
-  const count = database
-    .prepare("SELECT COUNT(*) as c FROM users")
-    .get() as { c: number };
-  if (count.c > 0) return;
+const DEMO_ACCOUNTS: Array<{
+  role: "admin" | "user" | "lambo";
+  usernameEnv: string;
+  passwordEnv: string;
+  defaultUsername: string;
+  defaultPassword: string;
+}> = [
+  {
+    role: "admin",
+    usernameEnv: "ADMIN_USERNAME",
+    passwordEnv: "ADMIN_PASSWORD",
+    defaultUsername: "admin",
+    defaultPassword: "gff-admin-change-me",
+  },
+  {
+    role: "user",
+    usernameEnv: "USER_USERNAME",
+    passwordEnv: "USER_PASSWORD",
+    defaultUsername: "user",
+    defaultPassword: "gff-user-change-me",
+  },
+  {
+    role: "lambo",
+    usernameEnv: "LAMBO_USERNAME",
+    passwordEnv: "LAMBO_PASSWORD",
+    defaultUsername: "lambo",
+    defaultPassword: "gff-lambo-change-me",
+  },
+];
 
-  // Lazy import to avoid bcrypt at module load in edge cases
+function seedDemoUsers(database: Database.Database) {
   const bcrypt = require("bcryptjs") as typeof import("bcryptjs");
-  const username = process.env.ADMIN_USERNAME ?? "admin";
-  const password =
-    process.env.ADMIN_PASSWORD ?? "gff-admin-change-me";
-  const hash = bcrypt.hashSync(password, 10);
-  database
-    .prepare("INSERT INTO users (username, password_hash, role) VALUES (?, ?, ?)")
-    .run(username, hash, "admin");
+  const insert = database.prepare(
+    "INSERT INTO users (username, password_hash, role) VALUES (?, ?, ?)",
+  );
+  const roleExists = database.prepare(
+    "SELECT 1 FROM users WHERE role = ? LIMIT 1",
+  );
+
+  for (const account of DEMO_ACCOUNTS) {
+    if (roleExists.get(account.role)) continue;
+
+    const username =
+      process.env[account.usernameEnv] ?? account.defaultUsername;
+    const password =
+      process.env[account.passwordEnv] ?? account.defaultPassword;
+    const hash = bcrypt.hashSync(password, 10);
+    insert.run(username, hash, account.role);
+  }
 }
 
 export function resetDb() {

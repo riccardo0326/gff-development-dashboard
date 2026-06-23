@@ -1,10 +1,21 @@
 import { NextResponse } from "next/server";
-import { requireSession, sessionToAuditUser } from "@/lib/auth";
+import { getSession, sessionToAuditUser } from "@/lib/auth";
 import { logAuditEvent } from "@/lib/audit";
 import { importWorkbookFromBuffer } from "@/lib/excel/import-workbook";
+import { canImportWorkbook } from "@/lib/roles";
+
+export const runtime = "nodejs";
 
 export async function POST(request: Request) {
-  const session = await requireSession();
+  const session = await getSession();
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  if (!canImportWorkbook(session.user?.role)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   const auditUser = sessionToAuditUser(session);
 
   const formData = await request.formData();

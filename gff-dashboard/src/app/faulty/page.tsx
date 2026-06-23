@@ -2,6 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { Download } from "lucide-react";
+import { DtcDataTable } from "@/components/dtc/dtc-data-table";
+import { DtcDetailModal } from "@/components/dtc/dtc-detail-modal";
+import type { DtcRowData } from "@/components/dtc/dtc-types";
 import {
   Button,
   Card,
@@ -23,6 +26,8 @@ export default function FaultyPage() {
   const [issueOptions, setIssueOptions] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [exporting, setExporting] = useState(false);
+  const [modalDtc, setModalDtc] = useState<DtcRowData | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     fetch("/api/faulty?options=1")
@@ -71,11 +76,36 @@ export default function FaultyPage() {
     setExporting(false);
   }
 
+  const rows: DtcRowData[] = items.map((row) => ({
+    id: row.matched_dtc_id ?? undefined,
+    ecu_id: row.da_code
+      ? `DA${row.da_code.replace(/^DA/i, "")}`
+      : undefined,
+    ecu_code: row.ecu_code ?? row.da_code ?? undefined,
+    symptom: row.symptom,
+    trouble_code: row.trouble_code,
+    dtc_text: row.dtc_text,
+    error_handling: row.error_handling ?? null,
+    error_setting_conditions: row.error_setting_conditions ?? null,
+    gff_available: row.gff_available ?? null,
+    gff_program: row.gff_program ?? null,
+    coverage_lb74x: (row.coverage_lb74x as DtcRowData["coverage_lb74x"]) ?? null,
+    coverage_lb636:
+      (row.coverage_lb636 as DtcRowData["coverage_lb636"]) ?? null,
+    coverage_lb63x: (row.coverage_lb63x as DtcRowData["coverage_lb63x"]) ?? null,
+    applicable_lb74x: row.applicable_lb74x,
+    applicable_lb636: row.applicable_lb636,
+    applicable_lb63x: row.applicable_lb63x,
+    issue_description: row.issue_description,
+    ev_name: row.ev_name,
+    projects_impacted: row.projects_impacted,
+  }));
+
   return (
     <div>
       <PageHeader
         title="Faulty DTCs"
-        description="Read-only list of DTC records flagged with data quality issues."
+        description="DTC records flagged with data quality issues. Matched ECU data shown when available."
         actions={
           <Button variant="secondary" onClick={handleExport} disabled={exporting}>
             <span className="inline-flex items-center gap-2">
@@ -145,51 +175,29 @@ export default function FaultyPage() {
           </div>
         </div>
         <div className="overflow-x-auto">
-          <table className="min-w-full text-sm">
-            <thead className="border-card-border bg-white/5 border-b">
-              <tr className="text-muted text-left">
-                <th className="px-4 py-3">Symptom</th>
-                <th className="px-4 py-3">Code</th>
-                <th className="px-4 py-3">Text</th>
-                <th className="px-4 py-3">Issue</th>
-                <th className="px-4 py-3">EV</th>
-                <th className="px-4 py-3">ECU</th>
-                <th className="px-4 py-3">Projects</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
-                <tr>
-                  <td colSpan={7} className="text-muted px-4 py-8 text-center">
-                    Loading faulty DTCs...
-                  </td>
-                </tr>
-              ) : items.length === 0 ? (
-                <tr>
-                  <td colSpan={7} className="text-muted px-4 py-8 text-center">
-                    No records match the current filters.
-                  </td>
-                </tr>
-              ) : (
-                items.map((row) => (
-                  <tr
-                    key={row.id}
-                    className="border-card-border hover:bg-white/5 border-b align-top last:border-b-0"
-                  >
-                    <td className="px-4 py-3 font-mono text-xs">{row.symptom}</td>
-                    <td className="px-4 py-3 font-mono text-xs">{row.trouble_code}</td>
-                    <td className="max-w-xs px-4 py-3">{row.dtc_text}</td>
-                    <td className="max-w-xs px-4 py-3">{row.issue_description}</td>
-                    <td className="max-w-xs px-4 py-3 font-mono text-xs">{row.ev_name}</td>
-                    <td className="px-4 py-3">{row.da_code}</td>
-                    <td className="px-4 py-3">{row.projects_impacted}</td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+          <DtcDataTable
+            rows={rows}
+            loading={loading}
+            showErrorColumns
+            onRowClick={(row) => {
+              setModalDtc(row);
+              setModalOpen(true);
+            }}
+            onEditGff={(row) => {
+              setModalDtc(row);
+              setModalOpen(true);
+            }}
+            emptyMessage="No records match the current filters."
+          />
         </div>
       </Card>
+
+      <DtcDetailModal
+        dtc={modalDtc}
+        ecuId={modalDtc?.ecu_id}
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+      />
     </div>
   );
 }

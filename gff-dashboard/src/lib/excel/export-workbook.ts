@@ -4,13 +4,21 @@ import * as XLSX from "xlsx";
 import { getDb } from "../db";
 import type { DailyStat, Dtc, Ecu, FaultyDtc, Settings } from "../types";
 import { isoToExcelDate } from "./dates";
-import { mapExportCoverage } from "./mappers";
+import { mapExportCoverage, mapExportGffAvailable } from "./mappers";
 
-const TEMPLATE_PATH = path.join(
-  process.cwd(),
-  "templates",
-  "workbook-template.xlsm",
-);
+const TEMPLATE_CANDIDATES = [
+  path.join(process.cwd(), "templates", "workbook-template.xlsm"),
+  path.join(process.cwd(), "..", "GFF_development - internal copy.xlsm"),
+];
+
+function resolveTemplatePath(): string {
+  for (const candidate of TEMPLATE_CANDIDATES) {
+    if (fs.existsSync(candidate)) return candidate;
+  }
+  throw new Error(
+    `Workbook template not found. Checked: ${TEMPLATE_CANDIDATES.join(", ")}`,
+  );
+}
 
 function setCell(
   sheet: XLSX.WorkSheet,
@@ -39,18 +47,13 @@ function updateEcuSheet(sheet: XLSX.WorkSheet, ecu: Ecu, dtcs: Dtc[]) {
     setCell(sheet, `C${row}`, dtc.dtc_text);
     setCell(sheet, `D${row}`, dtc.error_handling);
     setCell(sheet, `E${row}`, dtc.error_setting_conditions);
+    setCell(sheet, `F${row}`, mapExportGffAvailable(dtc.gff_available));
     setCell(sheet, `G${row}`, dtc.gff_program);
     setCell(sheet, `H${row}`, mapExportCoverage(dtc.coverage_lb74x, !!dtc.applicable_lb74x));
     setCell(sheet, `I${row}`, mapExportCoverage(dtc.coverage_lb636, !!dtc.applicable_lb636));
     setCell(sheet, `J${row}`, mapExportCoverage(dtc.coverage_lb63x, !!dtc.applicable_lb63x));
     if (dtc.category != null) setCell(sheet, `K${row}`, dtc.category);
     if (dtc.label != null) setCell(sheet, `L${row}`, dtc.label);
-
-    const hasUsed =
-      dtc.coverage_lb74x === "covered" ||
-      dtc.coverage_lb636 === "covered" ||
-      dtc.coverage_lb63x === "covered";
-    setCell(sheet, `F${row}`, hasUsed ? "y" : "");
   });
 }
 
@@ -83,11 +86,8 @@ function updateFaultySheet(sheet: XLSX.WorkSheet, rows: FaultyDtc[]) {
 }
 
 export function exportWorkbookToBuffer(): Buffer {
-  if (!fs.existsSync(TEMPLATE_PATH)) {
-    throw new Error(`Workbook template not found at ${TEMPLATE_PATH}`);
-  }
-
-  const templateBuffer = fs.readFileSync(TEMPLATE_PATH);
+  const templatePath = resolveTemplatePath();
+  const templateBuffer = fs.readFileSync(templatePath);
   const workbook = XLSX.read(templateBuffer, {
     type: "buffer",
     bookVBA: true,

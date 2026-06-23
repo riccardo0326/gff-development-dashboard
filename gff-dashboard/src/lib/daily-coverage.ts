@@ -11,9 +11,7 @@ export interface CoverageChange {
   changed_at: string;
 }
 
-export function todayIsoDate(): string {
-  return new Date().toISOString().slice(0, 10);
-}
+export { todayIsoDate } from "./datetime";
 
 export function isTrackableTransition(
   fromStatus: string | null,

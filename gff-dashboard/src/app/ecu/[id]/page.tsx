@@ -4,7 +4,13 @@ import { useParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { BackToDashboard } from "@/components/back-to-dashboard";
-import { CoverageBadge } from "@/components/coverage-badge";
+import {
+  DTC_PROJECTS,
+  DtcDataTable,
+  dtcSelectionKey,
+} from "@/components/dtc/dtc-data-table";
+import { DtcDetailModal } from "@/components/dtc/dtc-detail-modal";
+import type { DtcRowData } from "@/components/dtc/dtc-types";
 import { PriorityBadge } from "@/components/priority-badge";
 import { ProgressBar } from "@/components/progress-bar";
 import {
@@ -22,8 +28,7 @@ import type {
   VehicleProjectId,
 } from "@/lib/types";
 import { formatNumber, formatPercent } from "@/lib/utils";
-
-const PROJECTS: VehicleProjectId[] = ["LB74x", "LB636", "LB63x"];
+import { projectCoverage } from "@/components/dtc/dtc-types";
 
 interface EcuResponse {
   ecu: Ecu;
@@ -46,93 +51,12 @@ export default function EcuDetailPage() {
   const [project, setProject] = useState("");
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
-  const [savingId, setSavingId] = useState<number | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
-  const [bulkProject, setBulkProject] = useState<VehicleProjectId>("LB74x");
   const [bulkStatus, setBulkStatus] = useState<CoverageStatus>("covered");
   const [applyingBulk, setApplyingBulk] = useState(false);
-
-  function rowKey(dtcId: number, projectName: VehicleProjectId) {
-    return `${dtcId}:${projectName}`;
-  }
-
-  function toggleSelect(dtcId: number, projectName: VehicleProjectId) {
-    const key = rowKey(dtcId, projectName);
-    setSelected((prev) => {
-      const next = new Set(prev);
-      if (next.has(key)) next.delete(key);
-      else next.add(key);
-      return next;
-    });
-  }
-
-  function selectAllVisible() {
-    if (!data?.items) return;
-    const next = new Set(selected);
-    for (const dtc of data.items) {
-      for (const projectName of PROJECTS) {
-        const applicable =
-          projectName === "LB74x"
-            ? dtc.applicable_lb74x
-            : projectName === "LB636"
-              ? dtc.applicable_lb636
-              : dtc.applicable_lb63x;
-        if (applicable) next.add(rowKey(dtc.id, projectName));
-      }
-    }
-    setSelected(next);
-  }
-
-  async function applyBulk(selectedOnly: boolean) {
-    setApplyingBulk(true);
-    try {
-      const payload = selectedOnly
-        ? {
-            items: [...selected].map((key) => {
-              const [dtcId, proj] = key.split(":");
-              return {
-                dtcId: Number(dtcId),
-                project: proj as VehicleProjectId,
-                status: bulkStatus,
-              };
-            }),
-          }
-        : {
-            applyToAllMatching: true,
-            bulkProject,
-            bulkStatus,
-            filters: {
-              search: search || undefined,
-              ecuId,
-              category: category ? Number(category) : undefined,
-              coverage: (coverage as CoverageStatus) || undefined,
-              project: (project as VehicleProjectId) || undefined,
-            },
-          };
-
-      const response = await fetch("/api/dtcs/search", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      const result = (await response.json()) as {
-        error?: string;
-        updated?: number;
-        skipped?: number;
-      };
-
-      if (!response.ok) {
-        toast.error(result.error ?? "Bulk update failed");
-        return;
-      }
-
-      toast.success(`Updated ${result.updated ?? 0} row(s)`);
-      setSelected(new Set());
-      await loadData();
-    } finally {
-      setApplyingBulk(false);
-    }
-  }
+  const [modalDtc, setModalDtc] = useState<DtcRowData | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalEdit, setModalEdit] = useState(false);
 
   const loadData = useCallback(async () => {
     const paramsObj = new URLSearchParams({
@@ -155,39 +79,84 @@ export default function EcuDetailPage() {
     loadData();
   }, [loadData]);
 
-  async function updateCoverage(
-    dtcId: number,
-    projectName: VehicleProjectId,
-    status: CoverageStatus,
-  ) {
-    setSavingId(dtcId);
-    const response = await fetch(`/api/ecus/${ecuId}/dtcs/${dtcId}`, {
+  function toggleSelect(dtcId: number, projectName: VehicleProjectId) {
+    const key = dtcSelectionKey(dtcId, projectName);
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  }
+
+  function selectFiltered() {
+    if (!data?.items) return;
+    const next = new Set(selected);
+    const projectsToSelect = project
+      ? [project as VehicleProjectId]
+      : DTC_PROJECTS;
+    for (const dtc of data.items) {
+      for (const projectName of projectsToSelect) {
+        const { applicable } = projectCoverage(dtc, projectName);
+        if (applicable) next.add(dtcSelectionKey(dtc.id, projectName));
+      }
+    }
+    setSelected(next);
+  }
+
+  function unselectAll() {
+    setSelected(new Set());
+  }
+
+  async function applyBulk() {
+    setApplyingBulk(true);
+    try {
+      const response = await fetch("/api/dtcs/search", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          items: [...selected].map((key) => {
+            const [dtcId, proj] = key.split(":");
+            return {
+              dtcId: Number(dtcId),
+              project: proj as VehicleProjectId,
+              status: bulkStatus,
+            };
+          }),
+        }),
+      });
+      const result = (await response.json()) as {
+        error?: string;
+        updated?: number;
+      };
+
+      if (!response.ok) {
+        toast.error(result.error ?? "Bulk update failed");
+        return;
+      }
+
+      toast.success(`Updated ${result.updated ?? 0} row(s)`);
+      setSelected(new Set());
+      await loadData();
+    } finally {
+      setApplyingBulk(false);
+    }
+  }
+
+  async function toggleGff(row: DtcRowData, checked: boolean) {
+    if (!row.id) return;
+    await fetch(`/api/ecus/${ecuId}/dtcs/${row.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ project: projectName, status }),
+      body: JSON.stringify({ gff_available: checked }),
     });
-    const payload = (await response.json()) as {
-      dailyUpdate?: { impl_for_day: number; impl_for_day_auto?: number };
-    };
-
-    if (payload.dailyUpdate) {
-      const autoCount =
-        payload.dailyUpdate.impl_for_day_auto ?? payload.dailyUpdate.impl_for_day;
-      if (status === "covered") {
-        toast.success("GFF covered", {
-          description: `Today's auto-tracked count: ${autoCount}`,
-        });
-      } else {
-        toast.info("Coverage reverted", {
-          description: `Today's auto-tracked count: ${autoCount}`,
-        });
-      }
-    } else if (status === "covered") {
-      toast.success("GFF covered");
-    }
-
     await loadData();
-    setSavingId(null);
+  }
+
+  function openModal(row: DtcRowData, edit = false) {
+    setModalDtc(row);
+    setModalEdit(edit);
+    setModalOpen(true);
   }
 
   if (!data && loading) {
@@ -211,26 +180,24 @@ export default function EcuDetailPage() {
   }
 
   const totalPages = Math.max(1, Math.ceil(data.total / data.pageSize));
+  const rows: DtcRowData[] = data.items.map((dtc) => ({ ...dtc }));
 
   return (
     <div className="space-y-6">
       <PageHeader
         title={`ECU ${data.ecu.code}`}
-        description="Review and update DTC coverage per vehicle project. Empty cells mean the DTC does not exist for that project."
+        description="Click a row for full details. Use the pencil icon to edit GFF fields."
         actions={<BackToDashboard />}
       />
 
       <div className="grid gap-4 lg:grid-cols-4">
-        <Card>
-          <p className="text-muted text-sm">Priority</p>
-          <div className="mt-2">
-            <PriorityBadge priority={data.ecu.priority} />
-          </div>
+        <Card className="flex items-center justify-center py-6">
+          <PriorityBadge priority={data.ecu.priority} size="lg" />
         </Card>
         <Card className="lg:col-span-3">
           <p className="text-muted mb-3 text-sm">Project completion</p>
           <div className="grid gap-4 md:grid-cols-3">
-            {PROJECTS.map((projectName) => {
+            {DTC_PROJECTS.map((projectName) => {
               const stats = data.completion?.[projectName];
               if (!stats) {
                 return (
@@ -247,7 +214,8 @@ export default function EcuDetailPage() {
                     label={`${projectName} (${formatPercent(stats.completion_pct)})`}
                   />
                   <p className="text-muted mt-1 text-xs">
-                    {formatNumber(stats.covered)} covered / {formatNumber(stats.total)} total
+                    {formatNumber(stats.covered)} covered /{" "}
+                    {formatNumber(stats.total)} total
                   </p>
                 </div>
               );
@@ -299,7 +267,7 @@ export default function EcuDetailPage() {
           }}
           options={[
             { value: "", label: "All projects" },
-            ...PROJECTS.map((value) => ({ value, label: value })),
+            ...DTC_PROJECTS.map((value) => ({ value, label: value })),
           ]}
         />
       </Card>
@@ -307,14 +275,6 @@ export default function EcuDetailPage() {
       <Card>
         <h3 className="mb-3 font-medium">Bulk update</h3>
         <div className="flex flex-wrap items-end gap-3">
-          <label className="grid gap-1 text-sm">
-            <span className="text-muted">Project</span>
-            <SelectInput
-              value={bulkProject}
-              onChange={(v) => setBulkProject(v as VehicleProjectId)}
-              options={PROJECTS.map((p) => ({ value: p, label: p }))}
-            />
-          </label>
           <label className="grid gap-1 text-sm">
             <span className="text-muted">Set status</span>
             <SelectInput
@@ -328,20 +288,18 @@ export default function EcuDetailPage() {
           </label>
           <Button
             disabled={applyingBulk || selected.size === 0}
-            onClick={() => applyBulk(true)}
+            onClick={applyBulk}
           >
             Apply to selected ({selected.size})
           </Button>
-          <Button
-            variant="secondary"
-            disabled={applyingBulk || data.total === 0}
-            onClick={() => applyBulk(false)}
-          >
-            Apply to all matching ({formatNumber(data.total)})
+          <Button variant="secondary" onClick={selectFiltered}>
+            Select filtered
           </Button>
-          <Button variant="secondary" onClick={selectAllVisible}>
-            Select visible
-          </Button>
+          {selected.size > 0 ? (
+            <Button variant="secondary" onClick={unselectAll}>
+              Unselect
+            </Button>
+          ) : null}
         </div>
       </Card>
 
@@ -371,107 +329,29 @@ export default function EcuDetailPage() {
           </div>
         </div>
         <div className="overflow-x-auto">
-          <table className="min-w-full text-sm">
-            <thead className="border-card-border bg-white/5 border-b">
-              <tr className="text-muted text-left">
-                <th className="px-3 py-3">Symptom</th>
-                <th className="px-3 py-3">Code</th>
-                <th className="px-3 py-3">Text</th>
-                <th className="px-3 py-3">Category</th>
-                <th className="px-3 py-3">GFF program</th>
-                {PROJECTS.map((projectName) => (
-                  <th key={projectName} className="px-3 py-3">
-                    {projectName}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
-                <tr>
-                  <td colSpan={8} className="text-muted px-4 py-8 text-center">
-                    Loading DTC rows...
-                  </td>
-                </tr>
-              ) : (
-                data.items.map((dtc) => (
-                  <tr
-                    key={dtc.id}
-                    className="border-card-border hover:bg-white/5 border-b align-top last:border-b-0"
-                  >
-                    <td className="px-3 py-3 font-mono text-xs">{dtc.symptom}</td>
-                    <td className="px-3 py-3 font-mono text-xs">{dtc.trouble_code}</td>
-                    <td className="max-w-xs px-3 py-3">{dtc.dtc_text}</td>
-                    <td className="px-3 py-3">{dtc.category ?? "—"}</td>
-                    <td className="max-w-xs px-3 py-3 font-mono text-xs">
-                      {dtc.gff_program ?? "—"}
-                    </td>
-                    {PROJECTS.map((projectName) => {
-                      const column =
-                        projectName === "LB74x"
-                          ? dtc.coverage_lb74x
-                          : projectName === "LB636"
-                            ? dtc.coverage_lb636
-                            : dtc.coverage_lb63x;
-                      const applicable =
-                        projectName === "LB74x"
-                          ? dtc.applicable_lb74x
-                          : projectName === "LB636"
-                            ? dtc.applicable_lb636
-                            : dtc.applicable_lb63x;
-
-                      if (!applicable) {
-                        return (
-                          <td key={projectName} className="text-muted px-3 py-3">
-                            —
-                          </td>
-                        );
-                      }
-
-                      return (
-                        <td key={projectName} className="px-3 py-3">
-                          <div className="flex flex-col gap-2">
-                            <label className="flex items-center gap-2">
-                              <input
-                                type="checkbox"
-                                checked={selected.has(rowKey(dtc.id, projectName))}
-                                onChange={() =>
-                                  toggleSelect(dtc.id, projectName)
-                                }
-                                className="h-4 w-4"
-                              />
-                              {column ? (
-                                <CoverageBadge status={column} />
-                              ) : (
-                                <span className="text-muted text-xs">Unset</span>
-                              )}
-                            </label>
-                            <select
-                              value={column ?? "pending"}
-                              disabled={savingId === dtc.id}
-                              onChange={(e) =>
-                                updateCoverage(
-                                  dtc.id,
-                                  projectName,
-                                  e.target.value as CoverageStatus,
-                                )
-                              }
-                              className="border-card-border bg-background rounded-md border px-2 py-1 text-xs"
-                            >
-                              <option value="pending">Pending</option>
-                              <option value="covered">Covered</option>
-                            </select>
-                          </div>
-                        </td>
-                      );
-                    })}
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+          <DtcDataTable
+            rows={rows}
+            loading={loading}
+            showErrorColumns
+            selectable
+            selected={selected}
+            selectionProjectFilter={project as VehicleProjectId | ""}
+            onToggleSelect={toggleSelect}
+            onRowClick={(row) => openModal(row)}
+            onEditGff={(row) => openModal(row, true)}
+            onGffToggle={toggleGff}
+          />
         </div>
       </Card>
+
+      <DtcDetailModal
+        dtc={modalDtc}
+        ecuId={ecuId}
+        open={modalOpen}
+        initialEdit={modalEdit}
+        onClose={() => setModalOpen(false)}
+        onSaved={loadData}
+      />
     </div>
   );
 }
