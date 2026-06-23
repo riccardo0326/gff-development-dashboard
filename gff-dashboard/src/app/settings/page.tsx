@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useSession } from "next-auth/react";
 import { Download, Upload } from "lucide-react";
 import {
   Button,
@@ -8,6 +9,10 @@ import {
   FilterInput,
   PageHeader,
 } from "@/components/ui";
+import {
+  canAccessWorkbookImportExport,
+  canEditForecastParameters,
+} from "@/lib/roles";
 import type { Settings } from "@/lib/types";
 
 interface ImportSummary {
@@ -18,12 +23,17 @@ interface ImportSummary {
 }
 
 export default function SettingsPage() {
+  const { data: session } = useSession();
+  const role = session?.user?.role;
   const [settings, setSettings] = useState<Settings | null>(null);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [importing, setImporting] = useState(false);
   const [exporting, setExporting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const showWorkbook = canAccessWorkbookImportExport(role);
+  const showForecast = canEditForecastParameters(role);
 
   useEffect(() => {
     fetch("/api/settings")
@@ -132,85 +142,92 @@ export default function SettingsPage() {
         </Card>
       ) : null}
 
-      <Card>
-        <h3 className="mb-2 font-medium">Workbook import / export</h3>
-        <p className="text-muted mb-4 text-sm">
-          Export generates an updated `.xlsm` from the template (macros and
-          charts preserved). Import replaces all database content.
-        </p>
-        <div className="flex flex-wrap gap-3">
-          <Button onClick={handleExport} disabled={exporting}>
-            <span className="inline-flex items-center gap-2">
-              <Download className="h-4 w-4" />
-              {exporting ? "Exporting..." : "Export workbook"}
-            </span>
-          </Button>
-          <Button
-            variant="secondary"
-            onClick={() => fileInputRef.current?.click()}
-            disabled={importing}
-          >
-            <span className="inline-flex items-center gap-2">
-              <Upload className="h-4 w-4" />
-              {importing ? "Importing..." : "Import workbook"}
-            </span>
-          </Button>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept=".xlsx,.xlsm"
-            className="hidden"
-            onChange={(event) => {
-              const file = event.target.files?.[0];
-              if (file) void handleImport(file);
-            }}
-          />
-        </div>
-      </Card>
-
-      <Card>
-        <form onSubmit={saveSettings} className="grid max-w-xl gap-4">
-          <h3 className="font-medium">Forecast parameters</h3>
-          <label className="grid gap-1 text-sm">
-            <span className="text-muted">Daily estimate</span>
-            <FilterInput
-              value={String(settings.daily_estimate)}
-              onChange={(value) =>
-                setSettings({ ...settings, daily_estimate: Number(value) || 0 })
-              }
-              placeholder="50"
-            />
-          </label>
-          <label className="grid gap-1 text-sm">
-            <span className="text-muted">Forecast start date</span>
+      {showWorkbook ? (
+        <Card>
+          <h3 className="mb-2 font-medium">Workbook import / export</h3>
+          <p className="text-muted mb-4 text-sm">
+            Export generates an updated `.xlsm` from the template (macros and
+            charts preserved). Import replaces all database content.
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <Button onClick={handleExport} disabled={exporting}>
+              <span className="inline-flex items-center gap-2">
+                <Download className="h-4 w-4" />
+                {exporting ? "Exporting..." : "Export workbook"}
+              </span>
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={importing}
+            >
+              <span className="inline-flex items-center gap-2">
+                <Upload className="h-4 w-4" />
+                {importing ? "Importing..." : "Import workbook"}
+              </span>
+            </Button>
             <input
-              type="date"
-              value={settings.forecast_start_date}
-              onChange={(e) =>
-                setSettings({
-                  ...settings,
-                  forecast_start_date: e.target.value,
-                })
-              }
-              className="border-card-border bg-background rounded-lg border px-3 py-2"
+              ref={fileInputRef}
+              type="file"
+              accept=".xlsx,.xlsm"
+              className="hidden"
+              onChange={(event) => {
+                const file = event.target.files?.[0];
+                if (file) void handleImport(file);
+              }}
             />
-          </label>
-          <label className="grid gap-1 text-sm">
-            <span className="text-muted">Baseline covered DTCs</span>
-            <FilterInput
-              value={String(settings.baseline_implemented)}
-              onChange={(value) =>
-                setSettings({
-                  ...settings,
-                  baseline_implemented: Number(value) || 0,
-                })
-              }
-              placeholder="22167"
-            />
-          </label>
-          <Button type="submit">Save settings</Button>
-        </form>
-      </Card>
+          </div>
+        </Card>
+      ) : null}
+
+      {showForecast ? (
+        <Card>
+          <form onSubmit={saveSettings} className="grid max-w-xl gap-4">
+            <h3 className="font-medium">Forecast parameters</h3>
+            <label className="grid gap-1 text-sm">
+              <span className="text-muted">Daily estimate</span>
+              <FilterInput
+                value={String(settings.daily_estimate)}
+                onChange={(value) =>
+                  setSettings({
+                    ...settings,
+                    daily_estimate: Number(value) || 0,
+                  })
+                }
+                placeholder="50"
+              />
+            </label>
+            <label className="grid gap-1 text-sm">
+              <span className="text-muted">Forecast start date</span>
+              <input
+                type="date"
+                value={settings.forecast_start_date}
+                onChange={(e) =>
+                  setSettings({
+                    ...settings,
+                    forecast_start_date: e.target.value,
+                  })
+                }
+                className="border-card-border bg-background rounded-lg border px-3 py-2"
+              />
+            </label>
+            <label className="grid gap-1 text-sm">
+              <span className="text-muted">Baseline covered DTCs</span>
+              <FilterInput
+                value={String(settings.baseline_implemented)}
+                onChange={(value) =>
+                  setSettings({
+                    ...settings,
+                    baseline_implemented: Number(value) || 0,
+                  })
+                }
+                placeholder="22167"
+              />
+            </label>
+            <Button type="submit">Save settings</Button>
+          </form>
+        </Card>
+      ) : null}
     </div>
   );
 }

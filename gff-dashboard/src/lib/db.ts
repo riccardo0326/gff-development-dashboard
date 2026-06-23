@@ -20,6 +20,17 @@ export function getDb(): Database.Database {
   return db;
 }
 
+function migrateDtcGffAvailableColumn(database: Database.Database) {
+  const columns = database
+    .prepare("PRAGMA table_info(dtcs)")
+    .all() as Array<{ name: string }>;
+  const names = new Set(columns.map((c) => c.name));
+
+  if (!names.has("gff_available")) {
+    database.exec("ALTER TABLE dtcs ADD COLUMN gff_available TEXT");
+  }
+}
+
 function migrateDtcApplicableColumns(database: Database.Database) {
   const columns = database
     .prepare("PRAGMA table_info(dtcs)")
@@ -196,6 +207,7 @@ function initSchema(database: Database.Database) {
   `);
 
   migrateDailyStatsColumns(database);
+  migrateDtcGffAvailableColumn(database);
   migrateDtcApplicableColumns(database);
   migrateCoverageChangesColumns(database);
 

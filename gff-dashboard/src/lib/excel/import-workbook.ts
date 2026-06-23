@@ -6,6 +6,7 @@ import {
   cellString,
   classifyCoverageCell,
   normalizeDaCode,
+  parseGffAvailable,
   toDaId,
 } from "./mappers";
 
@@ -111,10 +112,10 @@ function importEcuSheet(
   const insert = db.prepare(`
     INSERT INTO dtcs (
       ecu_id, symptom, trouble_code, dtc_text, error_handling,
-      error_setting_conditions, gff_program, category, label,
+      error_setting_conditions, gff_available, gff_program, category, label,
       coverage_lb74x, coverage_lb636, coverage_lb63x,
       applicable_lb74x, applicable_lb636, applicable_lb63x
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `);
 
   let count = 0;
@@ -149,7 +150,8 @@ function importEcuSheet(
       cellString(row[2]),
       cellString(row[3]),
       cellString(row[4]),
-      cellString(row[5]),
+      parseGffAvailable(row[5]),
+      cellString(row[6]),
       Number.isFinite(category) ? category : null,
       Number.isFinite(label) ? label : null,
       lb74x.status,

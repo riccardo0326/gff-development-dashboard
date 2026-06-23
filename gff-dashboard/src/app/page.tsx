@@ -115,17 +115,7 @@ export default function DashboardPage() {
 
   return (
     <div>
-      <PageHeader
-        title="Dashboard"
-        actions={
-          <Link
-            href="/daily-gffs"
-            className="bg-accent hover:bg-blue-500 inline-flex items-center rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors"
-          >
-            Add daily GFFs
-          </Link>
-        }
-      />
+      <PageHeader title="Dashboard" />
 
       <div className="mb-6 grid gap-4 sm:grid-cols-3">
         <Card>

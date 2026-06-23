@@ -26,6 +26,16 @@ export function mapImportCoverage(value: unknown): "pending" | "covered" | null 
   return classifyCoverageCell(value).status;
 }
 
+export function parseGffAvailable(value: unknown): string | null {
+  const text = cellString(value);
+  if (!text) return null;
+  return text.toLowerCase() === "y" ? "y" : null;
+}
+
+export function mapExportGffAvailable(value: string | null): string {
+  return value === "y" ? "y" : "";
+}
+
 export function mapExportCoverage(
   value: string | null,
   applicable = false,

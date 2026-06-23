@@ -4,7 +4,7 @@ import * as XLSX from "xlsx";
 import { getDb } from "../db";
 import type { DailyStat, Dtc, Ecu, FaultyDtc, Settings } from "../types";
 import { isoToExcelDate } from "./dates";
-import { mapExportCoverage } from "./mappers";
+import { mapExportCoverage, mapExportGffAvailable } from "./mappers";
 
 const TEMPLATE_PATH = path.join(
   process.cwd(),
@@ -39,18 +39,13 @@ function updateEcuSheet(sheet: XLSX.WorkSheet, ecu: Ecu, dtcs: Dtc[]) {
     setCell(sheet, `C${row}`, dtc.dtc_text);
     setCell(sheet, `D${row}`, dtc.error_handling);
     setCell(sheet, `E${row}`, dtc.error_setting_conditions);
+    setCell(sheet, `F${row}`, mapExportGffAvailable(dtc.gff_available));
     setCell(sheet, `G${row}`, dtc.gff_program);
     setCell(sheet, `H${row}`, mapExportCoverage(dtc.coverage_lb74x, !!dtc.applicable_lb74x));
     setCell(sheet, `I${row}`, mapExportCoverage(dtc.coverage_lb636, !!dtc.applicable_lb636));
     setCell(sheet, `J${row}`, mapExportCoverage(dtc.coverage_lb63x, !!dtc.applicable_lb63x));
     if (dtc.category != null) setCell(sheet, `K${row}`, dtc.category);
     if (dtc.label != null) setCell(sheet, `L${row}`, dtc.label);
-
-    const hasUsed =
-      dtc.coverage_lb74x === "covered" ||
-      dtc.coverage_lb636 === "covered" ||
-      dtc.coverage_lb63x === "covered";
-    setCell(sheet, `F${row}`, hasUsed ? "y" : "");
   });
 }
 
