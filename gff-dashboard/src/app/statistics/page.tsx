@@ -211,8 +211,9 @@ export default function StatisticsPage() {
           <div className="space-y-5">
             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
               <KpiCard
-                label="Total DTCs"
+                label="Coverage slots"
                 value={formatNumber(selectedRow.total_dtcs)}
+                hint="Applicable LB74x / LB636 / LB63x cells (matches Excel TOT)"
               />
               <KpiCard
                 label="Covered"

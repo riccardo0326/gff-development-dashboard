@@ -12,7 +12,7 @@ import {
   SelectInput,
 } from "@/components/ui";
 import type { EcuCompletion, VehicleProjectId } from "@/lib/types";
-import { cn, compareEcuCodeHex, formatPercent } from "@/lib/utils";
+import { cn, compareEcuCodeHex, formatNumber, formatPercent } from "@/lib/utils";
 
 const PROJECTS: VehicleProjectId[] = ["LB74x", "LB636", "LB63x"];
 
@@ -86,19 +86,20 @@ export default function DashboardPage() {
   }, [ecus, sortField, sortDirection]);
 
   const summary = useMemo(() => {
-    const totals = { covered: 0, pending: 0 };
+    const totals = { covered: 0, pending: 0, total: 0 };
     for (const ecu of sortedEcus) {
       for (const project of PROJECTS) {
         const stats = ecu.projects[project];
         if (!stats) continue;
         totals.covered += stats.covered;
         totals.pending += stats.pending;
+        totals.total += stats.total;
       }
     }
-    const all = totals.covered + totals.pending;
     return {
       ecuCount: sortedEcus.length,
-      completion: all > 0 ? totals.covered / all : 0,
+      coverageSlots: totals.total,
+      completion: totals.total > 0 ? totals.covered / totals.total : 0,
     };
   }, [sortedEcus]);
 
@@ -115,16 +116,23 @@ export default function DashboardPage() {
     <div>
       <PageHeader title="Dashboard" />
 
-      <div className="mb-6 grid gap-4 sm:grid-cols-3">
+      <div className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <Card>
           <p className="text-muted text-sm">ECUs shown</p>
           <p className="mt-2 text-3xl font-semibold">{summary.ecuCount}</p>
+        </Card>
+        <Card>
+          <p className="text-muted text-sm">Coverage slots (filtered)</p>
+          <p className="mt-2 text-3xl font-semibold">
+            {formatNumber(summary.coverageSlots)}
+          </p>
         </Card>
         <Card>
           <p className="text-muted text-sm">Filtered completion</p>
           <p className="mt-2 text-3xl font-semibold">
             {formatPercent(summary.completion)}
           </p>
+          <p className="text-muted mt-1 text-xs">Covered / all applicable slots</p>
         </Card>
         <Card>
           <p className="text-muted text-sm">Vehicle projects</p>

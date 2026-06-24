@@ -13,4 +13,9 @@ if (!fs.existsSync(xlsmPath)) {
 
 const buffer = fs.readFileSync(xlsmPath);
 const summary = importWorkbookFromBuffer(buffer);
-console.log("Import complete:", summary);
+console.log("Import complete:");
+console.log(`  ECUs:            ${summary.ecus}`);
+console.log(`  DTC rows:        ${summary.dtcs}`);
+console.log(`  Coverage slots:  ${summary.coverageSlots}`);
+console.log(`  Faulty DTCs:     ${summary.faulty}`);
+console.log(`  Daily entries:   ${summary.daily}`);

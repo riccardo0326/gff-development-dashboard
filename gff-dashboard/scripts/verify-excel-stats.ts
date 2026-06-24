@@ -1,15 +1,17 @@
 import fs from "fs";
 import path from "path";
 import * as XLSX from "xlsx";
-import { resetDb } from "../src/lib/db";
+import { resetDb, getDb } from "../src/lib/db";
 import { importWorkbookFromBuffer } from "../src/lib/excel/import-workbook";
-import { getStatisticsSummary } from "../src/lib/queries";
+import { getEcuCompletions, getStatisticsSummary } from "../src/lib/queries";
 
 const WORKBOOK_PATH =
   process.env.GFF_WORKBOOK ??
   path.join(process.cwd(), "..", "GFF_development - internal copy.xlsm");
 
 const EXPECTED = {
+  ecus: 62,
+  dtcRows: 25086,
   TOT: { total: 53705, implemented: 25847, pending: 27755, pct: 48.13 },
 };
 
@@ -35,12 +37,60 @@ function main() {
   }
 
   resetDb();
-  importWorkbookFromBuffer(fs.readFileSync(WORKBOOK_PATH));
+  const summary = importWorkbookFromBuffer(fs.readFileSync(WORKBOOK_PATH));
+
+  const db = getDb();
+  const ecuCount = (db.prepare("SELECT COUNT(*) as c FROM ecus").get() as { c: number })
+    .c;
+  const dtcRows = (db.prepare("SELECT COUNT(*) as c FROM dtcs").get() as { c: number })
+    .c;
 
   const { priorityStats } = getStatisticsSummary();
+  const ecuCompletions = getEcuCompletions();
   const excelRows = readExcelTotals();
 
   let failed = false;
+
+  if (ecuCount !== EXPECTED.ecus) {
+    console.error(`ECUs: ${ecuCount} (expected ${EXPECTED.ecus})`);
+    failed = true;
+  } else {
+    console.log(`ECUs: ${ecuCount}`);
+  }
+
+  if (dtcRows !== EXPECTED.dtcRows) {
+    console.error(`DTC rows: ${dtcRows} (expected ${EXPECTED.dtcRows})`);
+    failed = true;
+  } else {
+    console.log(`DTC rows: ${dtcRows}`);
+  }
+
+  if (summary.coverageSlots !== EXPECTED.TOT.total) {
+    console.error(
+      `Coverage slots: ${summary.coverageSlots} (expected ${EXPECTED.TOT.total})`,
+    );
+    failed = true;
+  } else {
+    console.log(`Coverage slots: ${summary.coverageSlots}`);
+  }
+
+  let dashTotal = 0;
+  let dashCovered = 0;
+  for (const ecu of ecuCompletions) {
+    for (const project of ["LB74x", "LB636", "LB63x"] as const) {
+      const stats = ecu.projects[project];
+      if (!stats) continue;
+      dashTotal += stats.total;
+      dashCovered += stats.covered;
+    }
+  }
+
+  if (dashTotal !== EXPECTED.TOT.total) {
+    console.error(
+      `Dashboard slot total: ${dashTotal} (expected ${EXPECTED.TOT.total})`,
+    );
+    failed = true;
+  }
 
   for (const label of ["TOT"] as const) {
     const row = priorityStats.find((item) => item.label === label);
@@ -83,7 +133,7 @@ function main() {
     process.exit(1);
   }
 
-  console.log("\nTOT counts and percentages match the Excel Statistiche sheet.");
+  console.log("\nECU count, DTC rows, coverage slots, and dashboard aggregation match Excel.");
 }
 
 main();
