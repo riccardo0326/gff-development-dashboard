@@ -120,11 +120,12 @@ export function recordCoverageTransition(input: {
   symptom?: string | null;
   changeSource?: "manual" | "bulk";
   syncDaily?: boolean;
-}): DailyStat | null {
+}): { dailyStat: DailyStat | null; changeId: number } {
   const db = getDb();
   const statDate = input.statDate ?? todayIsoDate();
+  const changedAt = nowSqliteDatetime();
 
-  db.prepare(
+  const result = db.prepare(
     `
     INSERT INTO coverage_changes (
       dtc_id, ecu_id, project, from_status, to_status, stat_date,
@@ -143,11 +144,14 @@ export function recordCoverageTransition(input: {
     input.troubleCode ?? null,
     input.symptom ?? null,
     input.changeSource ?? "manual",
-    nowSqliteDatetime(),
+    changedAt,
   );
 
-  if (input.syncDaily === false) return null;
-  return syncDailyStatsForDate(statDate);
+  const changeId = Number(result.lastInsertRowid);
+  const dailyStat =
+    input.syncDaily === false ? null : syncDailyStatsForDate(statDate);
+
+  return { dailyStat, changeId };
 }
 
 export function addManualDailyCount(input: {

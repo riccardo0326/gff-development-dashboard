@@ -59,3 +59,27 @@ export function formatDateInRome(value: string): string {
 export function filenameDateStamp(): string {
   return todayIsoDate();
 }
+
+export function addDaysToIsoDate(isoDate: string, days: number): string {
+  const [year, month, day] = isoDate.split("-").map(Number);
+  const utc = Date.UTC(year, month - 1, day);
+  const shifted = new Date(utc + days * 86_400_000);
+  return shifted.toISOString().slice(0, 10);
+}
+
+export function dateRangeForShortcut(
+  shortcut: "day" | "week" | "month",
+): { from: string; to: string } {
+  const to = todayIsoDate();
+  const days =
+    shortcut === "day" ? 0 : shortcut === "week" ? 6 : 29;
+  return { from: addDaysToIsoDate(to, -days), to };
+}
+
+export function datetimeStartOfDay(isoDate: string): string {
+  return `${isoDate} 00:00:00`;
+}
+
+export function datetimeEndOfDay(isoDate: string): string {
+  return `${isoDate} 23:59:59`;
+}

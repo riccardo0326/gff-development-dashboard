@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { ArrowUpDown, ChevronDown, ChevronUp } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { PriorityBadge } from "@/components/priority-badge";
+import { EcuPriorityEditor } from "@/components/ecu-priority-editor";
 import { ProgressBar } from "@/components/progress-bar";
 import {
   Card,
@@ -112,6 +112,14 @@ export default function DashboardPage() {
     }
   }
 
+  function updateEcuPriority(ecuId: string, nextPriority: number) {
+    setEcus((current) =>
+      current.map((ecu) =>
+        ecu.id === ecuId ? { ...ecu, priority: nextPriority } : ecu,
+      ),
+    );
+  }
+
   return (
     <div>
       <PageHeader title="Dashboard" />
@@ -212,7 +220,13 @@ export default function DashboardPage() {
                       </Link>
                     </td>
                     <td className="px-4 py-3">
-                      <PriorityBadge priority={ecu.priority} />
+                      <EcuPriorityEditor
+                        ecuId={ecu.id}
+                        priority={ecu.priority}
+                        onUpdated={(nextPriority) =>
+                          updateEcuPriority(ecu.id, nextPriority)
+                        }
+                      />
                     </td>
                     {PROJECTS.map((project) => {
                       const stats = ecu.projects[project];

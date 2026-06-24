@@ -82,6 +82,19 @@ export function getEcuById(id: string): Ecu | null {
   return (db.prepare("SELECT * FROM ecus WHERE id = ?").get(id) as Ecu) ?? null;
 }
 
+export function updateEcuPriority(id: string, priority: number): Ecu | null {
+  if (priority < 1 || priority > 3) {
+    throw new Error("Priority must be between 1 and 3");
+  }
+  const db = getDb();
+  const result = db.prepare("UPDATE ecus SET priority = ? WHERE id = ?").run(
+    priority,
+    id,
+  );
+  if (result.changes === 0) return null;
+  return getEcuById(id);
+}
+
 export function getEcuCompletions(filters?: {
   priority?: number;
   search?: string;
@@ -269,7 +282,7 @@ export function updateDtcCoverage(
     (status === "pending" || status === "covered") &&
     (currentValue === "pending" || currentValue === "covered")
   ) {
-    dailyStat = recordCoverageTransition({
+    const { dailyStat: transitionStat } = recordCoverageTransition({
       dtcId,
       ecuId: existing.ecu_id,
       project,
@@ -281,6 +294,7 @@ export function updateDtcCoverage(
       symptom: existing.symptom,
       changeSource: "manual",
     });
+    dailyStat = transitionStat;
   }
 
   return { dtc: updated, dailyStat };
@@ -442,6 +456,7 @@ export function bulkUpdateDtcCoverage(
   const projectCounts: Record<string, number> = {};
   let toCovered = 0;
   let toPending = 0;
+  const changeIds: number[] = [];
 
   const updateStmt = db.prepare("SELECT * FROM dtcs WHERE id = ?");
 
@@ -471,7 +486,7 @@ export function bulkUpdateDtcCoverage(
         isTrackableTransition(currentValue, item.status) &&
         (currentValue === "pending" || currentValue === "covered")
       ) {
-        recordCoverageTransition({
+        const { changeId } = recordCoverageTransition({
           dtcId: item.dtcId,
           ecuId: existing.ecu_id,
           project: item.project,
@@ -485,6 +500,7 @@ export function bulkUpdateDtcCoverage(
           changeSource: "bulk",
           syncDaily: false,
         });
+        changeIds.push(changeId);
         ecuIds.add(existing.ecu_id);
         projectCounts[item.project] = (projectCounts[item.project] ?? 0) + 1;
         if (item.status === "covered") toCovered += 1;
@@ -517,6 +533,7 @@ export function bulkUpdateDtcCoverage(
         toPending,
         projects: projectCounts,
         projectSummary,
+        changeIds,
         source: meta?.source ?? "manual_selection",
         filters: meta?.filters ?? null,
       },

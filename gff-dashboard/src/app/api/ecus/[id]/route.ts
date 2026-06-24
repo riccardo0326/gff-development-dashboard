@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
+import { getSession } from "@/lib/auth";
 import {
   getCategoriesForEcu,
   getDtcsForEcu,
   getEcuById,
   getEcuCompletions,
+  updateEcuPriority,
 } from "@/lib/queries";
 import type { VehicleProjectId } from "@/lib/types";
 
@@ -49,4 +51,37 @@ export async function GET(
     page,
     pageSize,
   });
+}
+
+export async function PATCH(
+  request: Request,
+  context: { params: Promise<{ id: string }> },
+) {
+  const session = await getSession();
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { id } = await context.params;
+  const body = (await request.json()) as { priority?: number };
+
+  if (
+    body.priority === undefined ||
+    !Number.isInteger(body.priority) ||
+    body.priority < 1 ||
+    body.priority > 3
+  ) {
+    return NextResponse.json({ error: "Invalid priority" }, { status: 400 });
+  }
+
+  try {
+    const ecu = updateEcuPriority(id, body.priority);
+    if (!ecu) {
+      return NextResponse.json({ error: "ECU not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({ ecu });
+  } catch {
+    return NextResponse.json({ error: "Could not update priority" }, { status: 400 });
+  }
 }

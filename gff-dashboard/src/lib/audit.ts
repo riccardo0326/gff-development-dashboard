@@ -1,5 +1,9 @@
 import { getDb } from "./db";
-import { nowSqliteDatetime } from "./datetime";
+import {
+  datetimeEndOfDay,
+  datetimeStartOfDay,
+  nowSqliteDatetime,
+} from "./datetime";
 
 export type AuditEventType =
   | "bulk_update"
@@ -64,30 +68,86 @@ export interface CoverageChangeRow {
   ecu_code?: string;
 }
 
-export type ActivityEntry =
-  | {
-      kind: "coverage_change";
-      id: number;
-      timestamp: string;
-      username: string | null;
-      summary: string;
-      details: CoverageChangeRow;
-    }
-  | {
-      kind: "audit_event";
-      id: number;
-      timestamp: string;
-      username: string | null;
-      summary: string;
-      eventType: AuditEventType;
-      details: Record<string, unknown> | null;
-    };
+export interface CoverageChangeActivity {
+  kind: "coverage_change";
+  id: number;
+  timestamp: string;
+  username: string | null;
+  summary: string;
+  details: CoverageChangeRow;
+}
+
+export interface AuditEventActivity {
+  kind: "audit_event";
+  id: number;
+  timestamp: string;
+  username: string | null;
+  summary: string;
+  eventType: AuditEventType;
+  details: Record<string, unknown> | null;
+}
+
+export interface BulkUpdateActivity {
+  kind: "bulk_update";
+  id: number;
+  timestamp: string;
+  username: string | null;
+  summary: string;
+  eventType: "bulk_update";
+  details: Record<string, unknown> | null;
+  children: CoverageChangeActivity[];
+}
+
+export type ActivityDisplayEntry =
+  | CoverageChangeActivity
+  | AuditEventActivity
+  | BulkUpdateActivity;
+
+function coverageSummary(row: CoverageChangeRow): string {
+  return `${row.ecu_code}: ${row.trouble_code ?? row.symptom ?? `DTC #${row.dtc_id}`} ${row.project} ${row.from_status} → ${row.to_status}`;
+}
+
+function matchesTimestampRange(
+  timestamp: string,
+  from?: string,
+  to?: string,
+): boolean {
+  if (from && timestamp < datetimeStartOfDay(from)) return false;
+  if (to && timestamp > datetimeEndOfDay(to)) return false;
+  return true;
+}
+
+function collectBulkChangeIds(
+  details: Record<string, unknown> | null,
+): number[] {
+  if (!details || !Array.isArray(details.changeIds)) return [];
+  return details.changeIds.filter(
+    (id): id is number => typeof id === "number",
+  );
+}
+
+function fallbackBulkChangeIds(
+  bulkEvent: AuditEventRow,
+  coverageRows: CoverageChangeRow[],
+): number[] {
+  const bulkTime = bulkEvent.created_at.slice(0, 19);
+  return coverageRows
+    .filter(
+      (row) =>
+        row.change_source === "bulk" &&
+        row.username === bulkEvent.username &&
+        row.changed_at.slice(0, 19) === bulkTime,
+    )
+    .map((row) => row.id);
+}
 
 export function getActivityLog(filters?: {
   page?: number;
   pageSize?: number;
   eventType?: string;
   role?: string;
+  fromDate?: string;
+  toDate?: string;
 }) {
   const db = getDb();
   const page = filters?.page ?? 1;
@@ -117,13 +177,12 @@ export function getActivityLog(filters?: {
       JOIN ecus e ON e.id = cc.ecu_id
       LEFT JOIN users u ON u.username = cc.username
       ORDER BY cc.changed_at DESC
-      LIMIT 500
+      LIMIT 2000
     `,
     )
     .all() as Array<CoverageChangeRow & { user_role?: string | null }>;
 
-  let auditQuery =
-    "SELECT * FROM audit_events WHERE 1=1";
+  let auditQuery = "SELECT * FROM audit_events WHERE 1=1";
   const auditParams: Array<string | number> = [];
 
   if (filters?.eventType && filters.eventType !== "coverage_change") {
@@ -131,51 +190,112 @@ export function getActivityLog(filters?: {
     auditParams.push(filters.eventType);
   }
 
-  auditQuery += " ORDER BY created_at DESC LIMIT 500";
+  auditQuery += " ORDER BY created_at DESC LIMIT 2000";
 
   const auditRows = db
     .prepare(auditQuery)
     .all(...auditParams) as AuditEventRow[];
 
-  const entries: ActivityEntry[] = [];
+  const coverageById = new Map<number, CoverageChangeActivity>();
+  for (const row of coverageRows) {
+    if (!matchesRole(row.username)) continue;
+    if (
+      !matchesTimestampRange(row.changed_at, filters?.fromDate, filters?.toDate)
+    ) {
+      continue;
+    }
+    coverageById.set(row.id, {
+      kind: "coverage_change",
+      id: row.id,
+      timestamp: row.changed_at,
+      username: row.username,
+      summary: coverageSummary(row),
+      details: row,
+    });
+  }
+
+  const groupedChangeIds = new Set<number>();
+  const displayEntries: ActivityDisplayEntry[] = [];
+
+  const bulkEvents = auditRows.filter((row) => row.event_type === "bulk_update");
+  const otherAuditEvents = auditRows.filter(
+    (row) => row.event_type !== "bulk_update",
+  );
+
+  for (const row of bulkEvents) {
+    if (!matchesRole(row.username)) continue;
+    if (
+      !matchesTimestampRange(row.created_at, filters?.fromDate, filters?.toDate)
+    ) {
+      continue;
+    }
+    if (filters?.eventType && filters.eventType !== "bulk_update") continue;
+
+    const details = row.details_json
+      ? (JSON.parse(row.details_json) as Record<string, unknown>)
+      : null;
+
+    let changeIds = collectBulkChangeIds(details);
+    if (changeIds.length === 0) {
+      changeIds = fallbackBulkChangeIds(row, coverageRows);
+    }
+
+    const children = changeIds
+      .map((id) => coverageById.get(id))
+      .filter((entry): entry is CoverageChangeActivity => Boolean(entry));
+
+    for (const child of children) {
+      groupedChangeIds.add(child.id);
+    }
+
+    displayEntries.push({
+      kind: "bulk_update",
+      id: row.id,
+      timestamp: row.created_at,
+      username: row.username,
+      summary: row.summary,
+      eventType: "bulk_update",
+      details,
+      children,
+    });
+  }
 
   if (!filters?.eventType || filters.eventType === "coverage_change") {
-    for (const row of coverageRows) {
-      if (!matchesRole(row.username)) continue;
-      entries.push({
-        kind: "coverage_change",
-        id: row.id,
-        timestamp: row.changed_at,
-        username: row.username,
-        summary: `${row.ecu_code}: ${row.trouble_code ?? row.symptom ?? `DTC #${row.dtc_id}`} ${row.project} ${row.from_status} → ${row.to_status}`,
-        details: row,
-      });
+    for (const entry of coverageById.values()) {
+      if (groupedChangeIds.has(entry.id)) continue;
+      if (entry.details.change_source === "bulk") continue;
+      displayEntries.push(entry);
     }
   }
 
-  if (!filters?.eventType || filters.eventType !== "coverage_change") {
-    for (const row of auditRows) {
-      if (!matchesRole(row.username)) continue;
-      entries.push({
-        kind: "audit_event",
-        id: row.id,
-        timestamp: row.created_at,
-        username: row.username,
-        summary: row.summary,
-        eventType: row.event_type,
-        details: row.details_json
-          ? (JSON.parse(row.details_json) as Record<string, unknown>)
-          : null,
-      });
+  for (const row of otherAuditEvents) {
+    if (!matchesRole(row.username)) continue;
+    if (
+      !matchesTimestampRange(row.created_at, filters?.fromDate, filters?.toDate)
+    ) {
+      continue;
     }
+    if (filters?.eventType && filters.eventType !== row.event_type) continue;
+
+    displayEntries.push({
+      kind: "audit_event",
+      id: row.id,
+      timestamp: row.created_at,
+      username: row.username,
+      summary: row.summary,
+      eventType: row.event_type,
+      details: row.details_json
+        ? (JSON.parse(row.details_json) as Record<string, unknown>)
+        : null,
+    });
   }
 
-  entries.sort(
+  displayEntries.sort(
     (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
   );
 
-  const total = entries.length;
-  const items = entries.slice(offset, offset + pageSize);
+  const total = displayEntries.length;
+  const items = displayEntries.slice(offset, offset + pageSize);
 
   return { items, total, page, pageSize };
 }
