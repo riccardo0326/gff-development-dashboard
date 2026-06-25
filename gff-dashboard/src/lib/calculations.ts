@@ -1,9 +1,12 @@
 import {
   addBusinessDays,
+  addDays,
   format,
   getISOWeek,
   getISOWeekYear,
   parseISO,
+  setISOWeek,
+  startOfISOWeek,
 } from "date-fns";
 import type {
   DailyStat,
@@ -117,8 +120,17 @@ export function aggregateCoverageStats(
     LB63x: { covered: 0, pending: 0, neutral: 0 },
   };
 
+  const feasibleCompletion: Record<
+    VehicleProjectId,
+    { covered: number; pending: number; neutral: number }
+  > = {
+    LB74x: { covered: 0, pending: 0, neutral: 0 },
+    LB636: { covered: 0, pending: 0, neutral: 0 },
+    LB63x: { covered: 0, pending: 0, neutral: 0 },
+  };
+
   for (const row of rows) {
-    if (options?.excludeFaultyDtcIds?.has(row.dtc_id)) continue;
+    const isFaulty = options?.excludeFaultyDtcIds?.has(row.dtc_id) ?? false;
 
     for (const project of VEHICLE_PROJECTS) {
       const applicable =
@@ -127,24 +139,43 @@ export function aggregateCoverageStats(
       if (!applicable) continue;
 
       const value = row[PROJECT_COLUMNS[project]];
-      total += 1;
-      if (value === "covered") {
-        implemented += 1;
-        perProject[project].covered += 1;
-      } else if (value === "pending") {
-        pending += 1;
-        perProject[project].pending += 1;
-      } else {
-        perProject[project].neutral += 1;
+
+      if (!isFaulty) {
+        total += 1;
+        if (value === "covered") {
+          implemented += 1;
+          perProject[project].covered += 1;
+        } else if (value === "pending") {
+          pending += 1;
+          perProject[project].pending += 1;
+        } else {
+          perProject[project].neutral += 1;
+        }
+      }
+
+      if (options?.excludeFaultyDtcIds) {
+        if (value === "covered") {
+          feasibleCompletion[project].covered += 1;
+        } else if (value === "pending" && !isFaulty) {
+          feasibleCompletion[project].pending += 1;
+        } else if (!isFaulty) {
+          feasibleCompletion[project].neutral += 1;
+        }
       }
     }
   }
 
   const completion = {} as Record<VehicleProjectId, number>;
   for (const project of VEHICLE_PROJECTS) {
-    const { covered, pending: p, neutral } = perProject[project];
-    const denom = covered + p + neutral;
-    completion[project] = denom > 0 ? covered / denom : 0;
+    if (options?.excludeFaultyDtcIds) {
+      const { covered, pending: p, neutral } = feasibleCompletion[project];
+      const denom = covered + p + neutral;
+      completion[project] = denom > 0 ? covered / denom : 0;
+    } else {
+      const { covered, pending: p, neutral } = perProject[project];
+      const denom = covered + p + neutral;
+      completion[project] = denom > 0 ? covered / denom : 0;
+    }
   }
 
   return { total_dtcs: total, implemented, pending, completion };
@@ -305,6 +336,34 @@ export function buildWeeklyTrend(
   }
 
   return weeks;
+}
+
+export function buildDailyTrendForWeek(
+  dailyStats: DailyStat[],
+  year: number,
+  week: number,
+): Array<{
+  stat_date: string;
+  dayLabel: string;
+  impl_for_day: number;
+  daily_average: number;
+}> {
+  const dailyAverage = computeDailyAverage(dailyStats);
+  const statsByDate = new Map(
+    dailyStats.map((row) => [row.stat_date, row.impl_for_day]),
+  );
+  const weekStart = startOfISOWeek(setISOWeek(new Date(year, 0, 4), week));
+
+  return Array.from({ length: 7 }, (_, index) => {
+    const date = addDays(weekStart, index);
+    const statDate = format(date, "yyyy-MM-dd");
+    return {
+      stat_date: statDate,
+      dayLabel: format(date, "EEE dd MMM"),
+      impl_for_day: statsByDate.get(statDate) ?? 0,
+      daily_average: Number(dailyAverage.toFixed(1)),
+    };
+  });
 }
 
 export function parseSettings(raw: Record<string, string>): Settings {

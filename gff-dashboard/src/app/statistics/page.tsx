@@ -3,7 +3,6 @@
 import {
   CartesianGrid,
   Cell,
-  Legend,
   Line,
   LineChart,
   Pie,
@@ -14,19 +13,20 @@ import {
   YAxis,
 } from "recharts";
 import { useEffect, useMemo, useState } from "react";
+import { X } from "lucide-react";
 import { ProgressBar } from "@/components/progress-bar";
 import { Card, PageHeader } from "@/components/ui";
 import type { DailyStat, PriorityStats, Settings, WeeklyTrendPoint } from "@/lib/types";
-import { formatDisplayDate } from "@/lib/calculations";
+import { buildDailyTrendForWeek, formatDisplayDate } from "@/lib/calculations";
 import { cn, formatNumber, formatPercent } from "@/lib/utils";
 
 const PIE_COLORS = ["#22c55e", "#f59e0b"];
 const SCOPES = ["TOT", "Prio1", "Prio2", "Prio3"] as const;
-const KPI_MODES = ["total", "feasable"] as const;
+const KPI_MODES = ["total", "feasible"] as const;
 
 interface StatisticsResponse {
   priorityStats: PriorityStats[];
-  priorityStatsFeasable: PriorityStats[];
+  priorityStatsFeasible: PriorityStats[];
   forecast: Array<{
     stat_date: string;
     implemented_count: number;
@@ -65,11 +65,160 @@ function KpiCard({
   );
 }
 
+function ChartLegend() {
+  return (
+    <div className="mb-3 flex flex-wrap justify-end gap-4 text-xs">
+      <span className="text-muted inline-flex items-center gap-2">
+        <span className="inline-block h-0.5 w-6 bg-[#3b82f6]" />
+        Covered for week
+      </span>
+      <span className="text-muted inline-flex items-center gap-2">
+        <span className="inline-block h-0.5 w-6 bg-[#22c55e]" />
+        Weekly benchmark (5d avg)
+      </span>
+    </div>
+  );
+}
+
+function WeekAxisTick({
+  x,
+  y,
+  payload,
+  onSelectWeek,
+}: {
+  x?: string | number;
+  y?: string | number;
+  payload?: { value?: string };
+  onSelectWeek: (week: number) => void;
+}) {
+  const label = payload?.value ?? "";
+  const week = Number(label.replace("Week ", ""));
+
+  return (
+    <g transform={`translate(${Number(x ?? 0)},${Number(y ?? 0)})`}>
+      <text
+        x={0}
+        y={0}
+        dy={16}
+        textAnchor="end"
+        fill="#8b98a8"
+        fontSize={11}
+        transform="rotate(-45)"
+        className="cursor-pointer hover:fill-white"
+        onClick={() => {
+          if (Number.isFinite(week)) onSelectWeek(week);
+        }}
+      >
+        {label}
+      </text>
+    </g>
+  );
+}
+
+function WeekDetailModal({
+  week,
+  year,
+  dailyStats,
+  onClose,
+}: {
+  week: number;
+  year: number;
+  dailyStats: DailyStat[];
+  onClose: () => void;
+}) {
+  const dailyTrend = useMemo(
+    () => buildDailyTrendForWeek(dailyStats, year, week),
+    [dailyStats, year, week],
+  );
+
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, []);
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
+      onClick={onClose}
+      role="presentation"
+    >
+      <div
+        className="border-card-border bg-card max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-xl border p-5 shadow-xl"
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="week-modal-title"
+      >
+        <div className="mb-4 flex items-start justify-between gap-4">
+          <div>
+            <h3 id="week-modal-title" className="text-lg font-semibold">
+              Week {week} · {year}
+            </h3>
+            <p className="text-muted mt-1 text-sm">
+              Daily covered DTCs for this ISO week. Hover the chart to read per-day values.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="text-muted hover:text-foreground rounded-lg p-1 hover:bg-white/5"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        <div className="mb-3 flex flex-wrap justify-end gap-4 text-xs">
+          <span className="text-muted inline-flex items-center gap-2">
+            <span className="inline-block h-0.5 w-6 bg-[#3b82f6]" />
+            Covered for day
+          </span>
+          <span className="text-muted inline-flex items-center gap-2">
+            <span className="inline-block h-0.5 w-6 bg-[#22c55e]" />
+            Daily average
+          </span>
+        </div>
+
+        <div className="h-72">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={dailyTrend}>
+              <CartesianGrid stroke="#1f2937" strokeDasharray="3 3" />
+              <XAxis dataKey="dayLabel" stroke="#8b98a8" tick={{ fontSize: 11 }} />
+              <YAxis stroke="#8b98a8" allowDecimals={false} />
+              <Tooltip />
+              <Line
+                type="monotone"
+                dataKey="impl_for_day"
+                name="Covered for day"
+                stroke="#3b82f6"
+                strokeWidth={2}
+                dot={{ r: 3 }}
+                activeDot={{ r: 5 }}
+              />
+              <Line
+                type="monotone"
+                dataKey="daily_average"
+                name="Daily average"
+                stroke="#22c55e"
+                strokeWidth={2}
+                dot={false}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function StatisticsPage() {
   const [data, setData] = useState<StatisticsResponse | null>(null);
   const [selectedScope, setSelectedScope] =
     useState<(typeof SCOPES)[number]>("TOT");
   const [kpiMode, setKpiMode] = useState<(typeof KPI_MODES)[number]>("total");
+  const [selectedWeek, setSelectedWeek] = useState<number | null>(null);
 
   useEffect(() => {
     fetch("/api/statistics")
@@ -85,8 +234,8 @@ export default function StatisticsPage() {
   const selectedForecastRow = useMemo(() => {
     if (!data) return null;
     const stats =
-      kpiMode === "feasable"
-        ? data.priorityStatsFeasable
+      kpiMode === "feasible"
+        ? data.priorityStatsFeasible
         : data.priorityStats;
     return stats.find((row) => row.label === selectedScope) ?? null;
   }, [data, selectedScope, kpiMode]);
@@ -150,7 +299,6 @@ export default function StatisticsPage() {
                       ))}
                     </Pie>
                     <Tooltip />
-                    <Legend />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
@@ -161,9 +309,15 @@ export default function StatisticsPage() {
 
       <Card>
         <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <h3 className="font-medium">Weekly covered DTCs</h3>
+          <div>
+            <h3 className="font-medium">Weekly covered DTCs</h3>
+            <p className="text-muted mt-1 text-sm">
+              Click a week label to open the daily breakdown.
+            </p>
+          </div>
           <p className="text-muted text-sm">Year {chartYear}</p>
         </div>
+        <ChartLegend />
         <div className="overflow-x-auto">
           <div className="h-80 min-w-[2912px]">
             <ResponsiveContainer width="100%" height="100%">
@@ -173,14 +327,16 @@ export default function StatisticsPage() {
                   dataKey="weekLabel"
                   stroke="#8b98a8"
                   interval={0}
-                  tick={{ fontSize: 11 }}
-                  angle={-45}
-                  textAnchor="end"
                   height={60}
+                  tick={(props) => (
+                    <WeekAxisTick
+                      {...props}
+                      onSelectWeek={setSelectedWeek}
+                    />
+                  )}
                 />
                 <YAxis stroke="#8b98a8" />
                 <Tooltip />
-                <Legend />
                 <Line
                   type="monotone"
                   dataKey="impl_for_day"
@@ -202,6 +358,15 @@ export default function StatisticsPage() {
           </div>
         </div>
       </Card>
+
+      {selectedWeek !== null ? (
+        <WeekDetailModal
+          week={selectedWeek}
+          year={chartYear}
+          dailyStats={data.dailyStats}
+          onClose={() => setSelectedWeek(null)}
+        />
+      ) : null}
 
       <Card>
         <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -277,8 +442,8 @@ export default function StatisticsPage() {
                   <div>
                     <h4 className="font-medium">Forecast &amp; progress</h4>
                     <p className="text-muted mt-1 text-sm">
-                      {kpiMode === "feasable"
-                        ? "Excludes faulty DTCs that cannot be covered with a GFF."
+                      {kpiMode === "feasible"
+                        ? "Excludes faulty DTCs from pending; completion counts covered work against fixable remaining slots."
                         : "Includes all applicable coverage slots."}
                     </p>
                   </div>

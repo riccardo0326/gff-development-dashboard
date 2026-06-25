@@ -177,7 +177,7 @@ export function getStatisticsSummary() {
   const dailyStats = getDailyStats();
   const faultyDtcIds = getFaultyDtcIds();
   const priorityStats = buildPriorityStats(ecus, rows, settings, dailyStats);
-  const priorityStatsFeasable = buildPriorityStats(ecus, rows, settings, dailyStats, {
+  const priorityStatsFeasible = buildPriorityStats(ecus, rows, settings, dailyStats, {
     excludeFaultyDtcIds: faultyDtcIds,
   });
   const totalRow = priorityStats.find((r) => r.label === "TOT");
@@ -190,7 +190,7 @@ export function getStatisticsSummary() {
 
   return {
     priorityStats,
-    priorityStatsFeasable,
+    priorityStatsFeasible,
     forecast,
     weeklyTrend,
     settings,
