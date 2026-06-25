@@ -1,4 +1,10 @@
-import { addBusinessDays, format, parseISO } from "date-fns";
+import {
+  addBusinessDays,
+  format,
+  getISOWeek,
+  getISOWeekYear,
+  parseISO,
+} from "date-fns";
 import type {
   DailyStat,
   Ecu,
@@ -6,6 +12,7 @@ import type {
   ProjectCompletion,
   Settings,
   VehicleProjectId,
+  WeeklyTrendPoint,
 } from "./types";
 import { VEHICLE_PROJECTS } from "./types";
 
@@ -82,8 +89,9 @@ export function computeEcuProjectCompletion(
 
 export function aggregateCoverageStats(
   ecus: Ecu[],
-  allRows: Array<CoverageRow & { ecu_id: string; priority: number }>,
+  allRows: Array<CoverageRow & { ecu_id: string; priority: number; dtc_id: number }>,
   priorityFilter?: number,
+  options?: { excludeFaultyDtcIds?: Set<number> },
 ): {
   total_dtcs: number;
   implemented: number;
@@ -110,6 +118,8 @@ export function aggregateCoverageStats(
   };
 
   for (const row of rows) {
+    if (options?.excludeFaultyDtcIds?.has(row.dtc_id)) continue;
+
     for (const project of VEHICLE_PROJECTS) {
       const applicable =
         row[SLOT_APPLICABLE_COLUMNS[project]] ??
@@ -153,9 +163,10 @@ export function addWorkdays(from: Date, days: number): Date {
 
 export function buildPriorityStats(
   ecus: Ecu[],
-  allRows: Array<CoverageRow & { ecu_id: string; priority: number }>,
+  allRows: Array<CoverageRow & { ecu_id: string; priority: number; dtc_id: number }>,
   settings: Settings,
   dailyStats: DailyStat[],
+  options?: { excludeFaultyDtcIds?: Set<number> },
 ): PriorityStats[] {
   const dailyAverage = computeDailyAverage(dailyStats);
   const today = new Date();
@@ -172,7 +183,12 @@ export function buildPriorityStats(
   let cumulativeDaysAverage = 0;
 
   for (const { label, priority } of labels) {
-    const stats = aggregateCoverageStats(ecus, allRows, priority ?? undefined);
+    const stats = aggregateCoverageStats(
+      ecus,
+      allRows,
+      priority ?? undefined,
+      options,
+    );
 
     let daysRequiredEstimated: number | null = null;
     let endDateEstimated: string | null = null;
@@ -265,11 +281,41 @@ export function formatPercent(value: number): string {
   return `${(value * 100).toFixed(1)}%`;
 }
 
+export function buildWeeklyTrend(
+  dailyStats: DailyStat[],
+  year: number,
+): WeeklyTrendPoint[] {
+  const dailyAverage = computeDailyAverage(dailyStats);
+  const weeklyBenchmark = Number((dailyAverage * 5).toFixed(1));
+  const weeks: WeeklyTrendPoint[] = Array.from({ length: 52 }, (_, index) => ({
+    week: index + 1,
+    weekLabel: `Week ${index + 1}`,
+    impl_for_day: 0,
+    weekly_benchmark: weeklyBenchmark,
+  }));
+
+  for (const row of dailyStats) {
+    const date = parseISO(row.stat_date);
+    if (getISOWeekYear(date) !== year) continue;
+
+    const weekNum = getISOWeek(date);
+    if (weekNum < 1 || weekNum > 52) continue;
+
+    weeks[weekNum - 1].impl_for_day += row.impl_for_day;
+  }
+
+  return weeks;
+}
+
 export function parseSettings(raw: Record<string, string>): Settings {
+  const forecastStart = raw.forecast_start_date ?? "2026-03-26";
+  const defaultYear = Number(forecastStart.slice(0, 4)) || new Date().getFullYear();
+
   return {
     daily_estimate: Number(raw.daily_estimate ?? 50),
-    forecast_start_date: raw.forecast_start_date ?? "2026-03-26",
+    forecast_start_date: forecastStart,
     baseline_implemented: Number(raw.baseline_implemented ?? 0),
+    statistics_chart_year: Number(raw.statistics_chart_year ?? defaultYear),
   };
 }
 

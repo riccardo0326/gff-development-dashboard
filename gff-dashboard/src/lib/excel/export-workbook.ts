@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import * as XLSX from "xlsx";
+import { parseSettings } from "../calculations";
 import { getDb } from "../db";
 import type { DailyStat, Dtc, Ecu, FaultyDtc, Settings } from "../types";
 import { isoToExcelDate } from "./dates";
@@ -110,11 +111,7 @@ export function exportWorkbookToBuffer(): Buffer {
     .prepare("SELECT key, value FROM settings")
     .all() as Array<{ key: string; value: string }>;
   const settingsMap = Object.fromEntries(settingsRows.map((r) => [r.key, r.value]));
-  const settings: Settings = {
-    daily_estimate: Number(settingsMap.daily_estimate ?? 50),
-    forecast_start_date: settingsMap.forecast_start_date ?? "2026-03-26",
-    baseline_implemented: Number(settingsMap.baseline_implemented ?? 22167),
-  };
+  const settings = parseSettings(settingsMap);
 
   for (const ecu of ecus) {
     const sheet = workbook.Sheets[ecu.id];

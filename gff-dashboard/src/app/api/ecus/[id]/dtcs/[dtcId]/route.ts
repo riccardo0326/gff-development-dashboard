@@ -15,8 +15,6 @@ export async function PATCH(
     status?: "pending" | "covered" | null;
     gff_available?: boolean;
     gff_program?: string | null;
-    error_handling?: string | null;
-    error_setting_conditions?: string | null;
     coverageUpdates?: Array<{
       project: VehicleProjectId;
       status: "pending" | "covered";
