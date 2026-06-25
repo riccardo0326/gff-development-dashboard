@@ -17,6 +17,7 @@ export async function PUT(request: Request) {
     daily_estimate: number;
     forecast_start_date: string;
     baseline_implemented: number;
+    statistics_chart_year: number;
   }>;
 
   const settings = updateSettings(body);

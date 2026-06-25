@@ -248,6 +248,19 @@ export default function SettingsPage() {
                 placeholder="22167"
               />
             </label>
+            <label className="grid gap-1 text-sm">
+              <span className="text-muted">Statistics chart year</span>
+              <FilterInput
+                value={String(settings.statistics_chart_year)}
+                onChange={(value) =>
+                  setSettings({
+                    ...settings,
+                    statistics_chart_year: Number(value) || new Date().getFullYear(),
+                  })
+                }
+                placeholder="2026"
+              />
+            </label>
             <Button type="submit">Save settings</Button>
           </form>
         </Card>

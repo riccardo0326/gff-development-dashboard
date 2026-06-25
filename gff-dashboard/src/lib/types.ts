@@ -72,6 +72,14 @@ export interface Settings {
   daily_estimate: number;
   forecast_start_date: string;
   baseline_implemented: number;
+  statistics_chart_year: number;
+}
+
+export interface WeeklyTrendPoint {
+  week: number;
+  weekLabel: string;
+  impl_for_day: number;
+  weekly_benchmark: number;
 }
 
 export interface ProjectCompletion {

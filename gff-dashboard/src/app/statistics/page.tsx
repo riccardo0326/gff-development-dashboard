@@ -16,15 +16,17 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import { ProgressBar } from "@/components/progress-bar";
 import { Card, PageHeader } from "@/components/ui";
-import type { DailyStat, PriorityStats } from "@/lib/types";
+import type { DailyStat, PriorityStats, Settings, WeeklyTrendPoint } from "@/lib/types";
 import { formatDisplayDate } from "@/lib/calculations";
 import { cn, formatNumber, formatPercent } from "@/lib/utils";
 
 const PIE_COLORS = ["#22c55e", "#f59e0b"];
 const SCOPES = ["TOT", "Prio1", "Prio2", "Prio3"] as const;
+const KPI_MODES = ["total", "feasable"] as const;
 
 interface StatisticsResponse {
   priorityStats: PriorityStats[];
+  priorityStatsFeasable: PriorityStats[];
   forecast: Array<{
     stat_date: string;
     implemented_count: number;
@@ -32,7 +34,9 @@ interface StatisticsResponse {
     impl_for_day: number;
     daily_average: number;
   }>;
+  weeklyTrend: WeeklyTrendPoint[];
   dailyStats: DailyStat[];
+  settings: Settings;
 }
 
 function KpiCard({
@@ -65,6 +69,7 @@ export default function StatisticsPage() {
   const [data, setData] = useState<StatisticsResponse | null>(null);
   const [selectedScope, setSelectedScope] =
     useState<(typeof SCOPES)[number]>("TOT");
+  const [kpiMode, setKpiMode] = useState<(typeof KPI_MODES)[number]>("total");
 
   useEffect(() => {
     fetch("/api/statistics")
@@ -76,6 +81,15 @@ export default function StatisticsPage() {
     () => data?.priorityStats.find((row) => row.label === selectedScope),
     [data, selectedScope],
   );
+
+  const selectedForecastRow = useMemo(() => {
+    if (!data) return null;
+    const stats =
+      kpiMode === "feasable"
+        ? data.priorityStatsFeasable
+        : data.priorityStats;
+    return stats.find((row) => row.label === selectedScope) ?? null;
+  }, [data, selectedScope, kpiMode]);
 
   if (!data) {
     return (
@@ -92,17 +106,13 @@ export default function StatisticsPage() {
     SCOPES.includes(row.label as (typeof SCOPES)[number]),
   );
 
-  const trendData = data.forecast.map((row) => ({
-    date: row.stat_date.slice(5),
-    impl_for_day: row.impl_for_day,
-    daily_average: Number(row.daily_average.toFixed(1)),
-  }));
+  const chartYear = data.settings.statistics_chart_year;
 
   return (
     <div className="space-y-6">
       <PageHeader
         title="Statistics"
-        description="Priority breakdown, completion forecasts, and daily implementation trend."
+        description="Priority breakdown, completion forecasts, and weekly implementation trend."
       />
 
       <div className="grid gap-4 xl:grid-cols-2 2xl:grid-cols-4">
@@ -150,33 +160,46 @@ export default function StatisticsPage() {
       </div>
 
       <Card>
-        <h3 className="mb-4 font-medium">Daily covered DTCs</h3>
-        <div className="h-80">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={trendData}>
-              <CartesianGrid stroke="#1f2937" strokeDasharray="3 3" />
-              <XAxis dataKey="date" stroke="#8b98a8" />
-              <YAxis stroke="#8b98a8" />
-              <Tooltip />
-              <Legend />
-              <Line
-                type="monotone"
-                dataKey="impl_for_day"
-                name="Covered for day"
-                stroke="#3b82f6"
-                strokeWidth={2}
-                dot={false}
-              />
-              <Line
-                type="monotone"
-                dataKey="daily_average"
-                name="Daily average"
-                stroke="#22c55e"
-                strokeWidth={2}
-                dot={false}
-              />
-            </LineChart>
-          </ResponsiveContainer>
+        <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <h3 className="font-medium">Weekly covered DTCs</h3>
+          <p className="text-muted text-sm">Year {chartYear}</p>
+        </div>
+        <div className="overflow-x-auto">
+          <div className="h-80 min-w-[2912px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={data.weeklyTrend}>
+                <CartesianGrid stroke="#1f2937" strokeDasharray="3 3" />
+                <XAxis
+                  dataKey="weekLabel"
+                  stroke="#8b98a8"
+                  interval={0}
+                  tick={{ fontSize: 11 }}
+                  angle={-45}
+                  textAnchor="end"
+                  height={60}
+                />
+                <YAxis stroke="#8b98a8" />
+                <Tooltip />
+                <Legend />
+                <Line
+                  type="monotone"
+                  dataKey="impl_for_day"
+                  name="Covered for week"
+                  stroke="#3b82f6"
+                  strokeWidth={2}
+                  dot={false}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="weekly_benchmark"
+                  name="Weekly benchmark (5d avg)"
+                  stroke="#22c55e"
+                  strokeWidth={2}
+                  dot={false}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       </Card>
 
@@ -248,52 +271,85 @@ export default function StatisticsPage() {
               </div>
             ) : null}
 
-            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-              <KpiCard
-                label="Days required (estimated)"
-                value={
-                  selectedRow.days_required_estimated
-                    ? selectedRow.days_required_estimated.toFixed(1)
-                    : "—"
-                }
-              />
-              <KpiCard
-                label="End date (estimated)"
-                value={
-                  selectedRow.end_date_estimated
-                    ? formatDisplayDate(selectedRow.end_date_estimated)
-                    : "—"
-                }
-              />
-              <KpiCard
-                label="Days required (average)"
-                value={
-                  selectedRow.days_required_average
-                    ? selectedRow.days_required_average.toFixed(1)
-                    : "—"
-                }
-              />
-              <KpiCard
-                label="End date (average)"
-                value={
-                  selectedRow.end_date_average
-                    ? formatDisplayDate(selectedRow.end_date_average)
-                    : "—"
-                }
-              />
-            </div>
+            {selectedForecastRow ? (
+              <Card className="border-card-border bg-background/40 space-y-5">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <h4 className="font-medium">Forecast &amp; progress</h4>
+                    <p className="text-muted mt-1 text-sm">
+                      {kpiMode === "feasable"
+                        ? "Excludes faulty DTCs that cannot be covered with a GFF."
+                        : "Includes all applicable coverage slots."}
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {KPI_MODES.map((mode) => (
+                      <button
+                        key={mode}
+                        type="button"
+                        onClick={() => setKpiMode(mode)}
+                        className={cn(
+                          "rounded-lg px-3 py-1.5 text-sm capitalize transition-colors",
+                          kpiMode === mode
+                            ? "bg-accent text-white"
+                            : "border-card-border text-muted hover:text-foreground border hover:bg-white/5",
+                        )}
+                      >
+                        {mode}
+                      </button>
+                    ))}
+                  </div>
+                </div>
 
-            <div className="grid gap-4 md:grid-cols-3">
-              {(["LB74x", "LB636", "LB63x"] as const).map((project) => (
-                <Card key={project} className="bg-background/40">
-                  <p className="mb-2 text-sm font-medium">{project}</p>
-                  <ProgressBar value={selectedRow.completion[project]} />
-                  <p className="text-muted mt-2 text-xs">
-                    {formatPercent(selectedRow.completion[project])} completion
-                  </p>
-                </Card>
-              ))}
-            </div>
+                <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                  <KpiCard
+                    label="Days required (estimated)"
+                    value={
+                      selectedForecastRow.days_required_estimated
+                        ? selectedForecastRow.days_required_estimated.toFixed(1)
+                        : "—"
+                    }
+                  />
+                  <KpiCard
+                    label="End date (estimated)"
+                    value={
+                      selectedForecastRow.end_date_estimated
+                        ? formatDisplayDate(selectedForecastRow.end_date_estimated)
+                        : "—"
+                    }
+                  />
+                  <KpiCard
+                    label="Days required (average)"
+                    value={
+                      selectedForecastRow.days_required_average
+                        ? selectedForecastRow.days_required_average.toFixed(1)
+                        : "—"
+                    }
+                  />
+                  <KpiCard
+                    label="End date (average)"
+                    value={
+                      selectedForecastRow.end_date_average
+                        ? formatDisplayDate(selectedForecastRow.end_date_average)
+                        : "—"
+                    }
+                  />
+                </div>
+
+                <div className="grid gap-4 md:grid-cols-3">
+                  {(["LB74x", "LB636", "LB63x"] as const).map((project) => (
+                    <Card key={project} className="bg-background/40">
+                      <p className="mb-2 text-sm font-medium">{project}</p>
+                      <ProgressBar value={selectedForecastRow.completion[project]} />
+                      <p className="text-muted mt-2 text-xs">
+                        {formatPercent(selectedForecastRow.completion[project])}{" "}
+                        completion
+                      </p>
+                    </Card>
+                  ))}
+                </div>
+              </Card>
+            ) : null}
           </div>
         ) : null}
       </Card>

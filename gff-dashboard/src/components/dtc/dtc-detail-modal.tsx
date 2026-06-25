@@ -36,8 +36,6 @@ export function DtcDetailModal({
   const [saving, setSaving] = useState(false);
   const [gffAvailable, setGffAvailable] = useState(false);
   const [gffProgram, setGffProgram] = useState("");
-  const [errorHandling, setErrorHandling] = useState("");
-  const [errorSettingConditions, setErrorSettingConditions] = useState("");
   const [coverage, setCoverage] = useState<
     Record<VehicleProjectId, CoverageStatus | "">
   >({
@@ -60,8 +58,6 @@ export function DtcDetailModal({
     setEditing(initialEdit);
     setGffAvailable(hasGffAvailable(dtc.gff_available));
     setGffProgram(dtc.gff_program ?? "");
-    setErrorHandling(dtc.error_handling ?? "");
-    setErrorSettingConditions(dtc.error_setting_conditions ?? "");
     setCoverage({
       LB74x: dtc.coverage_lb74x ?? "",
       LB636: dtc.coverage_lb636 ?? "",
@@ -87,8 +83,6 @@ export function DtcDetailModal({
           body: JSON.stringify({
             gff_available: gffAvailable,
             gff_program: gffProgram || null,
-            error_handling: errorHandling || null,
-            error_setting_conditions: errorSettingConditions || null,
             coverageUpdates: PROJECTS.flatMap((project) => {
               const { applicable, coverage: current } = projectCoverage(
                 dtc,
@@ -183,19 +177,15 @@ export function DtcDetailModal({
             onChange={setGffProgram}
             multiline
           />
-          <EditableField
+          <Field
             label="DTC error handling"
-            value={errorHandling}
-            editing={editing && canEdit}
-            onChange={setErrorHandling}
-            multiline
+            value={dtc.error_handling}
+            className="sm:col-span-2"
           />
-          <EditableField
+          <Field
             label="DTC error setting conditions"
-            value={errorSettingConditions}
-            editing={editing && canEdit}
-            onChange={setErrorSettingConditions}
-            multiline
+            value={dtc.error_setting_conditions}
+            className="sm:col-span-2"
           />
         </div>
 

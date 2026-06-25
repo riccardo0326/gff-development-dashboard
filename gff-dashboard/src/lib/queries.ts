@@ -10,6 +10,7 @@ import { logAuditEvent, type AuditUser } from "./audit";
 import {
   buildForecastTable,
   buildPriorityStats,
+  buildWeeklyTrend,
   computeEcuProjectCompletion,
   parseSettings,
 } from "./calculations";
@@ -48,6 +49,9 @@ export function updateSettings(partial: Partial<Settings>): Settings {
   }
   if (partial.baseline_implemented !== undefined) {
     insert.run("baseline_implemented", String(partial.baseline_implemented));
+  }
+  if (partial.statistics_chart_year !== undefined) {
+    insert.run("statistics_chart_year", String(partial.statistics_chart_year));
   }
 
   return getSettings();
@@ -129,7 +133,7 @@ export function getAllCoverageRows() {
   return db
     .prepare(
       `
-      SELECT d.coverage_lb74x, d.coverage_lb636, d.coverage_lb63x,
+      SELECT d.id as dtc_id, d.coverage_lb74x, d.coverage_lb636, d.coverage_lb63x,
              d.applicable_lb74x, d.applicable_lb636, d.applicable_lb63x,
              d.ecu_id, e.priority
       FROM dtcs d
@@ -137,6 +141,7 @@ export function getAllCoverageRows() {
     `,
     )
     .all() as Array<{
+    dtc_id: number;
     coverage_lb74x: string | null;
     coverage_lb636: string | null;
     coverage_lb63x: string | null;
@@ -148,20 +153,49 @@ export function getAllCoverageRows() {
   }>;
 }
 
+export function getFaultyDtcIds(): Set<number> {
+  const db = getDb();
+  const rows = db
+    .prepare(
+      `
+      SELECT DISTINCT d.id as dtc_id
+      FROM faulty_dtcs f
+      LEFT JOIN ecus e ON e.code = REPLACE(UPPER(COALESCE(f.da_code, '')), 'DA', '')
+        OR e.id = UPPER(COALESCE(f.da_code, ''))
+      JOIN dtcs d ON d.ecu_id = e.id AND d.trouble_code = f.trouble_code
+    `,
+    )
+    .all() as Array<{ dtc_id: number }>;
+
+  return new Set(rows.map((row) => row.dtc_id));
+}
+
 export function getStatisticsSummary() {
   const ecus = getEcus();
   const rows = getAllCoverageRows();
   const settings = getSettings();
   const dailyStats = getDailyStats();
+  const faultyDtcIds = getFaultyDtcIds();
   const priorityStats = buildPriorityStats(ecus, rows, settings, dailyStats);
+  const priorityStatsFeasable = buildPriorityStats(ecus, rows, settings, dailyStats, {
+    excludeFaultyDtcIds: faultyDtcIds,
+  });
   const totalRow = priorityStats.find((r) => r.label === "TOT");
   const forecast = buildForecastTable(
     totalRow?.total_dtcs ?? 0,
     settings,
     dailyStats,
   );
+  const weeklyTrend = buildWeeklyTrend(dailyStats, settings.statistics_chart_year);
 
-  return { priorityStats, forecast, settings, dailyStats };
+  return {
+    priorityStats,
+    priorityStatsFeasable,
+    forecast,
+    weeklyTrend,
+    settings,
+    dailyStats,
+  };
 }
 
 export function getDailyStats(): DailyStat[] {
@@ -305,8 +339,6 @@ export function updateDtcDetails(
   input: {
     gff_available?: boolean;
     gff_program?: string | null;
-    error_handling?: string | null;
-    error_setting_conditions?: string | null;
     coverageUpdates?: Array<{
       project: VehicleProjectId;
       status: "pending" | "covered";
@@ -331,17 +363,6 @@ export function updateDtcDetails(
       input.gff_program,
       dtcId,
     );
-  }
-  if (input.error_handling !== undefined) {
-    db.prepare("UPDATE dtcs SET error_handling = ? WHERE id = ?").run(
-      input.error_handling,
-      dtcId,
-    );
-  }
-  if (input.error_setting_conditions !== undefined) {
-    db.prepare(
-      "UPDATE dtcs SET error_setting_conditions = ? WHERE id = ?",
-    ).run(input.error_setting_conditions, dtcId);
   }
 
   let dailyStat: DailyStat | null = null;
