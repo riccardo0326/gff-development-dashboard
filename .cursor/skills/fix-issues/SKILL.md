@@ -33,6 +33,7 @@ Quando mancano dettagli, **non** fare domande aperte in chat. Usa sempre lo **st
 ### Conferma prima di implementare
 
 **Non iniziare mai a modificare codice** finché l'utente non conferma esplicitamente il piano.
+**Non modificare mai le issue con label 'wontfix'**
 
 1. Presenta un **piano di fix** strutturato (issue, file coinvolti, approccio, rischi)
 2. Chiedi conferma con AskQuestion oppure in chat, aspettando una risposta equivalente a **"procedi"**
