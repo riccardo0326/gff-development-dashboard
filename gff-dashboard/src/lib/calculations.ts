@@ -154,6 +154,17 @@ export function aggregateCoverageStats(
       if (isFaulty) {
         perProject[project].faulty += 1;
         faulty += 1;
+
+        if (options?.excludeFaultyFromTotals) {
+          continue;
+        }
+
+        total += 1;
+        if (value === "covered") {
+          implemented += 1;
+        } else if (value === "pending") {
+          pending += 1;
+        }
         continue;
       }
 

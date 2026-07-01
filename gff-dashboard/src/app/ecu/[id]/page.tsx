@@ -12,7 +12,7 @@ import {
 import { DtcDetailModal } from "@/components/dtc/dtc-detail-modal";
 import type { DtcRowData } from "@/components/dtc/dtc-types";
 import { PriorityBadge } from "@/components/priority-badge";
-import { ProgressBar } from "@/components/progress-bar";
+import { ProgressBar, ProgressBarLegend } from "@/components/progress-bar";
 import {
   Button,
   Card,
@@ -199,6 +199,7 @@ export default function EcuDetailPage() {
         </Card>
         <Card className="lg:col-span-3">
           <p className="text-muted mb-3 text-sm">Project completion</p>
+          <ProgressBarLegend className="mb-3" />
           <div className="flex w-full flex-col gap-3">
             {DTC_PROJECTS.map((projectName) => {
               const stats = data.completion?.[projectName];

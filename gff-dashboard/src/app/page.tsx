@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ArrowUpDown, ChevronDown, ChevronUp } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { EcuPriorityEditor } from "@/components/ecu-priority-editor";
-import { ProgressBar } from "@/components/progress-bar";
+import { ProgressBar, ProgressBarLegend } from "@/components/progress-bar";
 import {
   Card,
   EmptyTableCell,
@@ -177,6 +177,9 @@ export default function DashboardPage() {
       </Card>
 
       <Card className="overflow-hidden p-0">
+        <div className="border-card-border border-b px-4 py-3">
+          <ProgressBarLegend />
+        </div>
         <div className="overflow-x-auto">
           <table className="min-w-full text-sm">
             <thead className="border-card-border bg-white/5 border-b">
