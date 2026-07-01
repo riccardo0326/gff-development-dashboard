@@ -1,7 +1,8 @@
 ---
 name: fix-issues
-description: Analizza e risolve le issue GitHub aperte del repository. Usa quando l'utente invoca /fix-issues, chiede di fixare issue aperte, o vuole lavorare su bug/feature tracciati su GitHub.
+description: Analyzes and resolves open GitHub issues in this repository. Use when the user invokes /fix-issues, asks to fix open issues, or mentions issue numbers. Analizza e risolve le issue GitHub aperte del repository.
 disable-model-invocation: true
+compatibility: Requires gh CLI, git, and network access. Works in Cursor Desktop and Cloud Agent.
 ---
 
 # Fix Issues
@@ -24,16 +25,16 @@ Skill Cursor per analizzare, pianificare e risolvere le issue GitHub aperte di q
 
 ### Domande a scelta chiusa
 
-Quando mancano dettagli, **non** fare domande aperte in chat. Usa sempre lo **strumento AskQuestion** (ask questions tool) di Cursor con opzioni cliccabili:
+Quando mancano dettagli, **non** fare domande aperte in chat. Usa lo **strumento AskQuestion** (ask questions tool) di Cursor con opzioni cliccabili quando disponibile:
 
 - Una o più domande per volta, con `options` concrete
 - `allowMultiple: false` per scelta singola, `true` solo se serve multi-selezione
-- Se lo strumento non è disponibile, elenca le opzioni numerate e chiedi di rispondere con l'ID dell'opzione scelta
+- **Cloud Agent / AskQuestion non disponibile:** elenca le opzioni numerate in chat e chiedi di rispondere con l'ID dell'opzione scelta
 
 ### Conferma prima di implementare
 
 **Non iniziare mai a modificare codice** finché l'utente non conferma esplicitamente il piano.
-**Non modificare mai le issue con label 'wontfix'**
+**Non modificare mai le issue con label `wontfix`** — escludile già in fase di raccolta.
 
 1. Presenta un **piano di fix** strutturato (issue, file coinvolti, approccio, rischi)
 2. Chiedi conferma con AskQuestion oppure in chat, aspettando una risposta equivalente a **"procedi"**
@@ -54,11 +55,13 @@ Quando mancano dettagli, **non** fare domande aperte in chat. Usa sempre lo **st
    gh issue list --repo riccardo0326/gff-development-dashboard --state open --json number,title,labels,body
    ```
 
-2. Se l'utente ha indicato numeri specifici, filtra su quelli. Altrimenti usa **AskQuestion** per chiedere:
+2. **Escludi** le issue con label `wontfix`.
+
+3. Se l'utente ha indicato numeri specifici, filtra su quelli. Altrimenti usa **AskQuestion** (o opzioni numerate in chat) per chiedere:
    - Quali issue affrontare (elenca ogni issue aperta come opzione; abilita multi-selezione se ha senso)
    - Priorità se ce ne sono molte (es. "tutte", "solo la più recente", "seleziona manualmente")
 
-3. Per ogni issue selezionata, carica i dettagli:
+4. Per ogni issue selezionata, carica i dettagli:
 
    ```bash
    gh issue view <numero> --repo riccardo0326/gff-development-dashboard --json title,body,labels,comments
@@ -66,7 +69,7 @@ Quando mancano dettagli, **non** fare domande aperte in chat. Usa sempre lo **st
 
 ### Fase 2 — Chiarimenti mancanti
 
-Usa **AskQuestion** quando servono decisioni non deducibili dal codice o dall'issue:
+Usa **AskQuestion** (o opzioni numerate) quando servono decisioni non deducibili dal codice o dall'issue:
 
 | Ambiguità | Esempio di opzioni |
 |-----------|-------------------|
@@ -100,7 +103,7 @@ Presenta il piano in questo formato:
 ...
 
 ### Strategia git
-- Branch: `cursor/fix-issue-<numero>-c6e7` (o branch unico se più issue)
+- Branch: `cursor/fix-issue-<numero>-cc10` (o branch unico se più issue)
 - PR: draft verso `main`
 ```
 
@@ -108,7 +111,7 @@ Poi chiedi conferma e **attendi "procedi"**.
 
 ### Fase 4 — Implementazione (solo dopo conferma)
 
-1. Crea branch: `cursor/fix-issue-<numero>-c6e7` (prefisso `cursor/`, suffisso `-c6e7`)
+1. Crea branch: `cursor/fix-issue-<numero>-cc10` (prefisso `cursor/`, suffisso `-cc10`)
 2. Implementa seguendo le convenzioni del progetto
 3. Verifica:
    ```bash
@@ -120,9 +123,11 @@ Poi chiedi conferma e **attendi "procedi"**.
    git push -u origin <branch-name>
    ```
 5. Apri PR draft verso `main` con riferimento alle issue:
-   ```bash
-   gh pr create --draft --title "..." --body "Fixes #<numero>\n\n..."
-   ```
+   - **Cursor Cloud Agent:** usa lo strumento **ManagePullRequest** (`action: create_pr`, `branch_name`, `base_branch: main`, `draft: true`, body con `Fixes #<numero>`)
+   - **Fallback CLI:**
+     ```bash
+     gh pr create --draft --base main --title "..." --body "Fixes #<numero>\n\n..."
+     ```
 
 ### Fase 5 — Report
 
@@ -132,18 +137,27 @@ Al termine, riassumi:
 - Modifiche principali
 - Eventuali issue saltate o follow-up necessari
 
+## Cloud Agent
+
+Quando esegui come **Cloud Agent**:
+
+- Segui le istruzioni git del task (branch `cursor/<nome>-cc10`, push con `-u origin`, PR draft verso `main`)
+- **Commit e push** prima di testare; **crea o aggiorna la PR** a ogni iterazione con modifiche
+- AskQuestion potrebbe non essere disponibile — usa opzioni numerate in chat
+- Se l'utente ha già indicato issue specifiche e chiede di procedere, salta la selezione issue ma **mantieni** la conferma del piano prima di implementare
+
 ## Vincoli
 
 - **Minimizza lo scope:** fix mirati, niente refactor non richiesti
 - **Una conferma per piano:** non implementare parzialmente prima di "procedi"
 - **Non chiudere issue manualmente** se la PR non è ancora mergiata (usa `Fixes #N` nel body della PR)
 - **Non modificare** file fuori da `gff-dashboard/` salvo la skill stessa o config strettamente necessaria
-- Se un fix è impossibile o l'issue è ambigua, spiegalo nel piano e proponi alternative via AskQuestion
+- Se un fix è impossibile o l'issue è ambigua, spiegalo nel piano e proponi alternative via AskQuestion o opzioni numerate
 
 ## Comandi utili
 
 ```bash
-# Issue aperte
+# Issue aperte (escludi wontfix manualmente se serve)
 gh issue list --repo riccardo0326/gff-development-dashboard --state open
 
 # Dettaglio issue
