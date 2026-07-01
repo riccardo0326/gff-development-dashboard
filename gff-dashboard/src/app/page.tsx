@@ -7,6 +7,7 @@ import { EcuPriorityEditor } from "@/components/ecu-priority-editor";
 import { ProgressBar } from "@/components/progress-bar";
 import {
   Card,
+  EmptyTableCell,
   FilterInput,
   PageHeader,
   SelectInput,
@@ -16,7 +17,7 @@ import { cn, compareEcuCodeHex, formatNumber, formatPercent } from "@/lib/utils"
 
 const PROJECTS: VehicleProjectId[] = ["LB74x", "LB636", "LB63x"];
 
-type SortField = "priority";
+type SortField = "priority" | VehicleProjectId;
 type SortDirection = "asc" | "desc";
 
 function SortHeader({
@@ -76,10 +77,17 @@ export default function DashboardPage() {
   const sortedEcus = useMemo(() => {
     const copy = [...ecus];
     copy.sort((a, b) => {
-      const cmp =
-        sortField === "priority"
-          ? a.priority - b.priority || compareEcuCodeHex(a.code, b.code)
-          : compareEcuCodeHex(a.code, b.code);
+      let cmp = 0;
+      if (sortField === "priority") {
+        cmp = a.priority - b.priority || compareEcuCodeHex(a.code, b.code);
+      } else {
+        const aStats = a.projects[sortField];
+        const bStats = b.projects[sortField];
+        if (!aStats && !bStats) cmp = 0;
+        else if (!aStats) cmp = 1;
+        else if (!bStats) cmp = -1;
+        else cmp = aStats.completion_pct - bStats.completion_pct;
+      }
       return sortDirection === "asc" ? cmp : -cmp;
     });
     return copy;
@@ -108,7 +116,7 @@ export default function DashboardPage() {
       setSortDirection((d) => (d === "asc" ? "desc" : "asc"));
     } else {
       setSortField(field);
-      setSortDirection("asc");
+      setSortDirection(field === "priority" ? "asc" : "desc");
     }
   }
 
@@ -182,12 +190,20 @@ export default function DashboardPage() {
                     onClick={() => toggleSort("priority")}
                   />
                 </th>
-                {PROJECTS.map((project) => (
+                {PROJECTS.map((project, index) => (
                   <th
                     key={project}
-                    className="text-muted min-w-[180px] px-4 py-3 font-medium"
+                    className={cn(
+                      "min-w-[180px] px-4 py-3",
+                      index < PROJECTS.length - 1 && "border-card-border border-r",
+                    )}
                   >
-                    {project}
+                    <SortHeader
+                      label={project}
+                      active={sortField === project}
+                      direction={sortDirection}
+                      onClick={() => toggleSort(project)}
+                    />
                   </th>
                 ))}
               </tr>
@@ -228,19 +244,38 @@ export default function DashboardPage() {
                         }
                       />
                     </td>
-                    {PROJECTS.map((project) => {
+                    {PROJECTS.map((project, index) => {
                       const stats = ecu.projects[project];
                       if (!stats) {
                         return (
-                          <td key={project} className="text-muted px-4 py-3">
-                            n/a
+                          <td
+                            key={project}
+                            className={cn(
+                              "px-4 py-3",
+                              index < PROJECTS.length - 1 &&
+                                "border-card-border border-r",
+                            )}
+                          >
+                            <EmptyTableCell />
                           </td>
                         );
                       }
                       return (
-                        <td key={project} className="px-4 py-3">
+                        <td
+                          key={project}
+                          className={cn(
+                            "px-4 py-3",
+                            index < PROJECTS.length - 1 &&
+                              "border-card-border border-r",
+                          )}
+                        >
                           <ProgressBar
-                            value={stats.completion_pct}
+                            segments={{
+                              covered: stats.covered,
+                              pending: stats.pending,
+                              neutral: stats.neutral,
+                              faulty: stats.faulty,
+                            }}
                             label={`${stats.covered}/${stats.total}`}
                           />
                         </td>

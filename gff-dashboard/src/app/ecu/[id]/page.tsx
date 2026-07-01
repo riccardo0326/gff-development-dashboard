@@ -16,6 +16,7 @@ import { ProgressBar } from "@/components/progress-bar";
 import {
   Button,
   Card,
+  EmptyTableCell,
   FilterInput,
   PageHeader,
   SelectInput,
@@ -198,26 +199,34 @@ export default function EcuDetailPage() {
         </Card>
         <Card className="lg:col-span-3">
           <p className="text-muted mb-3 text-sm">Project completion</p>
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="flex w-full flex-col gap-3">
             {DTC_PROJECTS.map((projectName) => {
               const stats = data.completion?.[projectName];
               if (!stats) {
                 return (
-                  <div key={projectName}>
+                  <div key={projectName} className="w-full">
                     <p className="mb-1 text-sm font-medium">{projectName}</p>
-                    <p className="text-muted text-sm">Not applicable</p>
+                    <EmptyTableCell>Not applicable</EmptyTableCell>
                   </div>
                 );
               }
               return (
-                <div key={projectName}>
+                <div key={projectName} className="w-full">
                   <ProgressBar
-                    value={stats.completion_pct}
+                    segments={{
+                      covered: stats.covered,
+                      pending: stats.pending,
+                      neutral: stats.neutral,
+                      faulty: stats.faulty,
+                    }}
                     label={`${projectName} (${formatPercent(stats.completion_pct)})`}
                   />
                   <p className="text-muted mt-1 text-xs">
                     {formatNumber(stats.covered)} covered /{" "}
                     {formatNumber(stats.total)} total
+                    {stats.faulty > 0
+                      ? ` · ${formatNumber(stats.faulty)} faulty`
+                      : ""}
                   </p>
                 </div>
               );

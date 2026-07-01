@@ -23,8 +23,8 @@ import type { DailyStat, PriorityStats, Settings, WeeklyTrendPoint } from "@/lib
 import { buildDailyTrendForWeek, formatDisplayDate } from "@/lib/calculations";
 import { cn, formatNumber, formatPercent } from "@/lib/utils";
 
-const PIE_COLORS = ["#22c55e", "#f59e0b"];
-const PIE_LABELS = ["Covered", "Pending"] as const;
+const PIE_COLORS = ["#22c55e", "#6b7280", "#f59e0b"];
+const PIE_LABELS = ["Covered", "Faulty", "Pending"] as const;
 const SCOPES = ["TOT", "Prio1", "Prio2", "Prio3"] as const;
 const KPI_MODES = ["total", "feasible"] as const;
 
@@ -62,9 +62,13 @@ function KpiCard({
         accent === "accent" && "border-accent/20",
       )}
     >
-      <p className="text-muted text-xs tracking-wide uppercase">{label}</p>
+      <p className="text-foreground/80 text-xs font-medium tracking-wide uppercase">
+        {label}
+      </p>
       <p className="mt-2 text-2xl font-semibold">{value}</p>
-      {hint ? <p className="text-muted mt-1 text-xs">{hint}</p> : null}
+      {hint ? (
+        <p className="text-foreground/60 mt-1 text-xs">{hint}</p>
+      ) : null}
     </Card>
   );
 }
@@ -149,10 +153,9 @@ function WeekAxisTick({
         x={0}
         y={0}
         dy={16}
-        textAnchor="end"
+        textAnchor="middle"
         fill="#8b98a8"
         fontSize={11}
-        transform="rotate(-45)"
         className="cursor-pointer hover:fill-white"
         onClick={() => {
           if (Number.isFinite(week)) onSelectWeek(week);
@@ -322,12 +325,17 @@ export default function StatisticsPage() {
               value: row.implemented,
             },
             {
+              name: "Faulty",
+              label: `Faulty (${formatNumber(row.faulty)})`,
+              value: row.faulty,
+            },
+            {
               name: "Pending",
               label: `Pending (${formatNumber(row.pending)})`,
               value: row.pending,
             },
           ].filter((slice) => slice.value > 0);
-          const pieTotal = row.implemented + row.pending;
+          const pieTotal = row.implemented + row.faulty + row.pending;
           const displayData =
             chartData.length > 0
               ? chartData
@@ -408,7 +416,7 @@ export default function StatisticsPage() {
                   dataKey="weekLabel"
                   stroke="#8b98a8"
                   interval={0}
-                  height={60}
+                  height={36}
                   tick={(props) => (
                     <WeekAxisTick
                       {...props}
@@ -536,8 +544,10 @@ export default function StatisticsPage() {
                   <KpiCard
                     label="Days required (estimated)"
                     value={
-                      selectedForecastRow.days_required_estimated
-                        ? selectedForecastRow.days_required_estimated.toFixed(1)
+                      selectedForecastRow.days_required_estimated != null
+                        ? String(
+                            Math.round(selectedForecastRow.days_required_estimated),
+                          )
                         : "—"
                     }
                   />
@@ -552,8 +562,10 @@ export default function StatisticsPage() {
                   <KpiCard
                     label="Days required (average)"
                     value={
-                      selectedForecastRow.days_required_average
-                        ? selectedForecastRow.days_required_average.toFixed(1)
+                      selectedForecastRow.days_required_average != null
+                        ? String(
+                            Math.round(selectedForecastRow.days_required_average),
+                          )
                         : "—"
                     }
                   />
@@ -568,16 +580,25 @@ export default function StatisticsPage() {
                 </div>
 
                 <div className="grid gap-4 md:grid-cols-3">
-                  {(["LB74x", "LB636", "LB63x"] as const).map((project) => (
-                    <Card key={project} className="bg-background/40">
-                      <p className="mb-2 text-sm font-medium">{project}</p>
-                      <ProgressBar value={selectedForecastRow.completion[project]} />
-                      <p className="text-muted mt-2 text-xs">
-                        {formatPercent(selectedForecastRow.completion[project])}{" "}
-                        completion
-                      </p>
-                    </Card>
-                  ))}
+                  {(["LB74x", "LB636", "LB63x"] as const).map((project) => {
+                    const segments = selectedForecastRow.segments[project];
+                    return (
+                      <Card key={project} className="bg-background/40">
+                        <p className="mb-2 text-sm font-medium">{project}</p>
+                        <ProgressBar
+                          value={selectedForecastRow.completion[project]}
+                          segments={segments}
+                        />
+                        <p className="text-muted mt-2 text-xs">
+                          {formatPercent(selectedForecastRow.completion[project])}{" "}
+                          completion
+                          {segments.faulty > 0
+                            ? ` · ${formatNumber(segments.faulty)} faulty`
+                            : ""}
+                        </p>
+                      </Card>
+                    );
+                  })}
                 </div>
               </Card>
             ) : null}

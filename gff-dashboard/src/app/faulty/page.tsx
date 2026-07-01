@@ -15,6 +15,11 @@ import {
 import type { FaultyDtc } from "@/lib/types";
 import { formatNumber } from "@/lib/utils";
 
+function formatDaLabel(code: string): string {
+  const normalized = code.replace(/^DA/i, "");
+  return `DA${normalized}`;
+}
+
 export default function FaultyPage() {
   const [items, setItems] = useState<FaultyDtc[]>([]);
   const [total, setTotal] = useState(0);
@@ -81,6 +86,7 @@ export default function FaultyPage() {
     ecu_id: row.da_code
       ? `DA${row.da_code.replace(/^DA/i, "")}`
       : undefined,
+    da_code: row.da_code ?? null,
     ecu_code: row.ecu_code ?? row.da_code ?? undefined,
     symptom: row.symptom,
     trouble_code: row.trouble_code,
@@ -132,8 +138,11 @@ export default function FaultyPage() {
             setDaCode(value);
           }}
           options={[
-            { value: "", label: "All ECUs" },
-            ...daOptions.map((code) => ({ value: code, label: code })),
+            { value: "", label: "All DA" },
+            ...daOptions.map((code) => ({
+              value: code,
+              label: formatDaLabel(code),
+            })),
           ]}
         />
         <SelectInput
@@ -178,6 +187,7 @@ export default function FaultyPage() {
           <DtcDataTable
             rows={rows}
             loading={loading}
+            showDa
             showErrorColumns
             onRowClick={(row) => {
               setModalDtc(row);
