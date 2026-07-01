@@ -4,7 +4,6 @@ import { Pencil } from "lucide-react";
 import { CoverageBadge } from "@/components/coverage-badge";
 import { TruncateText } from "@/components/truncate-text";
 import type { VehicleProjectId } from "@/lib/types";
-import { cn } from "@/lib/utils";
 import {
   type DtcRowData,
   hasGffAvailable,
@@ -17,6 +16,7 @@ interface DtcDataTableProps {
   rows: DtcRowData[];
   loading?: boolean;
   showEcu?: boolean;
+  showDa?: boolean;
   showErrorColumns?: boolean;
   selectable?: boolean;
   selected?: Set<string>;
@@ -32,10 +32,17 @@ function rowKey(dtcId: number, project: VehicleProjectId) {
   return `${dtcId}:${project}`;
 }
 
+function formatDaCode(code: string | null | undefined): string {
+  if (!code) return "—";
+  const normalized = code.replace(/^DA/i, "");
+  return `DA${normalized}`;
+}
+
 export function DtcDataTable({
   rows,
   loading,
   showEcu,
+  showDa,
   showErrorColumns = true,
   selectable,
   selected,
@@ -47,12 +54,17 @@ export function DtcDataTable({
   emptyMessage = "No records found.",
 }: DtcDataTableProps) {
   const colSpan =
-    (showEcu ? 2 : 0) + 5 + (showErrorColumns ? 2 : 0) + PROJECTS.length;
+    (showDa ? 1 : 0) +
+    (showEcu ? 2 : 0) +
+    5 +
+    (showErrorColumns && !showEcu ? 2 : 0) +
+    PROJECTS.length;
 
   return (
     <table className="min-w-full text-sm">
       <thead className="border-card-border bg-white/5 border-b">
         <tr className="text-muted text-left">
+          {showDa ? <th className="px-3 py-3">DA</th> : null}
           {showEcu ? (
             <>
               <th className="px-3 py-3">ECU</th>
@@ -97,6 +109,11 @@ export function DtcDataTable({
               className="border-card-border hover:bg-accent-soft/40 cursor-pointer border-b align-top transition-colors last:border-b-0"
               onClick={() => onRowClick(row)}
             >
+              {showDa ? (
+                <td className="px-3 py-3 font-mono text-xs">
+                  {formatDaCode(row.da_code ?? row.ecu_code)}
+                </td>
+              ) : null}
               {showEcu ? (
                 <>
                   <td className="px-3 py-3">{row.ecu_code ?? "—"}</td>

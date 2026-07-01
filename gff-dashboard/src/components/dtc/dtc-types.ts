@@ -4,6 +4,7 @@ export interface DtcRowData {
   id?: number;
   ecu_id?: string;
   ecu_code?: string;
+  da_code?: string | null;
   ecu_priority?: number;
   symptom: string | null;
   trouble_code: string | null;

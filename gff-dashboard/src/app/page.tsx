@@ -240,7 +240,12 @@ export default function DashboardPage() {
                       return (
                         <td key={project} className="px-4 py-3">
                           <ProgressBar
-                            value={stats.completion_pct}
+                            segments={{
+                              covered: stats.covered,
+                              pending: stats.pending,
+                              neutral: stats.neutral,
+                              faulty: stats.faulty,
+                            }}
                             label={`${stats.covered}/${stats.total}`}
                           />
                         </td>

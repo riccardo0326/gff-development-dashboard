@@ -13,6 +13,7 @@ import type {
   Ecu,
   PriorityStats,
   ProjectCompletion,
+  ProjectSegments,
   Settings,
   VehicleProjectId,
   WeeklyTrendPoint,
@@ -28,15 +29,6 @@ const PROJECT_COLUMNS: Record<
   LB63x: "coverage_lb63x",
 };
 
-export interface CoverageRow {
-  coverage_lb74x: string | null;
-  coverage_lb636: string | null;
-  coverage_lb63x: string | null;
-  applicable_lb74x?: number;
-  applicable_lb636?: number;
-  applicable_lb63x?: number;
-}
-
 const SLOT_APPLICABLE_COLUMNS: Record<
   VehicleProjectId,
   "applicable_lb74x" | "applicable_lb636" | "applicable_lb63x"
@@ -46,19 +38,44 @@ const SLOT_APPLICABLE_COLUMNS: Record<
   LB63x: "applicable_lb63x",
 };
 
+export interface CoverageRow {
+  coverage_lb74x: string | null;
+  coverage_lb636: string | null;
+  coverage_lb63x: string | null;
+  applicable_lb74x?: number;
+  applicable_lb636?: number;
+  applicable_lb63x?: number;
+  dtc_id?: number;
+}
+
+function emptyProjectSegments(): Record<VehicleProjectId, ProjectSegments> {
+  return {
+    LB74x: { covered: 0, pending: 0, neutral: 0, faulty: 0 },
+    LB636: { covered: 0, pending: 0, neutral: 0, faulty: 0 },
+    LB63x: { covered: 0, pending: 0, neutral: 0, faulty: 0 },
+  };
+}
+
 export function countProjectCoverage(
   rows: CoverageRow[],
   project: VehicleProjectId,
+  faultyDtcIds?: Set<number>,
 ): ProjectCompletion {
   const column = PROJECT_COLUMNS[project];
   const applicableColumn = SLOT_APPLICABLE_COLUMNS[project];
   let covered = 0;
   let pending = 0;
   let neutral = 0;
+  let faulty = 0;
 
   for (const row of rows) {
     const applicable = row[applicableColumn] ?? (row[column] ? 1 : 0);
     if (!applicable) continue;
+
+    if (row.dtc_id !== undefined && faultyDtcIds?.has(row.dtc_id)) {
+      faulty += 1;
+      continue;
+    }
 
     const value = row[column];
     if (value === "covered") covered += 1;
@@ -66,24 +83,28 @@ export function countProjectCoverage(
     else neutral += 1;
   }
 
-  const total = covered + pending + neutral;
+  const total = covered + pending + neutral + faulty;
+  const actionable = covered + pending + neutral;
   return {
     project,
     total,
     covered,
     pending,
-    completion_pct: total > 0 ? covered / total : 0,
+    neutral,
+    faulty,
+    completion_pct: actionable > 0 ? covered / actionable : 0,
   };
 }
 
 export function computeEcuProjectCompletion(
   _ecu: Ecu,
   rows: CoverageRow[],
+  faultyDtcIds?: Set<number>,
 ): Record<VehicleProjectId, ProjectCompletion | null> {
   const result = {} as Record<VehicleProjectId, ProjectCompletion | null>;
 
   for (const project of VEHICLE_PROJECTS) {
-    const stats = countProjectCoverage(rows, project);
+    const stats = countProjectCoverage(rows, project, faultyDtcIds);
     result[project] = stats.total > 0 ? stats : null;
   }
 
@@ -94,12 +115,14 @@ export function aggregateCoverageStats(
   ecus: Ecu[],
   allRows: Array<CoverageRow & { ecu_id: string; priority: number; dtc_id: number }>,
   priorityFilter?: number,
-  options?: { excludeFaultyDtcIds?: Set<number> },
+  options?: { faultyDtcIds?: Set<number>; excludeFaultyFromTotals?: boolean },
 ): {
   total_dtcs: number;
   implemented: number;
   pending: number;
+  faulty: number;
   completion: Record<VehicleProjectId, number>;
+  segments: Record<VehicleProjectId, ProjectSegments>;
 } {
   const filteredEcus =
     priorityFilter === undefined
@@ -107,30 +130,18 @@ export function aggregateCoverageStats(
       : ecus.filter((e) => e.priority === priorityFilter);
   const ecuIds = new Set(filteredEcus.map((e) => e.id));
   const rows = allRows.filter((r) => ecuIds.has(r.ecu_id));
+  const faultyDtcIds = options?.faultyDtcIds;
 
   let total = 0;
   let implemented = 0;
   let pending = 0;
-  const perProject: Record<
-    VehicleProjectId,
-    { covered: number; pending: number; neutral: number }
-  > = {
-    LB74x: { covered: 0, pending: 0, neutral: 0 },
-    LB636: { covered: 0, pending: 0, neutral: 0 },
-    LB63x: { covered: 0, pending: 0, neutral: 0 },
-  };
+  let faulty = 0;
+  const perProject = emptyProjectSegments();
 
-  const feasibleCompletion: Record<
-    VehicleProjectId,
-    { covered: number; pending: number; neutral: number }
-  > = {
-    LB74x: { covered: 0, pending: 0, neutral: 0 },
-    LB636: { covered: 0, pending: 0, neutral: 0 },
-    LB63x: { covered: 0, pending: 0, neutral: 0 },
-  };
+  const feasibleCompletion = emptyProjectSegments();
 
   for (const row of rows) {
-    const isFaulty = options?.excludeFaultyDtcIds?.has(row.dtc_id) ?? false;
+    const isFaulty = faultyDtcIds?.has(row.dtc_id) ?? false;
 
     for (const project of VEHICLE_PROJECTS) {
       const applicable =
@@ -140,25 +151,29 @@ export function aggregateCoverageStats(
 
       const value = row[PROJECT_COLUMNS[project]];
 
-      if (!isFaulty) {
-        total += 1;
-        if (value === "covered") {
-          implemented += 1;
-          perProject[project].covered += 1;
-        } else if (value === "pending") {
-          pending += 1;
-          perProject[project].pending += 1;
-        } else {
-          perProject[project].neutral += 1;
-        }
+      if (isFaulty) {
+        perProject[project].faulty += 1;
+        faulty += 1;
+        continue;
       }
 
-      if (options?.excludeFaultyDtcIds) {
+      total += 1;
+      if (value === "covered") {
+        implemented += 1;
+        perProject[project].covered += 1;
+      } else if (value === "pending") {
+        pending += 1;
+        perProject[project].pending += 1;
+      } else {
+        perProject[project].neutral += 1;
+      }
+
+      if (options?.excludeFaultyFromTotals) {
         if (value === "covered") {
           feasibleCompletion[project].covered += 1;
-        } else if (value === "pending" && !isFaulty) {
+        } else if (value === "pending") {
           feasibleCompletion[project].pending += 1;
-        } else if (!isFaulty) {
+        } else {
           feasibleCompletion[project].neutral += 1;
         }
       }
@@ -167,7 +182,7 @@ export function aggregateCoverageStats(
 
   const completion = {} as Record<VehicleProjectId, number>;
   for (const project of VEHICLE_PROJECTS) {
-    if (options?.excludeFaultyDtcIds) {
+    if (options?.excludeFaultyFromTotals) {
       const { covered, pending: p, neutral } = feasibleCompletion[project];
       const denom = covered + p + neutral;
       completion[project] = denom > 0 ? covered / denom : 0;
@@ -178,7 +193,14 @@ export function aggregateCoverageStats(
     }
   }
 
-  return { total_dtcs: total, implemented, pending, completion };
+  return {
+    total_dtcs: total,
+    implemented,
+    pending,
+    faulty,
+    completion,
+    segments: perProject,
+  };
 }
 
 export function computeDailyAverage(dailyStats: DailyStat[]): number {
@@ -197,7 +219,7 @@ export function buildPriorityStats(
   allRows: Array<CoverageRow & { ecu_id: string; priority: number; dtc_id: number }>,
   settings: Settings,
   dailyStats: DailyStat[],
-  options?: { excludeFaultyDtcIds?: Set<number> },
+  options?: { faultyDtcIds?: Set<number>; excludeFaultyFromTotals?: boolean },
 ): PriorityStats[] {
   const dailyAverage = computeDailyAverage(dailyStats);
   const today = new Date();
@@ -266,6 +288,8 @@ export function buildPriorityStats(
       total_dtcs: stats.total_dtcs,
       implemented: stats.implemented,
       pending: stats.pending,
+      faulty: stats.faulty,
+      segments: stats.segments,
       daily_estimate: priority === null ? settings.daily_estimate : null,
       daily_average: priority === null ? dailyAverage : null,
       days_required_estimated: daysRequiredEstimated,
