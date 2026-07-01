@@ -285,7 +285,7 @@ export default function EcuDetailPage() {
 
       <Card>
         <h3 className="mb-3 font-medium">Bulk update</h3>
-        <div className="flex flex-wrap items-end gap-3">
+        <div className="bulk-update-container flex flex-wrap items-end gap-3">
           <label className="grid gap-1 text-sm">
             <span className="text-muted">Set status</span>
             <SelectInput
@@ -303,11 +303,11 @@ export default function EcuDetailPage() {
           >
             Apply to selected ({selected.size})
           </Button>
-          <Button variant="secondary" onClick={selectFiltered}>
+          <Button variant="secondary-muted" onClick={selectFiltered}>
             Select filtered
           </Button>
           {selected.size > 0 ? (
-            <Button variant="secondary" onClick={unselectAll}>
+            <Button variant="secondary-muted" onClick={unselectAll}>
               Unselect
             </Button>
           ) : null}

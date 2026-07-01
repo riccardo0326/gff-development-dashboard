@@ -3,8 +3,8 @@
 import {
   CartesianGrid,
   Cell,
-  Legend,
   Label,
+  Legend,
   Line,
   LineChart,
   Pie,
@@ -16,8 +16,9 @@ import {
 } from "recharts";
 import { useEffect, useMemo, useState } from "react";
 import { X } from "lucide-react";
+import { DarkChartTooltip } from "@/components/chart-tooltip";
 import { ProgressBar } from "@/components/progress-bar";
-import { Card, PageHeader } from "@/components/ui";
+import { Card, PageHeader, SegmentedControl } from "@/components/ui";
 import type { DailyStat, PriorityStats, Settings, WeeklyTrendPoint } from "@/lib/types";
 import { buildDailyTrendForWeek, formatDisplayDate } from "@/lib/calculations";
 import { cn, formatNumber, formatPercent } from "@/lib/utils";
@@ -238,7 +239,7 @@ function WeekDetailModal({
               <CartesianGrid stroke="#1f2937" strokeDasharray="3 3" />
               <XAxis dataKey="dayLabel" stroke="#8b98a8" tick={{ fontSize: 11 }} />
               <YAxis stroke="#8b98a8" allowDecimals={false} />
-              <Tooltip />
+              <Tooltip content={<DarkChartTooltip />} />
               <Line
                 type="monotone"
                 dataKey="impl_for_day"
@@ -315,7 +316,7 @@ export default function StatisticsPage() {
         description="Priority breakdown, completion forecasts, and weekly implementation trend."
       />
 
-      <div className="grid gap-4 xl:grid-cols-2 2xl:grid-cols-4">
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4">
         {pieRows.map((row) => {
           const chartData = [
             {
@@ -334,8 +335,7 @@ export default function StatisticsPage() {
               value: row.pending,
             },
           ].filter((slice) => slice.value > 0);
-          const pieTotal =
-            row.implemented + row.faulty + row.pending;
+          const pieTotal = row.implemented + row.faulty + row.pending;
           const displayData =
             chartData.length > 0
               ? chartData
@@ -353,7 +353,7 @@ export default function StatisticsPage() {
                       nameKey="label"
                       innerRadius={52}
                       outerRadius={78}
-                          label={({ name, value, percent }) =>
+                      label={({ name, value, percent }) =>
                         value > 0 && name !== "Empty"
                           ? `${name} ${formatNumber(value)} (${((percent ?? 0) * 100).toFixed(0)}%)`
                           : ""
@@ -386,7 +386,7 @@ export default function StatisticsPage() {
                       />
                     </Pie>
                     <Legend />
-                    <Tooltip />
+                    <Tooltip content={<DarkChartTooltip />} />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
@@ -425,7 +425,7 @@ export default function StatisticsPage() {
                   )}
                 />
                 <YAxis stroke="#8b98a8" />
-                <Tooltip />
+                <Tooltip content={<DarkChartTooltip />} />
                 <Line
                   type="monotone"
                   dataKey="impl_for_day"
@@ -466,21 +466,12 @@ export default function StatisticsPage() {
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
-            {SCOPES.map((scope) => (
-              <button
-                key={scope}
-                type="button"
-                onClick={() => setSelectedScope(scope)}
-                className={cn(
-                  "rounded-lg px-3 py-1.5 text-sm transition-colors",
-                  selectedScope === scope
-                    ? "bg-accent text-white"
-                    : "border-card-border text-muted hover:text-foreground border hover:bg-white/5",
-                )}
-              >
-                {scope}
-              </button>
-            ))}
+            <SegmentedControl
+              tone="info"
+              value={selectedScope}
+              onChange={setSelectedScope}
+              options={SCOPES.map((scope) => ({ value: scope, label: scope }))}
+            />
           </div>
         </div>
 
@@ -537,21 +528,15 @@ export default function StatisticsPage() {
                     </p>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    {KPI_MODES.map((mode) => (
-                      <button
-                        key={mode}
-                        type="button"
-                        onClick={() => setKpiMode(mode)}
-                        className={cn(
-                          "rounded-lg px-3 py-1.5 text-sm capitalize transition-colors",
-                          kpiMode === mode
-                            ? "bg-accent text-white"
-                            : "border-card-border text-muted hover:text-foreground border hover:bg-white/5",
-                        )}
-                      >
-                        {mode}
-                      </button>
-                    ))}
+                    <SegmentedControl
+                      tone="success"
+                      value={kpiMode}
+                      onChange={setKpiMode}
+                      options={KPI_MODES.map((mode) => ({
+                        value: mode,
+                        label: mode,
+                      }))}
+                    />
                   </div>
                 </div>
 
