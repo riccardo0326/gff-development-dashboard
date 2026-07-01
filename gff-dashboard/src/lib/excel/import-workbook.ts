@@ -15,7 +15,7 @@ export interface ImportSummary {
   ecus: number;
   /** One row per DTC identity on an ECU sheet. */
   dtcs: number;
-  /** Applicable LB74x/LB636/LB63x coverage cells (matches Excel Statistiche TOT). */
+  /** Trackable GFF slots (applicable cells with gff_available = y). */
   coverageSlots: number;
   faulty: number;
   daily: number;
@@ -287,7 +287,11 @@ export function importWorkbook(workbook: WorkBook): ImportSummary {
     const coverageSlots = (
       db
         .prepare(
-          `SELECT SUM(applicable_lb74x + applicable_lb636 + applicable_lb63x) as c FROM dtcs`,
+          `SELECT SUM(
+            CASE WHEN applicable_lb74x = 1 AND gff_available = 'y' THEN 1 ELSE 0 END +
+            CASE WHEN applicable_lb636 = 1 AND gff_available = 'y' THEN 1 ELSE 0 END +
+            CASE WHEN applicable_lb63x = 1 AND gff_available = 'y' THEN 1 ELSE 0 END
+          ) as c FROM dtcs`,
         )
         .get() as { c: number | null }
     ).c ?? 0;

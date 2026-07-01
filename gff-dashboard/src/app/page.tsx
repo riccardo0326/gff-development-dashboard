@@ -138,7 +138,7 @@ export default function DashboardPage() {
           <p className="mt-2 text-3xl font-semibold">{summary.ecuCount}</p>
         </Card>
         <Card>
-          <p className="text-muted text-sm">Coverage slots (filtered)</p>
+          <p className="text-muted text-sm">Trackable GFF slots (filtered)</p>
           <p className="mt-2 text-3xl font-semibold">
             {formatNumber(summary.coverageSlots)}
           </p>
@@ -148,7 +148,7 @@ export default function DashboardPage() {
           <p className="mt-2 text-3xl font-semibold">
             {formatPercent(summary.completion)}
           </p>
-          <p className="text-muted mt-1 text-xs">Covered / all applicable slots</p>
+          <p className="text-muted mt-1 text-xs">Covered / trackable GFF slots</p>
         </Card>
         <Card>
           <p className="text-muted text-sm">Vehicle projects</p>
@@ -276,7 +276,6 @@ export default function DashboardPage() {
                             segments={{
                               covered: stats.covered,
                               pending: stats.pending,
-                              neutral: stats.neutral,
                               faulty: stats.faulty,
                             }}
                             label={`${stats.covered}/${stats.total}`}

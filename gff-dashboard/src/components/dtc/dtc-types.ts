@@ -24,9 +24,7 @@ export interface DtcRowData {
   projects_impacted?: string | null;
 }
 
-export function hasGffAvailable(value: string | null | undefined): boolean {
-  return String(value ?? "").trim().toLowerCase() === "y";
-}
+export { hasGffAvailable } from "@/lib/gff";
 
 export function projectCoverage(
   row: DtcRowData,
