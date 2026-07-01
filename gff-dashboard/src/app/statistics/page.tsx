@@ -100,10 +100,9 @@ function WeekAxisTick({
         x={0}
         y={0}
         dy={16}
-        textAnchor="end"
+        textAnchor="middle"
         fill="#8b98a8"
         fontSize={11}
-        transform="rotate(-45)"
         className="cursor-pointer hover:fill-white"
         onClick={() => {
           if (Number.isFinite(week)) onSelectWeek(week);
@@ -327,7 +326,7 @@ export default function StatisticsPage() {
                   dataKey="weekLabel"
                   stroke="#8b98a8"
                   interval={0}
-                  height={60}
+                  height={36}
                   tick={(props) => (
                     <WeekAxisTick
                       {...props}
@@ -470,8 +469,10 @@ export default function StatisticsPage() {
                   <KpiCard
                     label="Days required (estimated)"
                     value={
-                      selectedForecastRow.days_required_estimated
-                        ? selectedForecastRow.days_required_estimated.toFixed(1)
+                      selectedForecastRow.days_required_estimated != null
+                        ? String(
+                            Math.round(selectedForecastRow.days_required_estimated),
+                          )
                         : "—"
                     }
                   />
@@ -486,8 +487,10 @@ export default function StatisticsPage() {
                   <KpiCard
                     label="Days required (average)"
                     value={
-                      selectedForecastRow.days_required_average
-                        ? selectedForecastRow.days_required_average.toFixed(1)
+                      selectedForecastRow.days_required_average != null
+                        ? String(
+                            Math.round(selectedForecastRow.days_required_average),
+                          )
                         : "—"
                     }
                   />

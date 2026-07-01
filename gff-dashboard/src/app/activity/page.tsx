@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { CalendarRange, ChevronDown, ChevronRight } from "lucide-react";
-import { Button, Card, PageHeader, SelectInput } from "@/components/ui";
+import { Button, Card, PageHeader, PeriodSegmentedControl, SelectInput } from "@/components/ui";
 import {
   dateRangeForShortcut,
   formatDateInRome,
@@ -69,6 +69,16 @@ function ActivityMeta({
   );
 }
 
+function ActivityIconSlot({ children }: { children?: React.ReactNode }) {
+  return (
+    <span className="flex h-6 w-6 shrink-0 items-center justify-center">
+      {children ?? (
+        <span className="bg-foreground/30 h-1.5 w-1.5 rounded-full" aria-hidden />
+      )}
+    </span>
+  );
+}
+
 function BulkUpdateRow({ item }: { item: BulkUpdateActivity }) {
   const [open, setOpen] = useState(false);
 
@@ -79,13 +89,13 @@ function BulkUpdateRow({ item }: { item: BulkUpdateActivity }) {
         onClick={() => setOpen((value) => !value)}
         className="flex w-full items-start gap-2 text-left"
       >
-        <span className="text-muted mt-0.5 shrink-0">
+        <ActivityIconSlot>
           {open ? (
-            <ChevronDown className="h-4 w-4" />
+            <ChevronDown className="text-muted h-4 w-4" />
           ) : (
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="text-muted h-4 w-4" />
           )}
-        </span>
+        </ActivityIconSlot>
         <div className="min-w-0 flex-1">
           <p className="text-sm">{item.summary}</p>
           <ActivityMeta item={item} />
@@ -172,7 +182,7 @@ export default function ActivityPage() {
       />
 
       <Card className="space-y-4">
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <SelectInput
             value={eventType}
             onChange={(value) => {
@@ -204,25 +214,26 @@ export default function ActivityPage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-muted text-xs uppercase tracking-wide">Period</span>
-          <Button
-            variant={dateShortcut === "day" ? "primary" : "secondary"}
-            onClick={() => applyShortcut("day")}
-          >
-            Last day
-          </Button>
-          <Button
-            variant={dateShortcut === "week" ? "primary" : "secondary"}
-            onClick={() => applyShortcut("week")}
-          >
-            Last week
-          </Button>
-          <Button
-            variant={dateShortcut === "month" ? "primary" : "secondary"}
-            onClick={() => applyShortcut("month")}
-          >
-            Last month
-          </Button>
+          <span className="text-muted text-xs font-medium uppercase tracking-wide">
+            Period
+          </span>
+          <PeriodSegmentedControl
+            value={
+              dateShortcut === "day" ||
+              dateShortcut === "week" ||
+              dateShortcut === "month"
+                ? dateShortcut
+                : null
+            }
+            onChange={(value) =>
+              applyShortcut(value as Exclude<DateShortcut, "" | "custom">)
+            }
+            options={[
+              { value: "day", label: "Last day" },
+              { value: "week", label: "Last week" },
+              { value: "month", label: "Last month" },
+            ]}
+          />
           <Button
             variant={dateShortcut === "custom" ? "primary" : "secondary"}
             onClick={() => {
@@ -303,8 +314,13 @@ export default function ActivityPage() {
                 <BulkUpdateRow key={`bulk-${item.id}`} item={item} />
               ) : (
                 <li key={`${item.kind}-${item.id}`} className="px-4 py-3">
-                  <p className="text-sm">{item.summary}</p>
-                  <ActivityMeta item={item} />
+                  <div className="flex items-start gap-2">
+                    <ActivityIconSlot />
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm">{item.summary}</p>
+                      <ActivityMeta item={item} />
+                    </div>
+                  </div>
                 </li>
               ),
             )}
