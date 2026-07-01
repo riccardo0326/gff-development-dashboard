@@ -3,6 +3,8 @@
 import {
   CartesianGrid,
   Cell,
+  Label,
+  Legend,
   Line,
   LineChart,
   Pie,
@@ -14,13 +16,15 @@ import {
 } from "recharts";
 import { useEffect, useMemo, useState } from "react";
 import { X } from "lucide-react";
+import { DarkChartTooltip } from "@/components/chart-tooltip";
 import { ProgressBar } from "@/components/progress-bar";
-import { Card, PageHeader } from "@/components/ui";
+import { Card, PageHeader, SegmentedControl } from "@/components/ui";
 import type { DailyStat, PriorityStats, Settings, WeeklyTrendPoint } from "@/lib/types";
 import { buildDailyTrendForWeek, formatDisplayDate } from "@/lib/calculations";
 import { cn, formatNumber, formatPercent } from "@/lib/utils";
 
 const PIE_COLORS = ["#22c55e", "#f59e0b"];
+const PIE_LABELS = ["Covered", "Pending"] as const;
 const SCOPES = ["TOT", "Prio1", "Prio2", "Prio3"] as const;
 const KPI_MODES = ["total", "feasible"] as const;
 
@@ -62,6 +66,51 @@ function KpiCard({
       <p className="mt-2 text-2xl font-semibold">{value}</p>
       {hint ? <p className="text-muted mt-1 text-xs">{hint}</p> : null}
     </Card>
+  );
+}
+
+function DonutLegend() {
+  return (
+    <div className="mt-3 flex flex-wrap justify-center gap-3 text-xs">
+      {PIE_LABELS.map((label, index) => (
+        <span
+          key={label}
+          className="text-foreground/70 inline-flex items-center gap-1.5"
+        >
+          <span
+            className="inline-block h-2.5 w-2.5 rounded-sm"
+            style={{ backgroundColor: PIE_COLORS[index] }}
+          />
+          {label}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function DonutCenterLabel({
+  viewBox,
+  implemented,
+  total,
+}: {
+  viewBox?: { cx?: number; cy?: number };
+  implemented: number;
+  total: number;
+}) {
+  const cx = viewBox?.cx;
+  const cy = viewBox?.cy;
+  if (cx === undefined || cy === undefined) return null;
+  const pct = total > 0 ? Math.round((implemented / total) * 100) : 0;
+
+  return (
+    <text x={cx} y={cy} textAnchor="middle" dominantBaseline="middle">
+      <tspan x={cx} y={cy - 6} fill="#e6edf3" fontSize={18} fontWeight={700}>
+        {pct}%
+      </tspan>
+      <tspan x={cx} y={cy + 14} fill="#8b949e" fontSize={11}>
+        covered
+      </tspan>
+    </text>
   );
 }
 
@@ -187,7 +236,7 @@ function WeekDetailModal({
               <CartesianGrid stroke="#1f2937" strokeDasharray="3 3" />
               <XAxis dataKey="dayLabel" stroke="#8b98a8" tick={{ fontSize: 11 }} />
               <YAxis stroke="#8b98a8" allowDecimals={false} />
-              <Tooltip />
+              <Tooltip content={<DarkChartTooltip />} />
               <Line
                 type="monotone"
                 dataKey="impl_for_day"
@@ -264,7 +313,7 @@ export default function StatisticsPage() {
         description="Priority breakdown, completion forecasts, and weekly implementation trend."
       />
 
-      <div className="grid gap-4 xl:grid-cols-2 2xl:grid-cols-4">
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4">
         {pieRows.map((row) => {
           const chartData = [
             {
@@ -277,31 +326,63 @@ export default function StatisticsPage() {
               label: `Pending (${formatNumber(row.pending)})`,
               value: row.pending,
             },
-          ];
+          ].filter((slice) => slice.value > 0);
+          const pieTotal = row.implemented + row.pending;
+          const displayData =
+            chartData.length > 0
+              ? chartData
+              : [{ name: "Empty", label: "No data", value: 1 }];
+
           return (
             <Card key={row.label}>
               <h3 className="mb-3 font-medium">{row.label}</h3>
-              <div className="h-56">
+              <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
-                      data={chartData}
+                      data={displayData}
                       dataKey="value"
                       nameKey="label"
-                      innerRadius={50}
-                      outerRadius={80}
+                      innerRadius={52}
+                      outerRadius={78}
+                      label={({ name, value, percent }) =>
+                        value > 0 && name !== "Empty"
+                          ? `${name} ${formatNumber(value)} (${((percent ?? 0) * 100).toFixed(0)}%)`
+                          : ""
+                      }
+                      labelLine={false}
                     >
-                      {chartData.map((_, index) => (
+                      {displayData.map((entry, index) => (
                         <Cell
-                          key={index}
-                          fill={PIE_COLORS[index % PIE_COLORS.length]}
+                          key={entry.name}
+                          fill={
+                            entry.name === "Empty"
+                              ? "#30363d"
+                              : PIE_COLORS[
+                                  PIE_LABELS.indexOf(
+                                    entry.name as (typeof PIE_LABELS)[number],
+                                  )
+                                ] ?? PIE_COLORS[index % PIE_COLORS.length]
+                          }
                         />
                       ))}
+                      <Label
+                        content={(props) => (
+                          <DonutCenterLabel
+                            viewBox={props.viewBox as { cx?: number; cy?: number }}
+                            implemented={row.implemented}
+                            total={pieTotal}
+                          />
+                        )}
+                        position="center"
+                      />
                     </Pie>
-                    <Tooltip />
+                    <Legend />
+                    <Tooltip content={<DarkChartTooltip />} />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
+              <DonutLegend />
             </Card>
           );
         })}
@@ -336,7 +417,7 @@ export default function StatisticsPage() {
                   )}
                 />
                 <YAxis stroke="#8b98a8" />
-                <Tooltip />
+                <Tooltip content={<DarkChartTooltip />} />
                 <Line
                   type="monotone"
                   dataKey="impl_for_day"
@@ -377,21 +458,12 @@ export default function StatisticsPage() {
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
-            {SCOPES.map((scope) => (
-              <button
-                key={scope}
-                type="button"
-                onClick={() => setSelectedScope(scope)}
-                className={cn(
-                  "rounded-lg px-3 py-1.5 text-sm transition-colors",
-                  selectedScope === scope
-                    ? "bg-accent text-white"
-                    : "border-card-border text-muted hover:text-foreground border hover:bg-white/5",
-                )}
-              >
-                {scope}
-              </button>
-            ))}
+            <SegmentedControl
+              tone="info"
+              value={selectedScope}
+              onChange={setSelectedScope}
+              options={SCOPES.map((scope) => ({ value: scope, label: scope }))}
+            />
           </div>
         </div>
 
@@ -448,21 +520,15 @@ export default function StatisticsPage() {
                     </p>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    {KPI_MODES.map((mode) => (
-                      <button
-                        key={mode}
-                        type="button"
-                        onClick={() => setKpiMode(mode)}
-                        className={cn(
-                          "rounded-lg px-3 py-1.5 text-sm capitalize transition-colors",
-                          kpiMode === mode
-                            ? "bg-accent text-white"
-                            : "border-card-border text-muted hover:text-foreground border hover:bg-white/5",
-                        )}
-                      >
-                        {mode}
-                      </button>
-                    ))}
+                    <SegmentedControl
+                      tone="success"
+                      value={kpiMode}
+                      onChange={setKpiMode}
+                      options={KPI_MODES.map((mode) => ({
+                        value: mode,
+                        label: mode,
+                      }))}
+                    />
                   </div>
                 </div>
 

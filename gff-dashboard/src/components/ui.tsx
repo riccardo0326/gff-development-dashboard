@@ -91,37 +91,79 @@ export function Button({
   type = "button",
   disabled,
   href,
+  className,
 }: {
   children: React.ReactNode;
   onClick?: () => void;
-  variant?: "primary" | "secondary";
+  variant?: "primary" | "secondary" | "secondary-muted";
   type?: "button" | "submit";
   disabled?: boolean;
   href?: string;
+  className?: string;
 }) {
-  const className = cn(
-    "inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:opacity-50",
-    variant === "primary"
-      ? "bg-accent hover:bg-blue-500 text-white"
-      : "border-card-border hover:bg-white/5 border",
+  const styles = cn(
+    "inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition-colors",
+    variant === "primary" &&
+      "bg-accent hover:bg-blue-500 text-white disabled:bg-[#1f293d] disabled:text-[#64748b] disabled:cursor-not-allowed disabled:hover:bg-[#1f293d]",
+    variant === "secondary" &&
+      "border border-[#30363d] bg-[#21262d] text-foreground hover:bg-white/5 disabled:border-[#30363d] disabled:bg-transparent disabled:text-[#64748b] disabled:cursor-not-allowed disabled:hover:bg-transparent",
+    variant === "secondary-muted" &&
+      "border border-[#30363d] bg-[#21262d] text-foreground hover:bg-white/5",
+    className,
   );
 
   if (href) {
     return (
-      <a href={href} className={className}>
+      <a href={href} className={styles}>
         {children}
       </a>
     );
   }
 
   return (
-    <button
-      type={type}
-      onClick={onClick}
-      disabled={disabled}
-      className={className}
-    >
+    <button type={type} onClick={onClick} disabled={disabled} className={styles}>
       {children}
     </button>
+  );
+}
+
+export function SegmentedControl<T extends string>({
+  options,
+  value,
+  onChange,
+  tone = "info",
+}: {
+  options: Array<{ value: T; label: string }>;
+  value: T;
+  onChange: (value: T) => void;
+  tone?: "info" | "success";
+}) {
+  const activeClass =
+    tone === "success"
+      ? "bg-[#238636] text-white"
+      : "bg-[#1f6feb] text-white";
+
+  return (
+    <div
+      className="inline-flex overflow-hidden rounded-lg border border-[#30363d]"
+      role="group"
+    >
+      {options.map((option, index) => (
+        <button
+          key={option.value}
+          type="button"
+          onClick={() => onChange(option.value)}
+          className={cn(
+            "px-3 py-1.5 text-sm capitalize transition-colors",
+            index > 0 && "border-l border-[#30363d]",
+            value === option.value
+              ? activeClass
+              : "bg-[#21262d] text-[#8b949e] hover:text-foreground",
+          )}
+        >
+          {option.label}
+        </button>
+      ))}
+    </div>
   );
 }
