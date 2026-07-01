@@ -105,9 +105,10 @@ export function getEcuCompletions(filters?: {
 }): EcuCompletion[] {
   const ecus = getEcus(filters);
   const db = getDb();
+  const faultyDtcIds = getFaultyDtcIds();
 
   const stmt = db.prepare(`
-    SELECT coverage_lb74x, coverage_lb636, coverage_lb63x,
+    SELECT id as dtc_id, coverage_lb74x, coverage_lb636, coverage_lb63x,
            applicable_lb74x, applicable_lb636, applicable_lb63x
     FROM dtcs WHERE ecu_id = ?
   `);
@@ -117,6 +118,7 @@ export function getEcuCompletions(filters?: {
     projects: computeEcuProjectCompletion(
       ecu,
       stmt.all(ecu.id) as Array<{
+        dtc_id: number;
         coverage_lb74x: string | null;
         coverage_lb636: string | null;
         coverage_lb63x: string | null;
@@ -124,6 +126,7 @@ export function getEcuCompletions(filters?: {
         applicable_lb636: number;
         applicable_lb63x: number;
       }>,
+      faultyDtcIds,
     ),
   }));
 }
@@ -176,9 +179,12 @@ export function getStatisticsSummary() {
   const settings = getSettings();
   const dailyStats = getDailyStats();
   const faultyDtcIds = getFaultyDtcIds();
-  const priorityStats = buildPriorityStats(ecus, rows, settings, dailyStats);
+  const priorityStats = buildPriorityStats(ecus, rows, settings, dailyStats, {
+    faultyDtcIds,
+  });
   const priorityStatsFeasible = buildPriorityStats(ecus, rows, settings, dailyStats, {
-    excludeFaultyDtcIds: faultyDtcIds,
+    faultyDtcIds,
+    excludeFaultyFromTotals: true,
   });
   const totalRow = priorityStats.find((r) => r.label === "TOT");
   const forecast = buildForecastTable(

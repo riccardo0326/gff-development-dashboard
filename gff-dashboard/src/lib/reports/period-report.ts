@@ -6,6 +6,7 @@ import {
   getAllCoverageRows,
   getDailyStats,
   getEcus,
+  getFaultyDtcIds,
   getSettings,
 } from "@/lib/queries";
 import { buildPriorityStats } from "@/lib/calculations";
@@ -66,7 +67,9 @@ export function buildPeriodReportData(period: ReportPeriod): PeriodReportData {
   const ecus = getEcus();
   const rows = getAllCoverageRows();
   const dailyStats = getDailyStats();
-  const priorityStats = buildPriorityStats(ecus, rows, settings, dailyStats);
+  const priorityStats = buildPriorityStats(ecus, rows, settings, dailyStats, {
+    faultyDtcIds: getFaultyDtcIds(),
+  });
 
   const periodDailyStats = dailyStats
     .filter((d) => d.stat_date >= dateFrom && d.stat_date <= dateTo)

@@ -210,12 +210,20 @@ export default function EcuDetailPage() {
               return (
                 <div key={projectName}>
                   <ProgressBar
-                    value={stats.completion_pct}
+                    segments={{
+                      covered: stats.covered,
+                      pending: stats.pending,
+                      neutral: stats.neutral,
+                      faulty: stats.faulty,
+                    }}
                     label={`${projectName} (${formatPercent(stats.completion_pct)})`}
                   />
                   <p className="text-muted mt-1 text-xs">
                     {formatNumber(stats.covered)} covered /{" "}
                     {formatNumber(stats.total)} total
+                    {stats.faulty > 0
+                      ? ` · ${formatNumber(stats.faulty)} faulty`
+                      : ""}
                   </p>
                 </div>
               );

@@ -3,6 +3,8 @@
 import {
   CartesianGrid,
   Cell,
+  Legend,
+  Label,
   Line,
   LineChart,
   Pie,
@@ -20,7 +22,8 @@ import type { DailyStat, PriorityStats, Settings, WeeklyTrendPoint } from "@/lib
 import { buildDailyTrendForWeek, formatDisplayDate } from "@/lib/calculations";
 import { cn, formatNumber, formatPercent } from "@/lib/utils";
 
-const PIE_COLORS = ["#22c55e", "#f59e0b"];
+const PIE_COLORS = ["#22c55e", "#6b7280", "#f59e0b"];
+const PIE_LABELS = ["Covered", "Faulty", "Pending"] as const;
 const SCOPES = ["TOT", "Prio1", "Prio2", "Prio3"] as const;
 const KPI_MODES = ["total", "feasible"] as const;
 
@@ -58,10 +61,59 @@ function KpiCard({
         accent === "accent" && "border-accent/20",
       )}
     >
-      <p className="text-muted text-xs tracking-wide uppercase">{label}</p>
+      <p className="text-foreground/80 text-xs font-medium tracking-wide uppercase">
+        {label}
+      </p>
       <p className="mt-2 text-2xl font-semibold">{value}</p>
-      {hint ? <p className="text-muted mt-1 text-xs">{hint}</p> : null}
+      {hint ? (
+        <p className="text-foreground/60 mt-1 text-xs">{hint}</p>
+      ) : null}
     </Card>
+  );
+}
+
+function DonutLegend() {
+  return (
+    <div className="mt-3 flex flex-wrap justify-center gap-3 text-xs">
+      {PIE_LABELS.map((label, index) => (
+        <span
+          key={label}
+          className="text-foreground/70 inline-flex items-center gap-1.5"
+        >
+          <span
+            className="inline-block h-2.5 w-2.5 rounded-sm"
+            style={{ backgroundColor: PIE_COLORS[index] }}
+          />
+          {label}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function DonutCenterLabel({
+  viewBox,
+  implemented,
+  total,
+}: {
+  viewBox?: { cx?: number; cy?: number };
+  implemented: number;
+  total: number;
+}) {
+  const cx = viewBox?.cx;
+  const cy = viewBox?.cy;
+  if (cx === undefined || cy === undefined) return null;
+  const pct = total > 0 ? Math.round((implemented / total) * 100) : 0;
+
+  return (
+    <text x={cx} y={cy} textAnchor="middle" dominantBaseline="middle">
+      <tspan x={cx} y={cy - 6} fill="#e6edf3" fontSize={18} fontWeight={700}>
+        {pct}%
+      </tspan>
+      <tspan x={cx} y={cy + 14} fill="#8b949e" fontSize={11}>
+        covered
+      </tspan>
+    </text>
   );
 }
 
@@ -273,35 +325,73 @@ export default function StatisticsPage() {
               value: row.implemented,
             },
             {
+              name: "Faulty",
+              label: `Faulty (${formatNumber(row.faulty)})`,
+              value: row.faulty,
+            },
+            {
               name: "Pending",
               label: `Pending (${formatNumber(row.pending)})`,
               value: row.pending,
             },
-          ];
+          ].filter((slice) => slice.value > 0);
+          const pieTotal =
+            row.implemented + row.faulty + row.pending;
+          const displayData =
+            chartData.length > 0
+              ? chartData
+              : [{ name: "Empty", label: "No data", value: 1 }];
+
           return (
             <Card key={row.label}>
               <h3 className="mb-3 font-medium">{row.label}</h3>
-              <div className="h-56">
+              <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
-                      data={chartData}
+                      data={displayData}
                       dataKey="value"
                       nameKey="label"
-                      innerRadius={50}
-                      outerRadius={80}
+                      innerRadius={52}
+                      outerRadius={78}
+                          label={({ name, value, percent }) =>
+                        value > 0 && name !== "Empty"
+                          ? `${name} ${formatNumber(value)} (${((percent ?? 0) * 100).toFixed(0)}%)`
+                          : ""
+                      }
+                      labelLine={false}
                     >
-                      {chartData.map((_, index) => (
+                      {displayData.map((entry, index) => (
                         <Cell
-                          key={index}
-                          fill={PIE_COLORS[index % PIE_COLORS.length]}
+                          key={entry.name}
+                          fill={
+                            entry.name === "Empty"
+                              ? "#30363d"
+                              : PIE_COLORS[
+                                  PIE_LABELS.indexOf(
+                                    entry.name as (typeof PIE_LABELS)[number],
+                                  )
+                                ] ?? PIE_COLORS[index % PIE_COLORS.length]
+                          }
                         />
                       ))}
+                      <Label
+                        content={(props) => (
+                          <DonutCenterLabel
+                            viewBox={props.viewBox as { cx?: number; cy?: number }}
+                            implemented={row.implemented}
+                            total={pieTotal}
+                          />
+                        )}
+                        position="center"
+                      />
                     </Pie>
+                    <Legend />
                     <Tooltip />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
+              <DonutLegend />
             </Card>
           );
         })}
@@ -502,16 +592,25 @@ export default function StatisticsPage() {
                 </div>
 
                 <div className="grid gap-4 md:grid-cols-3">
-                  {(["LB74x", "LB636", "LB63x"] as const).map((project) => (
-                    <Card key={project} className="bg-background/40">
-                      <p className="mb-2 text-sm font-medium">{project}</p>
-                      <ProgressBar value={selectedForecastRow.completion[project]} />
-                      <p className="text-muted mt-2 text-xs">
-                        {formatPercent(selectedForecastRow.completion[project])}{" "}
-                        completion
-                      </p>
-                    </Card>
-                  ))}
+                  {(["LB74x", "LB636", "LB63x"] as const).map((project) => {
+                    const segments = selectedForecastRow.segments[project];
+                    return (
+                      <Card key={project} className="bg-background/40">
+                        <p className="mb-2 text-sm font-medium">{project}</p>
+                        <ProgressBar
+                          value={selectedForecastRow.completion[project]}
+                          segments={segments}
+                        />
+                        <p className="text-muted mt-2 text-xs">
+                          {formatPercent(selectedForecastRow.completion[project])}{" "}
+                          completion
+                          {segments.faulty > 0
+                            ? ` · ${formatNumber(segments.faulty)} faulty`
+                            : ""}
+                        </p>
+                      </Card>
+                    );
+                  })}
                 </div>
               </Card>
             ) : null}

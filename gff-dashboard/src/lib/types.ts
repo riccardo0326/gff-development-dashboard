@@ -82,11 +82,20 @@ export interface WeeklyTrendPoint {
   weekly_benchmark: number;
 }
 
+export interface ProjectSegments {
+  covered: number;
+  pending: number;
+  neutral: number;
+  faulty: number;
+}
+
 export interface ProjectCompletion {
   project: VehicleProjectId;
   total: number;
   covered: number;
   pending: number;
+  neutral: number;
+  faulty: number;
   completion_pct: number;
 }
 
@@ -100,6 +109,8 @@ export interface PriorityStats {
   total_dtcs: number;
   implemented: number;
   pending: number;
+  faulty: number;
+  segments: Record<VehicleProjectId, ProjectSegments>;
   daily_estimate: number | null;
   daily_average: number | null;
   days_required_estimated: number | null;
