@@ -9,6 +9,7 @@ import {
   todayIsoDate,
 } from "@/lib/datetime";
 import { formatNumber } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 type DateShortcut = "" | "day" | "week" | "month" | "custom";
 
@@ -44,6 +45,22 @@ type ActivityItem =
   | AuditEventActivity
   | BulkUpdateActivity;
 
+function activityBadgeClass(kind: string, eventType?: string): string {
+  if (kind === "bulk_update") {
+    return "border border-purple-500/30 bg-purple-500/15 text-purple-200";
+  }
+  if (eventType === "import") {
+    return "border border-blue-500/30 bg-blue-500/15 text-blue-200";
+  }
+  if (eventType === "export") {
+    return "border border-emerald-500/30 bg-emerald-500/15 text-emerald-200";
+  }
+  if (eventType === "report") {
+    return "border border-amber-500/30 bg-amber-500/15 text-amber-200";
+  }
+  return "border border-[#30363d] bg-[#21262d] text-[#8b949e]";
+}
+
 function ActivityMeta({
   item,
 }: {
@@ -54,15 +71,23 @@ function ActivityMeta({
     timestamp: string;
   };
 }) {
+  const badgeLabel =
+    item.kind === "bulk_update"
+      ? "bulk_update"
+      : item.kind === "audit_event"
+        ? item.eventType
+        : "change";
+
   return (
-    <p className="text-muted mt-1 text-xs">
-      {item.kind === "bulk_update" || item.kind === "audit_event" ? (
-        <span className="mr-2 rounded bg-white/10 px-1.5 py-0.5 uppercase">
-          {item.kind === "bulk_update" ? "bulk_update" : item.eventType}
-        </span>
-      ) : (
-        <span className="mr-2 rounded bg-white/10 px-1.5 py-0.5">change</span>
-      )}
+    <p className="mt-1 text-xs text-[#8b949e]">
+      <span
+        className={cn(
+          "mr-2 inline-block rounded px-1.5 py-0.5 uppercase",
+          activityBadgeClass(item.kind, item.eventType),
+        )}
+      >
+        {badgeLabel}
+      </span>
       {item.username ? `@${item.username}` : "system"} ·{" "}
       {formatDateInRome(item.timestamp)}
     </p>
@@ -94,8 +119,8 @@ function BulkUpdateRow({ item }: { item: BulkUpdateActivity }) {
               {item.children.map((child) => (
                 <li key={child.id} className="text-sm">
                   <p>{child.summary}</p>
-                  <p className="text-muted mt-0.5 text-xs">
-                    <span className="mr-2 rounded bg-white/10 px-1.5 py-0.5">
+                  <p className="text-muted mt-0.5 text-xs text-[#8b949e]">
+                    <span className="mr-2 inline-block rounded border border-[#30363d] bg-[#21262d] px-1.5 py-0.5 text-[#8b949e]">
                       change
                     </span>
                     {child.username ? `@${child.username}` : "system"} ·{" "}
