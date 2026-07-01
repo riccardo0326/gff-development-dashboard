@@ -83,16 +83,21 @@ export function SelectInput({
   value,
   onChange,
   options,
+  className,
 }: {
   value: string;
   onChange: (value: string) => void;
   options: Array<{ value: string; label: string }>;
+  className?: string;
 }) {
   return (
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="border-card-border bg-background focus:border-accent rounded-lg border px-3 py-2 text-sm outline-none"
+      className={cn(
+        "border-card-border bg-background focus:border-accent w-full rounded-lg border px-3 py-2 text-sm outline-none",
+        className,
+      )}
     >
       {options.map((option) => (
         <option key={option.value} value={option.value}>
@@ -142,5 +147,39 @@ export function Button({
     >
       {children}
     </button>
+  );
+}
+
+export function PeriodSegmentedControl<T extends string>({
+  options,
+  value,
+  onChange,
+}: {
+  options: Array<{ value: T; label: React.ReactNode }>;
+  value: T | null;
+  onChange: (value: T) => void;
+}) {
+  return (
+    <div
+      className="inline-flex overflow-hidden rounded-lg border border-[#30363d]"
+      role="group"
+    >
+      {options.map((option, index) => (
+        <button
+          key={String(option.value)}
+          type="button"
+          onClick={() => onChange(option.value)}
+          className={cn(
+            "px-3 py-1.5 text-sm transition-colors",
+            index > 0 && "border-l border-[#30363d]",
+            value === option.value
+              ? "bg-[#30363d] text-white"
+              : "bg-[#21262d] text-[#8b949e] hover:text-foreground",
+          )}
+        >
+          {option.label}
+        </button>
+      ))}
+    </div>
   );
 }
