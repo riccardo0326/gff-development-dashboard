@@ -1,5 +1,31 @@
 import { cn } from "@/lib/utils";
 
+export const PROGRESS_BAR_LEGEND = [
+  { key: "covered", label: "Covered", color: "#22c55e" },
+  { key: "pending", label: "Pending", color: "#f59e0b" },
+  { key: "neutral", label: "Neutral", color: "#64748b" },
+  { key: "faulty", label: "Faulty", color: "#6b7280" },
+] as const;
+
+export function ProgressBarLegend({ className }: { className?: string }) {
+  return (
+    <div className={cn("flex flex-wrap gap-x-4 gap-y-1 text-xs", className)}>
+      {PROGRESS_BAR_LEGEND.map((item) => (
+        <span
+          key={item.key}
+          className="text-foreground/70 inline-flex items-center gap-1.5"
+        >
+          <span
+            className="inline-block h-2.5 w-2.5 rounded-full"
+            style={{ backgroundColor: item.color }}
+          />
+          {item.label}
+        </span>
+      ))}
+    </div>
+  );
+}
+
 export interface ProgressBarSegments {
   covered: number;
   pending: number;

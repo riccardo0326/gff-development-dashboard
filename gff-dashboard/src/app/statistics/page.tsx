@@ -4,7 +4,6 @@ import {
   CartesianGrid,
   Cell,
   Label,
-  Legend,
   Line,
   LineChart,
   Pie,
@@ -17,7 +16,7 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import { X } from "lucide-react";
 import { DarkChartTooltip } from "@/components/chart-tooltip";
-import { ProgressBar } from "@/components/progress-bar";
+import { ProgressBar, ProgressBarLegend } from "@/components/progress-bar";
 import { Card, PageHeader, SegmentedControl } from "@/components/ui";
 import type { DailyStat, PriorityStats, Settings, WeeklyTrendPoint } from "@/lib/types";
 import { buildDailyTrendForWeek, formatDisplayDate } from "@/lib/calculations";
@@ -73,20 +72,28 @@ function KpiCard({
   );
 }
 
-function DonutLegend() {
+function DonutLegend({
+  items,
+}: {
+  items: Array<{ label: string; value: number; color: string }>;
+}) {
+  const visible = items.filter((item) => item.value > 0);
+  if (visible.length === 0) return null;
+
   return (
-    <div className="mt-3 flex flex-wrap justify-center gap-3 text-xs">
-      {PIE_LABELS.map((label, index) => (
-        <span
-          key={label}
-          className="text-foreground/70 inline-flex items-center gap-1.5"
+    <div className="mt-3 space-y-1.5">
+      {visible.map((item) => (
+        <div
+          key={item.label}
+          className="text-foreground/70 flex items-center gap-2 text-xs"
         >
           <span
-            className="inline-block h-2.5 w-2.5 rounded-sm"
-            style={{ backgroundColor: PIE_COLORS[index] }}
+            className="inline-block h-2.5 w-2.5 shrink-0 rounded-full"
+            style={{ backgroundColor: item.color }}
           />
-          {label}
-        </span>
+          <span>{item.label}</span>
+          <span className="text-muted">({formatNumber(item.value)})</span>
+        </div>
       ))}
     </div>
   );
@@ -350,15 +357,9 @@ export default function StatisticsPage() {
                     <Pie
                       data={displayData}
                       dataKey="value"
-                      nameKey="label"
+                      nameKey="name"
                       innerRadius={52}
                       outerRadius={78}
-                      label={({ name, value, percent }) =>
-                        value > 0 && name !== "Empty"
-                          ? `${name} ${formatNumber(value)} (${((percent ?? 0) * 100).toFixed(0)}%)`
-                          : ""
-                      }
-                      labelLine={false}
                     >
                       {displayData.map((entry, index) => (
                         <Cell
@@ -385,12 +386,17 @@ export default function StatisticsPage() {
                         position="center"
                       />
                     </Pie>
-                    <Legend />
                     <Tooltip content={<DarkChartTooltip />} />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
-              <DonutLegend />
+              <DonutLegend
+                items={[
+                  { label: "Covered", value: row.implemented, color: PIE_COLORS[0] },
+                  { label: "Faulty", value: row.faulty, color: PIE_COLORS[1] },
+                  { label: "Pending", value: row.pending, color: PIE_COLORS[2] },
+                ]}
+              />
             </Card>
           );
         })}
@@ -578,6 +584,8 @@ export default function StatisticsPage() {
                     }
                   />
                 </div>
+
+                <ProgressBarLegend className="mb-1" />
 
                 <div className="grid gap-4 md:grid-cols-3">
                   {(["LB74x", "LB636", "LB63x"] as const).map((project) => {

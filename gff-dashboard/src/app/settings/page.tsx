@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useSession } from "next-auth/react";
-import { Download, Upload } from "lucide-react";
+import { signOut, useSession } from "next-auth/react";
+import { Download, LogOut, Upload } from "lucide-react";
 import {
   Button,
   Card,
@@ -265,6 +265,26 @@ export default function SettingsPage() {
           </form>
         </Card>
       ) : null}
+
+      <Card>
+        <h3 className="mb-2 font-medium">Account</h3>
+        <p className="text-muted mb-4 text-sm">
+          Signed in as{" "}
+          <span className="text-foreground">
+            {session?.user?.name ?? session?.user?.email ?? "unknown user"}
+          </span>
+          {session?.user?.role ? ` (${session.user.role})` : ""}.
+        </p>
+        <Button
+          variant="secondary"
+          onClick={() => signOut({ callbackUrl: "/login" })}
+        >
+          <span className="inline-flex items-center gap-2">
+            <LogOut className="h-4 w-4" />
+            Sign out
+          </span>
+        </Button>
+      </Card>
     </div>
   );
 }

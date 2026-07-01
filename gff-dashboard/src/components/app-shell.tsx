@@ -3,7 +3,6 @@
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
 import {
   Activity,
@@ -11,7 +10,6 @@ import {
   BarChart3,
   FileBarChart,
   LayoutDashboard,
-  LogOut,
   PanelLeftClose,
   PanelLeftOpen,
   Search,
@@ -58,112 +56,88 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen lg:flex">
       <aside
         className={cn(
-          "border-card-border bg-card flex shrink-0 flex-col border-b transition-[width] duration-300 ease-in-out lg:h-screen lg:justify-between lg:border-r lg:border-b-0",
+          "border-card-border bg-card flex shrink-0 flex-col border-b transition-[width] duration-300 ease-in-out lg:sticky lg:top-0 lg:min-h-screen lg:self-start lg:border-r lg:border-b-0",
           collapsed ? "w-full lg:w-16" : "w-full lg:w-64",
         )}
       >
-        <div className="flex min-h-0 flex-1 flex-col lg:overflow-hidden">
-          <div
-            className={cn(
-              "flex items-start gap-2 px-3 py-4",
-              collapsed ? "flex-col items-center lg:px-2" : "justify-between px-5",
-            )}
-          >
-            {!collapsed ? (
-              <div className="min-w-0">
-                <p className="text-muted text-xs tracking-[0.2em] uppercase">
-                  GFF Tracker
-                </p>
-                <h1 className="mt-1 text-lg font-semibold leading-tight">
-                  Development Dashboard
-                </h1>
-              </div>
-            ) : (
-              <div
-                className="bg-accent-soft text-accent mx-auto flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold"
-                title="GFF Tracker"
-              >
-                GFF
-              </div>
-            )}
-            <button
-              type="button"
-              onClick={toggleCollapsed}
-              className={cn(
-                "text-muted hover:text-foreground hover:bg-white/5 hidden shrink-0 rounded-lg p-2 transition-colors lg:inline-flex",
-                collapsed && "mx-auto flex w-full items-center justify-center",
-              )}
-              aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-              title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+        <div
+          className={cn(
+            "flex items-start gap-2 px-3 py-4",
+            collapsed ? "flex-col items-center lg:px-2" : "justify-between px-5",
+          )}
+        >
+          {!collapsed ? (
+            <div className="min-w-0">
+              <p className="text-muted text-xs tracking-[0.2em] uppercase">
+                GFF Tracker
+              </p>
+              <h1 className="mt-1 text-lg font-semibold leading-tight">
+                Development Dashboard
+              </h1>
+            </div>
+          ) : (
+            <div
+              className="bg-accent-soft text-accent mx-auto flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold"
+              title="GFF Tracker"
             >
-              {mounted && collapsed ? (
-                <PanelLeftOpen className="h-5 w-5" />
-              ) : (
-                <PanelLeftClose className="h-5 w-5" />
-              )}
-            </button>
-          </div>
-
-          <nav
-            className={cn(
-              "flex flex-1 gap-1 overflow-x-auto px-3 pb-4 lg:flex-col lg:overflow-y-auto",
-              collapsed && "lg:items-center lg:px-2",
-            )}
-          >
-            {visibleNav.map(({ href, label, icon: Icon }) => {
-              const active =
-                href === "/" ? pathname === "/" : pathname.startsWith(href);
-              return (
-                <Link
-                  key={href}
-                  href={href}
-                  title={collapsed ? label : undefined}
-                  className={cn(
-                    "flex items-center rounded-lg text-sm transition-colors",
-                    collapsed
-                      ? "justify-center px-2 py-2.5 lg:w-full"
-                      : "gap-2 px-3 py-2 whitespace-nowrap",
-                    active
-                      ? "bg-accent-soft text-foreground"
-                      : "text-muted hover:bg-white/5 hover:text-foreground",
-                  )}
-                >
-                  <span
-                    className={cn(
-                      "flex shrink-0 items-center justify-center",
-                      collapsed ? "h-5 w-full" : "h-4 w-4",
-                    )}
-                  >
-                    <Icon className="h-4 w-4" />
-                  </span>
-                  {!collapsed ? label : null}
-                </Link>
-              );
-            })}
-          </nav>
-        </div>
-
-        <div className={cn("shrink-0 px-3 pb-6", collapsed && "lg:px-2")}>
+              GFF
+            </div>
+          )}
           <button
             type="button"
-            onClick={() => signOut({ callbackUrl: "/login" })}
-            title={collapsed ? "Sign out" : undefined}
+            onClick={toggleCollapsed}
             className={cn(
-              "text-muted hover:text-foreground flex w-full items-center rounded-lg text-sm transition-colors hover:bg-white/5",
-              collapsed ? "justify-center px-2 py-2.5" : "gap-2 px-3 py-2",
+              "text-muted hover:text-foreground hover:bg-white/5 hidden shrink-0 rounded-lg p-2 transition-colors lg:inline-flex",
+              collapsed && "mx-auto flex w-full items-center justify-center",
             )}
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
-            <span
-              className={cn(
-                "flex shrink-0 items-center justify-center",
-                collapsed ? "h-5 w-full" : "h-4 w-4",
-              )}
-            >
-              <LogOut className="h-4 w-4" />
-            </span>
-            {!collapsed ? "Sign out" : null}
+            {mounted && collapsed ? (
+              <PanelLeftOpen className="h-5 w-5" />
+            ) : (
+              <PanelLeftClose className="h-5 w-5" />
+            )}
           </button>
         </div>
+
+        <nav
+          className={cn(
+            "flex flex-1 gap-1 overflow-x-auto px-3 pb-4 lg:flex-col lg:overflow-y-auto",
+            collapsed && "lg:items-center lg:px-2",
+          )}
+        >
+          {visibleNav.map(({ href, label, icon: Icon }) => {
+            const active =
+              href === "/" ? pathname === "/" : pathname.startsWith(href);
+            return (
+              <Link
+                key={href}
+                href={href}
+                title={collapsed ? label : undefined}
+                className={cn(
+                  "flex items-center rounded-lg text-sm transition-colors",
+                  collapsed
+                    ? "justify-center px-2 py-2.5 lg:w-full"
+                    : "gap-2 px-3 py-2 whitespace-nowrap",
+                  active
+                    ? "bg-accent-soft text-foreground"
+                    : "text-muted hover:bg-white/5 hover:text-foreground",
+                )}
+              >
+                <span
+                  className={cn(
+                    "flex shrink-0 items-center justify-center",
+                    collapsed ? "h-5 w-full" : "h-4 w-4",
+                  )}
+                >
+                  <Icon className="h-4 w-4" />
+                </span>
+                {!collapsed ? label : null}
+              </Link>
+            );
+          })}
+        </nav>
       </aside>
       <main className="min-w-0 flex-1 px-4 py-6 sm:px-6 lg:px-8">{children}</main>
     </div>
