@@ -109,7 +109,8 @@ export function getEcuCompletions(filters?: {
 
   const stmt = db.prepare(`
     SELECT id as dtc_id, coverage_lb74x, coverage_lb636, coverage_lb63x,
-           applicable_lb74x, applicable_lb636, applicable_lb63x
+           applicable_lb74x, applicable_lb636, applicable_lb63x,
+           gff_available
     FROM dtcs WHERE ecu_id = ?
   `);
 
@@ -125,6 +126,7 @@ export function getEcuCompletions(filters?: {
         applicable_lb74x: number;
         applicable_lb636: number;
         applicable_lb63x: number;
+        gff_available: string | null;
       }>,
       faultyDtcIds,
     ),
@@ -138,7 +140,7 @@ export function getAllCoverageRows() {
       `
       SELECT d.id as dtc_id, d.coverage_lb74x, d.coverage_lb636, d.coverage_lb63x,
              d.applicable_lb74x, d.applicable_lb636, d.applicable_lb63x,
-             d.ecu_id, e.priority
+             d.gff_available, d.ecu_id, e.priority
       FROM dtcs d
       JOIN ecus e ON e.id = d.ecu_id
     `,
@@ -151,6 +153,7 @@ export function getAllCoverageRows() {
     applicable_lb74x: number;
     applicable_lb636: number;
     applicable_lb63x: number;
+    gff_available: string | null;
     ecu_id: string;
     priority: number;
   }>;

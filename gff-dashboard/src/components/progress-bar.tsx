@@ -3,7 +3,6 @@ import { cn } from "@/lib/utils";
 export const PROGRESS_BAR_LEGEND = [
   { key: "covered", label: "Covered", color: "#22c55e" },
   { key: "pending", label: "Pending", color: "#f59e0b" },
-  { key: "neutral", label: "Neutral", color: "#64748b" },
   { key: "faulty", label: "Faulty", color: "#6b7280" },
 ] as const;
 
@@ -29,14 +28,12 @@ export function ProgressBarLegend({ className }: { className?: string }) {
 export interface ProgressBarSegments {
   covered: number;
   pending: number;
-  neutral?: number;
   faulty?: number;
 }
 
 const SEGMENT_COLORS = {
   covered: "bg-[#22c55e]",
   pending: "bg-[#f59e0b]",
-  neutral: "bg-[#64748b]",
   faulty: "bg-[#6b7280]",
 } as const;
 
@@ -47,9 +44,8 @@ function SegmentedProgressBar({
   segments: ProgressBarSegments;
   className?: string;
 }) {
-  const neutral = segments.neutral ?? 0;
   const faulty = segments.faulty ?? 0;
-  const total = segments.covered + segments.pending + neutral + faulty;
+  const total = segments.covered + segments.pending + faulty;
 
   if (total === 0) {
     return (
@@ -60,7 +56,6 @@ function SegmentedProgressBar({
   const parts: Array<{ key: keyof typeof SEGMENT_COLORS; count: number }> = [
     { key: "covered", count: segments.covered },
     { key: "pending", count: segments.pending },
-    { key: "neutral", count: neutral },
     { key: "faulty", count: faulty },
   ];
 
@@ -101,9 +96,7 @@ export function ProgressBar({
       ? Math.max(0, Math.min(100, value * 100))
       : segments
         ? (() => {
-            const neutral = segments.neutral ?? 0;
-            const actionable =
-              segments.covered + segments.pending + neutral;
+            const actionable = segments.covered + segments.pending;
             return actionable > 0 ? (segments.covered / actionable) * 100 : 0;
           })()
         : 0;

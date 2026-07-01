@@ -85,7 +85,6 @@ export interface WeeklyTrendPoint {
 export interface ProjectSegments {
   covered: number;
   pending: number;
-  neutral: number;
   faulty: number;
 }
 
@@ -94,7 +93,6 @@ export interface ProjectCompletion {
   total: number;
   covered: number;
   pending: number;
-  neutral: number;
   faulty: number;
   completion_pct: number;
 }

@@ -19,6 +19,7 @@ import type {
   WeeklyTrendPoint,
 } from "./types";
 import { VEHICLE_PROJECTS } from "./types";
+import { isTrackableGffSlot } from "./gff";
 
 const PROJECT_COLUMNS: Record<
   VehicleProjectId,
@@ -45,14 +46,15 @@ export interface CoverageRow {
   applicable_lb74x?: number;
   applicable_lb636?: number;
   applicable_lb63x?: number;
+  gff_available?: string | null;
   dtc_id?: number;
 }
 
 function emptyProjectSegments(): Record<VehicleProjectId, ProjectSegments> {
   return {
-    LB74x: { covered: 0, pending: 0, neutral: 0, faulty: 0 },
-    LB636: { covered: 0, pending: 0, neutral: 0, faulty: 0 },
-    LB63x: { covered: 0, pending: 0, neutral: 0, faulty: 0 },
+    LB74x: { covered: 0, pending: 0, faulty: 0 },
+    LB636: { covered: 0, pending: 0, faulty: 0 },
+    LB63x: { covered: 0, pending: 0, faulty: 0 },
   };
 }
 
@@ -65,12 +67,10 @@ export function countProjectCoverage(
   const applicableColumn = SLOT_APPLICABLE_COLUMNS[project];
   let covered = 0;
   let pending = 0;
-  let neutral = 0;
   let faulty = 0;
 
   for (const row of rows) {
-    const applicable = row[applicableColumn] ?? (row[column] ? 1 : 0);
-    if (!applicable) continue;
+    if (!isTrackableGffSlot(row, project)) continue;
 
     if (row.dtc_id !== undefined && faultyDtcIds?.has(row.dtc_id)) {
       faulty += 1;
@@ -79,18 +79,16 @@ export function countProjectCoverage(
 
     const value = row[column];
     if (value === "covered") covered += 1;
-    else if (value === "pending") pending += 1;
-    else neutral += 1;
+    else pending += 1;
   }
 
-  const total = covered + pending + neutral + faulty;
-  const actionable = covered + pending + neutral;
+  const total = covered + pending + faulty;
+  const actionable = covered + pending;
   return {
     project,
     total,
     covered,
     pending,
-    neutral,
     faulty,
     completion_pct: actionable > 0 ? covered / actionable : 0,
   };
@@ -144,10 +142,7 @@ export function aggregateCoverageStats(
     const isFaulty = faultyDtcIds?.has(row.dtc_id) ?? false;
 
     for (const project of VEHICLE_PROJECTS) {
-      const applicable =
-        row[SLOT_APPLICABLE_COLUMNS[project]] ??
-        (row[PROJECT_COLUMNS[project]] ? 1 : 0);
-      if (!applicable) continue;
+      if (!isTrackableGffSlot(row, project)) continue;
 
       const value = row[PROJECT_COLUMNS[project]];
 
@@ -162,7 +157,7 @@ export function aggregateCoverageStats(
         total += 1;
         if (value === "covered") {
           implemented += 1;
-        } else if (value === "pending") {
+        } else {
           pending += 1;
         }
         continue;
@@ -172,20 +167,16 @@ export function aggregateCoverageStats(
       if (value === "covered") {
         implemented += 1;
         perProject[project].covered += 1;
-      } else if (value === "pending") {
+      } else {
         pending += 1;
         perProject[project].pending += 1;
-      } else {
-        perProject[project].neutral += 1;
       }
 
       if (options?.excludeFaultyFromTotals) {
         if (value === "covered") {
           feasibleCompletion[project].covered += 1;
-        } else if (value === "pending") {
-          feasibleCompletion[project].pending += 1;
         } else {
-          feasibleCompletion[project].neutral += 1;
+          feasibleCompletion[project].pending += 1;
         }
       }
     }
@@ -194,12 +185,12 @@ export function aggregateCoverageStats(
   const completion = {} as Record<VehicleProjectId, number>;
   for (const project of VEHICLE_PROJECTS) {
     if (options?.excludeFaultyFromTotals) {
-      const { covered, pending: p, neutral } = feasibleCompletion[project];
-      const denom = covered + p + neutral;
+      const { covered, pending: p } = feasibleCompletion[project];
+      const denom = covered + p;
       completion[project] = denom > 0 ? covered / denom : 0;
     } else {
-      const { covered, pending: p, neutral } = perProject[project];
-      const denom = covered + p + neutral;
+      const { covered, pending: p } = perProject[project];
+      const denom = covered + p;
       completion[project] = denom > 0 ? covered / denom : 0;
     }
   }
