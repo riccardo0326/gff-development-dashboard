@@ -1,5 +1,24 @@
 import { cn } from "@/lib/utils";
 
+export function EmptyTableCell({
+  children = "—",
+  className,
+}: {
+  children?: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <span
+      className={cn(
+        "text-foreground/35 inline-block text-sm font-normal tabular-nums",
+        className,
+      )}
+    >
+      {children}
+    </span>
+  );
+}
+
 export function Card({
   children,
   className,
@@ -100,10 +119,10 @@ export function Button({
   href?: string;
 }) {
   const className = cn(
-    "inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:opacity-50",
+    "inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition-colors",
     variant === "primary"
-      ? "bg-accent hover:bg-blue-500 text-white"
-      : "border-card-border hover:bg-white/5 border",
+      ? "bg-accent hover:bg-blue-500 text-white disabled:bg-[#1f293d] disabled:text-[#64748b] disabled:cursor-not-allowed disabled:hover:bg-[#1f293d]"
+      : "border-card-border hover:bg-white/5 border disabled:border-[#30363d] disabled:bg-transparent disabled:text-[#64748b] disabled:cursor-not-allowed disabled:hover:bg-transparent",
   );
 
   if (href) {
