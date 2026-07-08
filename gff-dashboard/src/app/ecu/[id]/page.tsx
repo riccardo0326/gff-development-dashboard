@@ -218,7 +218,7 @@ export default function EcuDetailPage() {
                     segments={{
                       covered: stats.covered,
                       pending: stats.pending,
-                      faulty: stats.faulty,
+                      faulty: 0,
                     }}
                     label={`${projectName} (${formatPercent(stats.completion_pct)})`}
                   />

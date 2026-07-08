@@ -124,8 +124,7 @@ function main() {
     const pct = (row.implemented / row.total_dtcs) * 100;
     const excelPct = excel?.[1] ? (excel[2] / excel[1]) * 100 : 0;
     const totOk = row.total_dtcs === applicableSlots;
-    const balanceOk =
-      row.implemented + row.pending + row.faulty === row.total_dtcs;
+    const balanceOk = row.implemented + row.pending === row.total_dtcs;
 
     console.log(
       `${label}: total=${row.total_dtcs}${totOk ? "" : ` (expected ${applicableSlots})`}, ` +

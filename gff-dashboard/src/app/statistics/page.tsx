@@ -375,17 +375,12 @@ export default function StatisticsPage() {
               value: row.implemented,
             },
             {
-              name: "Faulty",
-              label: `Faulty (${formatNumber(row.faulty)})`,
-              value: row.faulty,
-            },
-            {
               name: "Pending",
               label: `Pending (${formatNumber(row.pending)})`,
               value: row.pending,
             },
           ].filter((slice) => slice.value > 0);
-          const pieTotal = row.implemented + row.faulty + row.pending;
+          const pieTotal = row.total_dtcs;
           const displayData =
             chartData.length > 0
               ? chartData
@@ -436,7 +431,6 @@ export default function StatisticsPage() {
               <DonutLegend
                 items={[
                   { label: "Covered", value: row.implemented, color: PIE_COLORS[0] },
-                  { label: "Faulty", value: row.faulty, color: PIE_COLORS[1] },
                   { label: "Pending", value: row.pending, color: PIE_COLORS[2] },
                 ]}
               />

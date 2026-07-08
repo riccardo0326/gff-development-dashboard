@@ -290,7 +290,7 @@ export default function DashboardPage() {
                             segments={{
                               covered: stats.covered,
                               pending: stats.pending,
-                              faulty: stats.faulty,
+                              faulty: 0,
                             }}
                             label={`${stats.covered}/${stats.total}`}
                           />

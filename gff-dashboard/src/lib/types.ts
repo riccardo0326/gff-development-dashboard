@@ -93,6 +93,7 @@ export interface ProjectCompletion {
   total: number;
   covered: number;
   pending: number;
+  /** Distinct faulty DTCs with at least one applicable slot in this project (not a slot bucket). */
   faulty: number;
   completion_pct: number;
 }
@@ -107,6 +108,7 @@ export interface PriorityStats {
   total_dtcs: number;
   implemented: number;
   pending: number;
+  /** Distinct faulty DTCs with at least one applicable slot in this scope (not a slot bucket). */
   faulty: number;
   segments: Record<VehicleProjectId, ProjectSegments>;
   daily_estimate: number | null;

@@ -64,33 +64,30 @@ export function countProjectCoverage(
   faultyDtcIds?: Set<number>,
 ): ProjectCompletion {
   const column = PROJECT_COLUMNS[project];
-  const applicableColumn = SLOT_APPLICABLE_COLUMNS[project];
   let covered = 0;
   let pending = 0;
-  let faulty = 0;
+  const faultyDtcIdsInScope = new Set<number>();
 
   for (const row of rows) {
     if (!isCoverageSlot(row, project)) continue;
 
-    if (row.dtc_id !== undefined && faultyDtcIds?.has(row.dtc_id)) {
-      faulty += 1;
-      continue;
-    }
-
     const value = row[column];
     if (value === "covered") covered += 1;
     else pending += 1;
+
+    if (row.dtc_id !== undefined && faultyDtcIds?.has(row.dtc_id)) {
+      faultyDtcIdsInScope.add(row.dtc_id);
+    }
   }
 
-  const total = covered + pending + faulty;
-  const actionable = covered + pending;
+  const total = covered + pending;
   return {
     project,
     total,
     covered,
     pending,
-    faulty,
-    completion_pct: actionable > 0 ? covered / actionable : 0,
+    faulty: faultyDtcIdsInScope.size,
+    completion_pct: total > 0 ? covered / total : 0,
   };
 }
 
@@ -133,35 +130,25 @@ export function aggregateCoverageStats(
   let total = 0;
   let implemented = 0;
   let pending = 0;
-  let faulty = 0;
+  const faultyDtcIdsInScope = new Set<number>();
   const perProject = emptyProjectSegments();
 
   const feasibleCompletion = emptyProjectSegments();
 
   for (const row of rows) {
     const isFaulty = faultyDtcIds?.has(row.dtc_id) ?? false;
+    let rowHasCoverageSlot = false;
 
     for (const project of VEHICLE_PROJECTS) {
       if (!isCoverageSlot(row, project)) continue;
 
-      const value = row[PROJECT_COLUMNS[project]];
+      rowHasCoverageSlot = true;
 
-      if (isFaulty) {
-        perProject[project].faulty += 1;
-        faulty += 1;
-
-        if (options?.excludeFaultyFromTotals) {
-          continue;
-        }
-
-        total += 1;
-        if (value === "covered") {
-          implemented += 1;
-        } else {
-          pending += 1;
-        }
+      if (options?.excludeFaultyFromTotals && isFaulty) {
         continue;
       }
+
+      const value = row[PROJECT_COLUMNS[project]];
 
       total += 1;
       if (value === "covered") {
@@ -179,6 +166,10 @@ export function aggregateCoverageStats(
           feasibleCompletion[project].pending += 1;
         }
       }
+    }
+
+    if (isFaulty && rowHasCoverageSlot) {
+      faultyDtcIdsInScope.add(row.dtc_id);
     }
   }
 
@@ -199,7 +190,7 @@ export function aggregateCoverageStats(
     total_dtcs: total,
     implemented,
     pending,
-    faulty,
+    faulty: faultyDtcIdsInScope.size,
     completion,
     segments: perProject,
   };
