@@ -135,63 +135,26 @@ export function aggregateCoverageStats(
   let pending = 0;
   let faulty = 0;
   const perProject = emptyProjectSegments();
-
-  const feasibleCompletion = emptyProjectSegments();
-
-  for (const row of rows) {
-    const isFaulty = faultyDtcIds?.has(row.dtc_id) ?? false;
-
-    for (const project of VEHICLE_PROJECTS) {
-      if (!isCoverageSlot(row, project)) continue;
-
-      const value = row[PROJECT_COLUMNS[project]];
-
-      if (isFaulty) {
-        perProject[project].faulty += 1;
-        faulty += 1;
-
-        if (options?.excludeFaultyFromTotals) {
-          continue;
-        }
-
-        total += 1;
-        if (value === "covered") {
-          implemented += 1;
-        } else {
-          pending += 1;
-        }
-        continue;
-      }
-
-      total += 1;
-      if (value === "covered") {
-        implemented += 1;
-        perProject[project].covered += 1;
-      } else {
-        pending += 1;
-        perProject[project].pending += 1;
-      }
-
-      if (options?.excludeFaultyFromTotals) {
-        if (value === "covered") {
-          feasibleCompletion[project].covered += 1;
-        } else {
-          feasibleCompletion[project].pending += 1;
-        }
-      }
-    }
-  }
-
   const completion = {} as Record<VehicleProjectId, number>;
+
   for (const project of VEHICLE_PROJECTS) {
+    const stats = countProjectCoverage(rows, project, faultyDtcIds);
+    perProject[project] = {
+      covered: stats.covered,
+      pending: stats.pending,
+      faulty: stats.faulty,
+    };
+    completion[project] = stats.completion_pct;
+    faulty += stats.faulty;
+
     if (options?.excludeFaultyFromTotals) {
-      const { covered, pending: p } = feasibleCompletion[project];
-      const denom = covered + p;
-      completion[project] = denom > 0 ? covered / denom : 0;
+      total += stats.covered + stats.pending;
+      implemented += stats.covered;
+      pending += stats.pending;
     } else {
-      const { covered, pending: p } = perProject[project];
-      const denom = covered + p;
-      completion[project] = denom > 0 ? covered / denom : 0;
+      total += stats.total;
+      implemented += stats.covered;
+      pending += stats.pending;
     }
   }
 
@@ -328,7 +291,7 @@ export function buildForecastTable(
   return sorted.map((row) => ({
     stat_date: row.stat_date,
     implemented_count: row.implemented_count,
-    pending: totalDtcs - row.implemented_count,
+    pending: Math.max(0, totalDtcs - row.implemented_count),
     impl_for_day: row.impl_for_day,
     daily_average: dailyAverage,
   }));

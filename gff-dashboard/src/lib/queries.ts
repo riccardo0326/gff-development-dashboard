@@ -205,8 +205,9 @@ export function getStatisticsSummary() {
     excludeFaultyFromTotals: true,
   });
   const totalRow = priorityStats.find((r) => r.label === "TOT");
+  const feasibleRow = priorityStatsFeasible.find((r) => r.label === "TOT");
   const forecast = buildForecastTable(
-    totalRow?.total_dtcs ?? 0,
+    feasibleRow?.total_dtcs ?? totalRow?.total_dtcs ?? 0,
     settings,
     dailyStats,
   );
