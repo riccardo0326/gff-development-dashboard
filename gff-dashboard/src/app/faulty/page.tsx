@@ -12,6 +12,7 @@ import {
   PageHeader,
   SelectInput,
 } from "@/components/ui";
+import { VisualizationFilter } from "@/components/visualization-filter";
 import type { FaultyDtc } from "@/lib/types";
 import { formatNumber } from "@/lib/utils";
 
@@ -122,7 +123,7 @@ export default function FaultyPage() {
         }
       />
 
-      <Card className="mb-6 grid gap-3 lg:grid-cols-3">
+      <VisualizationFilter>
         <FilterInput
           value={search}
           onChange={(value) => {
@@ -156,7 +157,7 @@ export default function FaultyPage() {
             ...issueOptions.map((item) => ({ value: item, label: item })),
           ]}
         />
-      </Card>
+      </VisualizationFilter>
 
       <Card className="overflow-hidden p-0">
         <div className="border-card-border flex items-center justify-between border-b px-4 py-3">

@@ -12,10 +12,12 @@ import {
   PageHeader,
   SelectInput,
 } from "@/components/ui";
+import { VisualizationFilter } from "@/components/visualization-filter";
 import type { EcuCompletion, VehicleProjectId } from "@/lib/types";
+import { VEHICLE_PROJECTS } from "@/lib/types";
 import { cn, compareEcuCodeHex, formatNumber, formatPercent } from "@/lib/utils";
 
-const PROJECTS: VehicleProjectId[] = ["LB74x", "LB636", "LB63x"];
+const PROJECTS: VehicleProjectId[] = VEHICLE_PROJECTS;
 
 type SortField = "priority" | VehicleProjectId;
 type SortDirection = "asc" | "desc";
@@ -61,6 +63,20 @@ export default function DashboardPage() {
   const [sortField, setSortField] = useState<SortField>("priority");
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
   const [loading, setLoading] = useState(true);
+  const [projects, setProjects] = useState<VehicleProjectId[]>(PROJECTS);
+
+  useEffect(() => {
+    fetch("/api/projects")
+      .then((res) => res.json())
+      .then((data: Array<{ id: VehicleProjectId }>) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setProjects(data.map((row) => row.id));
+        }
+      })
+      .catch(() => {
+        setProjects(PROJECTS);
+      });
+  }, []);
 
   useEffect(() => {
     const params = new URLSearchParams();
@@ -96,7 +112,7 @@ export default function DashboardPage() {
   const summary = useMemo(() => {
     const totals = { covered: 0, pending: 0, total: 0 };
     for (const ecu of sortedEcus) {
-      for (const project of PROJECTS) {
+      for (const project of projects) {
         const stats = ecu.projects[project];
         if (!stats) continue;
         totals.covered += stats.covered;
@@ -109,7 +125,7 @@ export default function DashboardPage() {
       coverageSlots: totals.total,
       completion: totals.total > 0 ? totals.covered / totals.total : 0,
     };
-  }, [sortedEcus]);
+  }, [sortedEcus, projects]);
 
   function toggleSort(field: SortField) {
     if (sortField === field) {
@@ -152,29 +168,27 @@ export default function DashboardPage() {
         </Card>
         <Card>
           <p className="text-muted text-sm">Vehicle projects</p>
-          <p className="mt-2 text-3xl font-semibold">3</p>
+          <p className="mt-2 text-3xl font-semibold">{projects.length}</p>
         </Card>
       </div>
 
-      <Card className="mb-6">
-        <div className="grid gap-3 md:grid-cols-[180px_1fr]">
-          <SelectInput
-            value={priority}
-            onChange={setPriority}
-            options={[
-              { value: "", label: "All priorities" },
-              { value: "1", label: "PRIO 1" },
-              { value: "2", label: "PRIO 2" },
-              { value: "3", label: "PRIO 3" },
-            ]}
-          />
-          <FilterInput
-            value={search}
-            onChange={setSearch}
-            placeholder="Search ECU code (e.g. 0001, DA0001)"
-          />
-        </div>
-      </Card>
+      <VisualizationFilter columns={2}>
+        <SelectInput
+          value={priority}
+          onChange={setPriority}
+          options={[
+            { value: "", label: "All priorities" },
+            { value: "1", label: "PRIO 1" },
+            { value: "2", label: "PRIO 2" },
+            { value: "3", label: "PRIO 3" },
+          ]}
+        />
+        <FilterInput
+          value={search}
+          onChange={setSearch}
+          placeholder="Search ECU code (e.g. 0001, DA0001)"
+        />
+      </VisualizationFilter>
 
       <Card className="overflow-hidden p-0">
         <div className="border-card-border border-b px-4 py-3">
@@ -193,12 +207,12 @@ export default function DashboardPage() {
                     onClick={() => toggleSort("priority")}
                   />
                 </th>
-                {PROJECTS.map((project, index) => (
+                {projects.map((project, index) => (
                   <th
                     key={project}
                     className={cn(
                       "min-w-[180px] px-4 py-3",
-                      index < PROJECTS.length - 1 && "border-card-border border-r",
+                      index < projects.length - 1 && "border-card-border border-r",
                     )}
                   >
                     <SortHeader
@@ -214,13 +228,13 @@ export default function DashboardPage() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={5} className="text-muted px-4 py-8 text-center">
+                  <td colSpan={2 + projects.length} className="text-muted px-4 py-8 text-center">
                     Loading ECUs...
                   </td>
                 </tr>
               ) : sortedEcus.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="text-muted px-4 py-8 text-center">
+                  <td colSpan={2 + projects.length} className="text-muted px-4 py-8 text-center">
                     No ECUs match the current filters.
                   </td>
                 </tr>
@@ -247,7 +261,7 @@ export default function DashboardPage() {
                         }
                       />
                     </td>
-                    {PROJECTS.map((project, index) => {
+                    {projects.map((project, index) => {
                       const stats = ecu.projects[project];
                       if (!stats) {
                         return (
@@ -255,7 +269,7 @@ export default function DashboardPage() {
                             key={project}
                             className={cn(
                               "px-4 py-3",
-                              index < PROJECTS.length - 1 &&
+                              index < projects.length - 1 &&
                                 "border-card-border border-r",
                             )}
                           >
@@ -268,7 +282,7 @@ export default function DashboardPage() {
                           key={project}
                           className={cn(
                             "px-4 py-3",
-                            index < PROJECTS.length - 1 &&
+                            index < projects.length - 1 &&
                               "border-card-border border-r",
                           )}
                         >
