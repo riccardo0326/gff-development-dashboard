@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { CalendarRange, ChevronDown, ChevronRight } from "lucide-react";
+import { VisualizationFilter } from "@/components/visualization-filter";
 import { Button, Card, PageHeader, PeriodSegmentedControl, SelectInput } from "@/components/ui";
 import {
   dateRangeForShortcut,
@@ -206,123 +207,126 @@ export default function ActivityPage() {
         description="Coverage changes, bulk updates, imports, exports, and report downloads."
       />
 
-      <Card className="space-y-4">
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <SelectInput
-            value={eventType}
-            onChange={(value) => {
-              setPage(1);
-              setEventType(value);
-            }}
-            options={[
-              { value: "", label: "All events" },
-              { value: "coverage_change", label: "Coverage changes" },
-              { value: "bulk_update", label: "Bulk updates" },
-              { value: "import", label: "Imports" },
-              { value: "export", label: "Exports" },
-              { value: "report", label: "Reports" },
-            ]}
-          />
-          <SelectInput
-            value={role}
-            onChange={(value) => {
-              setPage(1);
-              setRole(value);
-            }}
-            options={[
-              { value: "", label: "All roles" },
-              { value: "admin", label: "Admin" },
-              { value: "user", label: "User" },
-              { value: "lambo", label: "Lambo" },
-            ]}
-          />
-        </div>
-
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="text-muted text-xs font-medium uppercase tracking-wide">
-            Period
-          </span>
-          <PeriodSegmentedControl
-            value={
-              dateShortcut === "day" ||
-              dateShortcut === "week" ||
-              dateShortcut === "month"
-                ? dateShortcut
-                : null
-            }
-            onChange={(value) =>
-              applyShortcut(value as Exclude<DateShortcut, "" | "custom">)
-            }
-            options={[
-              { value: "day", label: "Last day" },
-              { value: "week", label: "Last week" },
-              { value: "month", label: "Last month" },
-            ]}
-          />
-          <Button
-            variant={dateShortcut === "custom" ? "primary" : "secondary"}
-            onClick={() => {
-              setCalendarOpen((open) => !open);
-              if (!fromDate && !toDate) {
-                setFromDate(todayIsoDate());
-                setToDate(todayIsoDate());
-              }
-              setDateShortcut("custom");
-            }}
-          >
-            <span className="inline-flex items-center gap-2">
-              <CalendarRange className="h-4 w-4" />
-              Custom range
-            </span>
-          </Button>
-          {fromDate || toDate ? (
-            <button
-              type="button"
-              onClick={clearDateFilter}
-              className="text-muted hover:text-foreground text-sm underline-offset-2 hover:underline"
-            >
-              Clear dates
-            </button>
-          ) : null}
-        </div>
-
-        {calendarOpen ? (
-          <div className="border-card-border grid max-w-xl gap-3 rounded-lg border p-4 sm:grid-cols-2">
-            <label className="grid gap-1 text-sm">
-              <span className="text-muted">From</span>
-              <input
-                type="date"
-                value={fromDate}
-                onChange={(event) => {
-                  setFromDate(event.target.value);
-                  setDateShortcut("custom");
-                  setPage(1);
-                }}
-                className="border-card-border bg-background rounded-lg border px-3 py-2"
+      <VisualizationFilter
+        columns={2}
+        footer={
+          <>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-muted text-xs font-medium uppercase tracking-wide">
+                Period
+              </span>
+              <PeriodSegmentedControl
+                value={
+                  dateShortcut === "day" ||
+                  dateShortcut === "week" ||
+                  dateShortcut === "month"
+                    ? dateShortcut
+                    : null
+                }
+                onChange={(value) =>
+                  applyShortcut(value as Exclude<DateShortcut, "" | "custom">)
+                }
+                options={[
+                  { value: "day", label: "Last day" },
+                  { value: "week", label: "Last week" },
+                  { value: "month", label: "Last month" },
+                ]}
               />
-            </label>
-            <label className="grid gap-1 text-sm">
-              <span className="text-muted">To</span>
-              <input
-                type="date"
-                value={toDate}
-                onChange={(event) => {
-                  setToDate(event.target.value);
+              <Button
+                variant={dateShortcut === "custom" ? "primary" : "secondary"}
+                onClick={() => {
+                  setCalendarOpen((open) => !open);
+                  if (!fromDate && !toDate) {
+                    setFromDate(todayIsoDate());
+                    setToDate(todayIsoDate());
+                  }
                   setDateShortcut("custom");
-                  setPage(1);
                 }}
-                className="border-card-border bg-background rounded-lg border px-3 py-2"
-              />
-            </label>
-          </div>
-        ) : null}
+              >
+                <span className="inline-flex items-center gap-2">
+                  <CalendarRange className="h-4 w-4" />
+                  Custom range
+                </span>
+              </Button>
+              {fromDate || toDate ? (
+                <button
+                  type="button"
+                  onClick={clearDateFilter}
+                  className="text-muted hover:text-foreground text-sm underline-offset-2 hover:underline"
+                >
+                  Clear dates
+                </button>
+              ) : null}
+            </div>
 
-        {fromDate && toDate ? (
-          <p className="text-muted text-xs">
-            Showing events from {fromDate} to {toDate} (Europe/Rome)
-          </p>
-        ) : null}
-      </Card>
+            {calendarOpen ? (
+              <div className="border-card-border grid max-w-xl gap-3 rounded-lg border p-4 sm:grid-cols-2">
+                <label className="grid gap-1 text-sm">
+                  <span className="text-muted">From</span>
+                  <input
+                    type="date"
+                    value={fromDate}
+                    onChange={(event) => {
+                      setFromDate(event.target.value);
+                      setDateShortcut("custom");
+                      setPage(1);
+                    }}
+                    className="border-card-border bg-background rounded-lg border px-3 py-2"
+                  />
+                </label>
+                <label className="grid gap-1 text-sm">
+                  <span className="text-muted">To</span>
+                  <input
+                    type="date"
+                    value={toDate}
+                    onChange={(event) => {
+                      setToDate(event.target.value);
+                      setDateShortcut("custom");
+                      setPage(1);
+                    }}
+                    className="border-card-border bg-background rounded-lg border px-3 py-2"
+                  />
+                </label>
+              </div>
+            ) : null}
+
+            {fromDate && toDate ? (
+              <p className="text-muted text-xs">
+                Showing events from {fromDate} to {toDate} (Europe/Rome)
+              </p>
+            ) : null}
+          </>
+        }
+      >
+        <SelectInput
+          value={eventType}
+          onChange={(value) => {
+            setPage(1);
+            setEventType(value);
+          }}
+          options={[
+            { value: "", label: "All events" },
+            { value: "coverage_change", label: "Coverage changes" },
+            { value: "bulk_update", label: "Bulk updates" },
+            { value: "import", label: "Imports" },
+            { value: "export", label: "Exports" },
+            { value: "report", label: "Reports" },
+          ]}
+        />
+        <SelectInput
+          value={role}
+          onChange={(value) => {
+            setPage(1);
+            setRole(value);
+          }}
+          options={[
+            { value: "", label: "All roles" },
+            { value: "admin", label: "Admin" },
+            { value: "user", label: "User" },
+            { value: "lambo", label: "Lambo" },
+          ]}
+        />
+      </VisualizationFilter>
 
       <Card className="overflow-hidden p-0">
         <div className="border-card-border border-b px-4 py-3">

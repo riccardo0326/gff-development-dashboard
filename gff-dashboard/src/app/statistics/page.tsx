@@ -16,6 +16,7 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import { X } from "lucide-react";
 import { DarkChartTooltip } from "@/components/chart-tooltip";
+import { DailyForecastAccordion } from "@/components/statistics/daily-forecast-accordion";
 import { ForecastColumn } from "@/components/statistics/forecast-column";
 import { InfoTooltip } from "@/components/info-tooltip";
 import { SectionTitle } from "@/components/section-title";
@@ -505,27 +506,23 @@ export default function StatisticsPage() {
         />
       ) : null}
 
-      <Card>
-        <SectionTitle
-          title="Scope"
-          description="Select a priority scope for the KPI and forecast sections below."
-          action={
-            <SegmentedControl
-              tone="info"
-              value={selectedScope}
-              onChange={setSelectedScope}
-              options={SCOPES.map((scope) => ({ value: scope, label: scope }))}
-            />
-          }
-        />
-      </Card>
-
       {selectedRow ? (
         <>
           <section>
             <SectionTitle
               title="Priority KPIs"
               description="Coverage breakdown for the selected scope."
+              action={
+                <SegmentedControl
+                  tone="info"
+                  value={selectedScope}
+                  onChange={setSelectedScope}
+                  options={SCOPES.map((scope) => ({
+                    value: scope,
+                    label: scope,
+                  }))}
+                />
+              }
             />
             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
               <KpiCard
@@ -582,35 +579,12 @@ export default function StatisticsPage() {
         </>
       ) : null}
 
-      <Card className="overflow-x-auto">
-        <h3 className="mb-4 font-medium">Daily forecast table</h3>
-        <table className="min-w-full text-sm">
-          <thead>
-            <tr className="text-muted border-card-border border-b text-left">
-              <th className="min-w-[140px] px-3 py-2">Date</th>
-              <th className="min-w-[140px] px-3 py-2">Covered total</th>
-              <th className="min-w-[140px] px-3 py-2">Pending</th>
-              <th className="min-w-[140px] px-3 py-2">Covered for day</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.forecast.map((row) => (
-              <tr
-                key={row.stat_date}
-                className="border-card-border border-b last:border-b-0"
-              >
-                <td className="px-3 py-2">
-                  {formatDisplayDate(row.stat_date)}
-                </td>
-                <td className="px-3 py-2">
-                  {formatNumber(row.implemented_count)}
-                </td>
-                <td className="px-3 py-2">{formatNumber(row.pending)}</td>
-                <td className="px-3 py-2">{formatNumber(row.impl_for_day)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <Card>
+        <SectionTitle
+          title="Daily forecast"
+          description="Browse cumulative coverage progress by month and day."
+        />
+        <DailyForecastAccordion rows={data.forecast} />
       </Card>
     </div>
   );

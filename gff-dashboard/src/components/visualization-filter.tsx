@@ -5,10 +5,12 @@ export function VisualizationFilter({
   children,
   className,
   columns = 3,
+  footer,
 }: {
   children: React.ReactNode;
   className?: string;
   columns?: 2 | 3 | 4;
+  footer?: React.ReactNode;
 }) {
   const gridClass =
     columns === 2
@@ -18,9 +20,10 @@ export function VisualizationFilter({
         : "lg:grid-cols-3";
 
   return (
-    <Card className={cn("mb-6", className)}>
-      <h3 className="mb-3 font-medium">Visualization filter</h3>
+    <Card className={cn("mb-6 space-y-4", className)}>
+      <h3 className="font-medium">Visualization filter</h3>
       <div className={cn("grid gap-3", gridClass)}>{children}</div>
+      {footer}
     </Card>
   );
 }

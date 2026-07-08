@@ -23,7 +23,7 @@ export function InfoTooltip({
       </button>
       <span
         role="tooltip"
-        className="border-card-border bg-card text-foreground/90 pointer-events-none absolute top-full left-1/2 z-50 mt-2 hidden w-72 -translate-x-1/2 rounded-lg border p-3 text-left text-xs leading-relaxed shadow-xl group-hover:block group-focus-within:block"
+        className="border-card-border bg-card text-foreground/90 pointer-events-none absolute top-full right-0 z-50 mt-2 hidden w-72 max-w-[min(18rem,calc(100vw-2rem))] rounded-lg border p-3 text-left text-xs leading-relaxed shadow-xl group-hover:block group-focus-within:block"
       >
         {content}
       </span>
