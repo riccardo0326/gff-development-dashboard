@@ -487,7 +487,7 @@ export default function StatisticsPage() {
               <KpiCard
                 label="Coverage slots"
                 value={formatNumber(selectedRow.total_dtcs)}
-                hint="Applicable LB74x / LB636 / LB63x cells (matches Excel TOT)"
+                hint="Applicable LB74x / LB636 / LB63x cells (1 slot = 1 vehicle project per DTC)"
               />
               <KpiCard
                 label="Covered"

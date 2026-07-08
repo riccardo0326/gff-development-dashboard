@@ -159,7 +159,10 @@ export function DtcDetailModal({
         </div>
 
         <div className="mt-5 grid gap-4">
-          <label className="flex items-center gap-2 text-sm">
+          <label
+            className="flex items-center gap-2 text-sm"
+            title="y = a GFF function already exists for this DTC; without y the GFF still needs to be developed"
+          >
             <input
               type="checkbox"
               checked={gffAvailable}
@@ -167,7 +170,7 @@ export function DtcDetailModal({
               onChange={(e) => setGffAvailable(e.target.checked)}
               className="h-4 w-4"
             />
-            GFF available
+            GFF exists (y)
           </label>
 
           <EditableField

@@ -12,8 +12,21 @@ const WORKBOOK_PATH =
 const EXPECTED = {
   ecus: 62,
   dtcRows: 25086,
-  TOT: { total: 53705, implemented: 25847, pending: 27755, pct: 48.13 },
 };
+
+function countApplicableSlots(db: ReturnType<typeof getDb>): number {
+  return (
+    db
+      .prepare(
+        `SELECT SUM(
+          CASE WHEN applicable_lb74x = 1 THEN 1 ELSE 0 END +
+          CASE WHEN applicable_lb636 = 1 THEN 1 ELSE 0 END +
+          CASE WHEN applicable_lb63x = 1 THEN 1 ELSE 0 END
+        ) as c FROM dtcs`,
+      )
+      .get() as { c: number | null }
+  ).c ?? 0;
+}
 
 function readExcelTotals() {
   const buffer = fs.readFileSync(WORKBOOK_PATH);
@@ -65,13 +78,19 @@ function main() {
     console.log(`DTC rows: ${dtcRows}`);
   }
 
-  if (summary.coverageSlots !== EXPECTED.TOT.total) {
-    console.error(
-      `Coverage slots: ${summary.coverageSlots} (expected ${EXPECTED.TOT.total})`,
-    );
+  if (summary.coverageSlots <= 0) {
+    console.error(`Coverage slots: invalid count ${summary.coverageSlots}`);
     failed = true;
   } else {
     console.log(`Coverage slots: ${summary.coverageSlots}`);
+  }
+
+  const applicableSlots = countApplicableSlots(db);
+  if (summary.coverageSlots !== applicableSlots) {
+    console.error(
+      `Coverage slots mismatch: import=${summary.coverageSlots}, sql=${applicableSlots}`,
+    );
+    failed = true;
   }
 
   let dashTotal = 0;
@@ -85,16 +104,15 @@ function main() {
     }
   }
 
-  if (dashTotal !== EXPECTED.TOT.total) {
+  if (dashTotal !== applicableSlots) {
     console.error(
-      `Dashboard slot total: ${dashTotal} (expected ${EXPECTED.TOT.total})`,
+      `Dashboard slot total: ${dashTotal} (expected ${applicableSlots})`,
     );
     failed = true;
   }
 
   for (const label of ["TOT"] as const) {
     const row = priorityStats.find((item) => item.label === label);
-    const expected = EXPECTED[label];
     const excel = excelRows[label] as number[];
 
     if (!row) {
@@ -104,26 +122,28 @@ function main() {
     }
 
     const pct = (row.implemented / row.total_dtcs) * 100;
-    const excelPct = (excel[2] / excel[1]) * 100;
-    const totOk = row.total_dtcs === expected.total;
-    const implOk = row.implemented === expected.implemented;
-    const pendOk = row.pending === expected.pending;
-    const pctOk = Math.abs(pct - expected.pct) < 0.05;
+    const excelPct = excel?.[1] ? (excel[2] / excel[1]) * 100 : 0;
+    const totOk = row.total_dtcs === applicableSlots;
+    const balanceOk =
+      row.implemented + row.pending + row.faulty === row.total_dtcs;
 
     console.log(
-      `${label}: total=${row.total_dtcs}${totOk ? "" : ` (expected ${expected.total})`}, ` +
-        `covered=${row.implemented}${implOk ? "" : ` (expected ${expected.implemented})`}, ` +
-        `pending=${row.pending}${pendOk ? "" : ` (expected ${expected.pending})`}, ` +
-        `pct=${pct.toFixed(2)}%${pctOk ? "" : ` (expected ${expected.pct.toFixed(2)}%)`}`,
+      `${label}: total=${row.total_dtcs}${totOk ? "" : ` (expected ${applicableSlots})`}, ` +
+        `covered=${row.implemented}, pending=${row.pending}, faulty=${row.faulty}, ` +
+        `pct=${pct.toFixed(2)}%`,
     );
 
-    if (!totOk || !implOk || !pendOk || !pctOk) {
+    if (!totOk || !balanceOk) {
       failed = true;
     }
 
-    if (excel[1] !== expected.total || excel[2] !== expected.implemented) {
+    if (excel?.[1] != null) {
+      const excelDiffers = excel[1] !== row.total_dtcs;
       console.log(
-        `  Excel sheet row: total=${excel[1]}, covered=${excel[2]}, pending=${excel[3]}, pct=${excelPct.toFixed(2)}%`,
+        `  Excel Statistiche row: total=${excel[1]}, covered=${excel[2]}, pending=${excel[3]}, pct=${excelPct.toFixed(2)}%` +
+          (excelDiffers
+            ? " (may differ: Excel TOT counts gff_available=y slots only)"
+            : ""),
       );
     }
   }
@@ -133,7 +153,9 @@ function main() {
     process.exit(1);
   }
 
-  console.log("\nECU count, DTC rows, coverage slots, and dashboard aggregation match Excel.");
+  console.log(
+    "\nECU count, DTC rows, coverage slots, and dashboard aggregation are internally consistent.",
+  );
 }
 
 main();

@@ -12,6 +12,12 @@ The Excel `x` / `used` values are mapped to:
 | `x` | **Pending** — DTC exists, not yet covered by a GFF |
 | `used` | **Covered** — DTC already covered by a GFF |
 
+## Coverage slot vs GFF exists
+
+- **Coverage slot**: a single applicable cell in columns H/I/J on an ECU sheet (one vehicle project per DTC row).
+- **`gff_available = y`**: a GFF function already exists for that DTC (column F). Without `y`, the GFF still needs to be developed.
+- KPI totals count **all applicable coverage slots**, regardless of `y`. Covered/pending status comes from the H/I/J cells (`used` / `x`).
+
 ## Stack
 
 - Next.js (App Router) + TypeScript + Tailwind CSS
@@ -122,7 +128,7 @@ Then open [http://localhost:3000](http://localhost:3000).
 ### Smoke checks
 
 1. **Dashboard** — 63 ECUs, filter by PRIO 1
-2. **Statistics** — TOT row ~53k DTCs, pie charts render
+2. **Statistics** — TOT row shows all applicable coverage slots; pie charts render
 3. **Faulty DTCs** — paginated list loads
 4. **ECU detail** — open `DA0001`, change a cell Pending ↔ Covered
 5. **Settings** — add a daily entry, confirm it appears in Statistics trend
@@ -137,4 +143,4 @@ npm run import
 
 This replaces the database with fresh data from the Excel file.
 
-Import output distinguishes **DTC rows** (one per symptom/code on an ECU sheet) from **coverage slots** (applicable LB74x/LB636/LB63x cells — matches Excel Statistiche TOT).
+Import output distinguishes **DTC rows** (one per symptom/code on an ECU sheet) from **coverage slots** (all applicable LB74x/LB636/LB63x cells per DTC).

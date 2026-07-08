@@ -223,7 +223,7 @@ export default function EcuDetailPage() {
                   />
                   <p className="text-muted mt-1 text-xs">
                     {formatNumber(stats.covered)} covered /{" "}
-                    {formatNumber(stats.total)} trackable
+                    {formatNumber(stats.total)} coverage slots
                     {stats.faulty > 0
                       ? ` · ${formatNumber(stats.faulty)} faulty`
                       : ""}

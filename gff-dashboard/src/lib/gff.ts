@@ -32,14 +32,25 @@ const APPLICABLE_COLUMNS: Record<
   LB63x: "applicable_lb63x",
 };
 
-/** Applicable project slot where a GFF can be created/tracked for the DTC. */
-export function isTrackableGffSlot(
+/** Applicable coverage cell for a vehicle project on a DTC row (one slot = one car per DTC). */
+export function isCoverageSlot(
   row: GffSlotRow,
   project: VehicleProjectId,
 ): boolean {
   const coverageColumn = PROJECT_COLUMNS[project];
   const applicableColumn = APPLICABLE_COLUMNS[project];
-  const applicable = row[applicableColumn] ?? (row[coverageColumn] ? 1 : 0);
-  if (!applicable) return false;
-  return hasGffAvailable(row.gff_available);
+  return !!(row[applicableColumn] ?? (row[coverageColumn] ? 1 : 0));
+}
+
+/** @deprecated Use isCoverageSlot — gff_available is metadata, not a slot gate. */
+export function isTrackableGffSlot(
+  row: GffSlotRow,
+  project: VehicleProjectId,
+): boolean {
+  return isCoverageSlot(row, project);
+}
+
+/** True when the DTC still needs a GFF function developed (no y in column F). */
+export function needsGffDevelopment(value: string | null | undefined): boolean {
+  return !hasGffAvailable(value);
 }
