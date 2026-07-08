@@ -21,6 +21,7 @@ import {
   PageHeader,
   SelectInput,
 } from "@/components/ui";
+import { VisualizationFilter } from "@/components/visualization-filter";
 import type {
   CoverageStatus,
   Dtc,
@@ -223,7 +224,7 @@ export default function EcuDetailPage() {
                   />
                   <p className="text-muted mt-1 text-xs">
                     {formatNumber(stats.covered)} covered /{" "}
-                    {formatNumber(stats.total)} trackable
+                    {formatNumber(stats.total)} coverage slots
                     {stats.faulty > 0
                       ? ` · ${formatNumber(stats.faulty)} faulty`
                       : ""}
@@ -235,7 +236,7 @@ export default function EcuDetailPage() {
         </Card>
       </div>
 
-      <Card className="grid gap-3 lg:grid-cols-4">
+      <VisualizationFilter columns={4}>
         <FilterInput
           value={search}
           onChange={(value) => {
@@ -281,7 +282,7 @@ export default function EcuDetailPage() {
             ...DTC_PROJECTS.map((value) => ({ value, label: value })),
           ]}
         />
-      </Card>
+      </VisualizationFilter>
 
       <Card>
         <h3 className="mb-3 font-medium">Bulk update</h3>

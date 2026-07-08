@@ -20,6 +20,7 @@ import {
   PageHeader,
   SelectInput,
 } from "@/components/ui";
+import { VisualizationFilter } from "@/components/visualization-filter";
 import type { CoverageStatus, VehicleProjectId } from "@/lib/types";
 import { formatNumber } from "@/lib/utils";
 
@@ -157,7 +158,7 @@ export default function SearchPage() {
         description="Search DTCs across all ECUs. Click a row for full details including error handling fields."
       />
 
-      <Card className="grid gap-3 lg:grid-cols-3">
+      <VisualizationFilter>
         <FilterInput
           value={search}
           onChange={(value) => {
@@ -189,7 +190,7 @@ export default function SearchPage() {
             ...DTC_PROJECTS.map((value) => ({ value, label: value })),
           ]}
         />
-      </Card>
+      </VisualizationFilter>
 
       <Card>
         <h3 className="mb-3 font-medium">Bulk update</h3>

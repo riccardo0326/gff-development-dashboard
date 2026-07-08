@@ -16,16 +16,50 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import { X } from "lucide-react";
 import { DarkChartTooltip } from "@/components/chart-tooltip";
-import { ProgressBar, ProgressBarLegend } from "@/components/progress-bar";
+import { DailyForecastAccordion } from "@/components/statistics/daily-forecast-accordion";
+import { ForecastColumn } from "@/components/statistics/forecast-column";
+import { InfoTooltip } from "@/components/info-tooltip";
+import { SectionTitle } from "@/components/section-title";
 import { Card, PageHeader, SegmentedControl } from "@/components/ui";
-import type { DailyStat, PriorityStats, Settings, WeeklyTrendPoint } from "@/lib/types";
+import type { DailyStat, PriorityStats, Settings, VehicleProjectId, WeeklyTrendPoint } from "@/lib/types";
+import { VEHICLE_PROJECTS } from "@/lib/types";
 import { buildDailyTrendForWeek, formatDisplayDate } from "@/lib/calculations";
-import { cn, formatNumber, formatPercent } from "@/lib/utils";
+import { cn, formatNumber } from "@/lib/utils";
 
 const PIE_COLORS = ["#22c55e", "#6b7280", "#f59e0b"];
 const PIE_LABELS = ["Covered", "Faulty", "Pending"] as const;
 const SCOPES = ["TOT", "Prio1", "Prio2", "Prio3"] as const;
-const KPI_MODES = ["total", "feasible"] as const;
+
+const FORECAST_KPI_TOOLTIP = (
+  <div className="space-y-3">
+    <div>
+      <p className="text-foreground font-medium">Estimated (plan rate)</p>
+      <p className="mt-1">
+        Uses <strong>daily estimate</strong> from Settings (target slots covered
+        per working day). Days required = pending ÷ daily estimate.
+      </p>
+    </div>
+    <div>
+      <p className="text-foreground font-medium">End date (estimated)</p>
+      <p className="mt-1">
+        Today plus estimated days, counting business days only.
+      </p>
+    </div>
+    <div>
+      <p className="text-foreground font-medium">Average (actual rate)</p>
+      <p className="mt-1">
+        Uses the historical average of <strong>impl_for_day</strong> from daily
+        entries. Days required = pending ÷ daily average.
+      </p>
+    </div>
+    <div>
+      <p className="text-foreground font-medium">End date (average)</p>
+      <p className="mt-1">
+        Today plus average-based days, counting business days only.
+      </p>
+    </div>
+  </div>
+);
 
 interface StatisticsResponse {
   priorityStats: PriorityStats[];
@@ -276,8 +310,8 @@ export default function StatisticsPage() {
   const [data, setData] = useState<StatisticsResponse | null>(null);
   const [selectedScope, setSelectedScope] =
     useState<(typeof SCOPES)[number]>("TOT");
-  const [kpiMode, setKpiMode] = useState<(typeof KPI_MODES)[number]>("total");
   const [selectedWeek, setSelectedWeek] = useState<number | null>(null);
+  const [projects, setProjects] = useState<VehicleProjectId[]>(VEHICLE_PROJECTS);
 
   useEffect(() => {
     fetch("/api/statistics")
@@ -285,19 +319,28 @@ export default function StatisticsPage() {
       .then(setData);
   }, []);
 
+  useEffect(() => {
+    fetch("/api/projects")
+      .then((res) => res.json())
+      .then((rows: Array<{ id: VehicleProjectId }>) => {
+        if (Array.isArray(rows) && rows.length > 0) {
+          setProjects(rows.map((row) => row.id));
+        }
+      })
+      .catch(() => {
+        setProjects(VEHICLE_PROJECTS);
+      });
+  }, []);
+
   const selectedRow = useMemo(
     () => data?.priorityStats.find((row) => row.label === selectedScope),
     [data, selectedScope],
   );
 
-  const selectedForecastRow = useMemo(() => {
-    if (!data) return null;
-    const stats =
-      kpiMode === "feasible"
-        ? data.priorityStatsFeasible
-        : data.priorityStats;
-    return stats.find((row) => row.label === selectedScope) ?? null;
-  }, [data, selectedScope, kpiMode]);
+  const selectedFeasibleRow = useMemo(
+    () => data?.priorityStatsFeasible.find((row) => row.label === selectedScope),
+    [data, selectedScope],
+  );
 
   if (!data) {
     return (
@@ -463,31 +506,29 @@ export default function StatisticsPage() {
         />
       ) : null}
 
-      <Card>
-        <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h3 className="font-medium">Priority KPIs</h3>
-            <p className="text-muted mt-1 text-sm">
-              Select a scope to inspect coverage and forecast metrics.
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <SegmentedControl
-              tone="info"
-              value={selectedScope}
-              onChange={setSelectedScope}
-              options={SCOPES.map((scope) => ({ value: scope, label: scope }))}
+      {selectedRow ? (
+        <>
+          <section>
+            <SectionTitle
+              title="Priority KPIs"
+              description="Coverage breakdown for the selected scope."
+              action={
+                <SegmentedControl
+                  tone="info"
+                  value={selectedScope}
+                  onChange={setSelectedScope}
+                  options={SCOPES.map((scope) => ({
+                    value: scope,
+                    label: scope,
+                  }))}
+                />
+              }
             />
-          </div>
-        </div>
-
-        {selectedRow ? (
-          <div className="space-y-5">
-            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
               <KpiCard
                 label="Coverage slots"
                 value={formatNumber(selectedRow.total_dtcs)}
-                hint="Applicable LB74x / LB636 / LB63x cells (matches Excel TOT)"
+                hint="Applicable vehicle-project cells (1 slot = 1 project per DTC)"
               />
               <KpiCard
                 label="Covered"
@@ -499,150 +540,51 @@ export default function StatisticsPage() {
                 value={formatNumber(selectedRow.pending)}
                 accent="warning"
               />
+              <KpiCard
+                label="Faulty DTCs"
+                value={formatNumber(selectedRow.faulty)}
+              />
             </div>
+          </section>
 
-            {selectedRow.label === "TOT" ? (
-              <div className="grid gap-4 sm:grid-cols-2">
-                <KpiCard
-                  label="Daily estimate"
-                  value={String(selectedRow.daily_estimate ?? "—")}
-                  hint="Target covered DTCs per working day"
-                  accent="accent"
-                />
-                <KpiCard
-                  label="Daily average"
-                  value={
-                    selectedRow.daily_average
-                      ? selectedRow.daily_average.toFixed(1)
-                      : "—"
-                  }
-                  hint="Average from manual daily entries"
-                  accent="accent"
-                />
+          {selectedFeasibleRow ? (
+            <section>
+              <SectionTitle
+                title="Forecast & progress"
+                description="Side-by-side forecast using planned and actual daily rates."
+                action={<InfoTooltip content={FORECAST_KPI_TOOLTIP} />}
+              />
+              <div className="grid gap-6 xl:grid-cols-2">
+                <Card className="space-y-4">
+                  <ForecastColumn
+                    title="Total"
+                    description="Includes all applicable coverage slots. Progress bars show covered, pending, and faulty."
+                    stats={selectedRow}
+                    projects={projects}
+                    includeFaultyInBar
+                  />
+                </Card>
+                <Card className="space-y-4">
+                  <ForecastColumn
+                    title="Feasible"
+                    description="Excludes faulty DTCs from pending and forecast. Progress bars show only covered and pending."
+                    stats={selectedFeasibleRow}
+                    projects={projects}
+                    includeFaultyInBar={false}
+                  />
+                </Card>
               </div>
-            ) : null}
+            </section>
+          ) : null}
+        </>
+      ) : null}
 
-            {selectedForecastRow ? (
-              <Card className="border-card-border bg-background/40 space-y-5">
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                  <div>
-                    <h4 className="font-medium">Forecast &amp; progress</h4>
-                    <p className="text-muted mt-1 text-sm">
-                      {kpiMode === "feasible"
-                        ? "Excludes faulty DTCs from pending; completion counts covered work against fixable remaining slots."
-                        : "Includes all applicable coverage slots."}
-                    </p>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    <SegmentedControl
-                      tone="success"
-                      value={kpiMode}
-                      onChange={setKpiMode}
-                      options={KPI_MODES.map((mode) => ({
-                        value: mode,
-                        label: mode,
-                      }))}
-                    />
-                  </div>
-                </div>
-
-                <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                  <KpiCard
-                    label="Days required (estimated)"
-                    value={
-                      selectedForecastRow.days_required_estimated != null
-                        ? String(
-                            Math.round(selectedForecastRow.days_required_estimated),
-                          )
-                        : "—"
-                    }
-                  />
-                  <KpiCard
-                    label="End date (estimated)"
-                    value={
-                      selectedForecastRow.end_date_estimated
-                        ? formatDisplayDate(selectedForecastRow.end_date_estimated)
-                        : "—"
-                    }
-                  />
-                  <KpiCard
-                    label="Days required (average)"
-                    value={
-                      selectedForecastRow.days_required_average != null
-                        ? String(
-                            Math.round(selectedForecastRow.days_required_average),
-                          )
-                        : "—"
-                    }
-                  />
-                  <KpiCard
-                    label="End date (average)"
-                    value={
-                      selectedForecastRow.end_date_average
-                        ? formatDisplayDate(selectedForecastRow.end_date_average)
-                        : "—"
-                    }
-                  />
-                </div>
-
-                <ProgressBarLegend className="mb-1" />
-
-                <div className="grid gap-4 md:grid-cols-3">
-                  {(["LB74x", "LB636", "LB63x"] as const).map((project) => {
-                    const segments = selectedForecastRow.segments[project];
-                    return (
-                      <Card key={project} className="bg-background/40">
-                        <p className="mb-2 text-sm font-medium">{project}</p>
-                        <ProgressBar
-                          value={selectedForecastRow.completion[project]}
-                          segments={segments}
-                        />
-                        <p className="text-muted mt-2 text-xs">
-                          {formatPercent(selectedForecastRow.completion[project])}{" "}
-                          completion
-                          {segments.faulty > 0
-                            ? ` · ${formatNumber(segments.faulty)} faulty`
-                            : ""}
-                        </p>
-                      </Card>
-                    );
-                  })}
-                </div>
-              </Card>
-            ) : null}
-          </div>
-        ) : null}
-      </Card>
-
-      <Card className="overflow-x-auto">
-        <h3 className="mb-4 font-medium">Daily forecast table</h3>
-        <table className="min-w-full text-sm">
-          <thead>
-            <tr className="text-muted border-card-border border-b text-left">
-              <th className="min-w-[140px] px-3 py-2">Date</th>
-              <th className="min-w-[140px] px-3 py-2">Covered total</th>
-              <th className="min-w-[140px] px-3 py-2">Pending</th>
-              <th className="min-w-[140px] px-3 py-2">Covered for day</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.forecast.map((row) => (
-              <tr
-                key={row.stat_date}
-                className="border-card-border border-b last:border-b-0"
-              >
-                <td className="px-3 py-2">
-                  {formatDisplayDate(row.stat_date)}
-                </td>
-                <td className="px-3 py-2">
-                  {formatNumber(row.implemented_count)}
-                </td>
-                <td className="px-3 py-2">{formatNumber(row.pending)}</td>
-                <td className="px-3 py-2">{formatNumber(row.impl_for_day)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <Card>
+        <SectionTitle
+          title="Daily forecast"
+          description="Browse cumulative coverage progress by month and day."
+        />
+        <DailyForecastAccordion rows={data.forecast} />
       </Card>
     </div>
   );

@@ -19,7 +19,7 @@ import type {
   WeeklyTrendPoint,
 } from "./types";
 import { VEHICLE_PROJECTS } from "./types";
-import { isTrackableGffSlot } from "./gff";
+import { isCoverageSlot } from "./gff";
 
 const PROJECT_COLUMNS: Record<
   VehicleProjectId,
@@ -70,7 +70,7 @@ export function countProjectCoverage(
   let faulty = 0;
 
   for (const row of rows) {
-    if (!isTrackableGffSlot(row, project)) continue;
+    if (!isCoverageSlot(row, project)) continue;
 
     if (row.dtc_id !== undefined && faultyDtcIds?.has(row.dtc_id)) {
       faulty += 1;
@@ -142,7 +142,7 @@ export function aggregateCoverageStats(
     const isFaulty = faultyDtcIds?.has(row.dtc_id) ?? false;
 
     for (const project of VEHICLE_PROJECTS) {
-      if (!isTrackableGffSlot(row, project)) continue;
+      if (!isCoverageSlot(row, project)) continue;
 
       const value = row[PROJECT_COLUMNS[project]];
 

@@ -74,7 +74,9 @@ export function DtcDataTable({
           <th className="px-3 py-3">Symptom</th>
           <th className="px-3 py-3">Code</th>
           <th className="px-3 py-3">Text</th>
-          <th className="px-3 py-3">GFF</th>
+          <th className="px-3 py-3" title="y = a GFF function already exists for this DTC">
+            GFF exists
+          </th>
           <th className="px-3 py-3">GFF name</th>
           {!showEcu && showErrorColumns ? (
             <>
@@ -139,6 +141,7 @@ export function DtcDataTable({
                   disabled={!onGffToggle || !row.id}
                   onChange={(e) => onGffToggle?.(row, e.target.checked)}
                   className="h-4 w-4"
+                  title="y = a GFF function already exists for this DTC"
                 />
               </td>
               <td

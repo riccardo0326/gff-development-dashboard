@@ -57,6 +57,21 @@ export function updateSettings(partial: Partial<Settings>): Settings {
   return getSettings();
 }
 
+export interface VehicleProject {
+  id: VehicleProjectId;
+  name: string;
+  sort_order: number;
+}
+
+export function getVehicleProjects(): VehicleProject[] {
+  const db = getDb();
+  return db
+    .prepare(
+      "SELECT id, name, sort_order FROM vehicle_projects ORDER BY sort_order ASC",
+    )
+    .all() as VehicleProject[];
+}
+
 export function getEcus(filters?: {
   priority?: number;
   search?: string;
