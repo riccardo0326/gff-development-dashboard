@@ -21,7 +21,8 @@ interface DtcDataTableProps {
   selectable?: boolean;
   selected?: Set<string>;
   onToggleSelect?: (dtcId: number, project: VehicleProjectId) => void;
-  selectionProjectFilter?: VehicleProjectId | "";
+  selectionProjects?: VehicleProjectId[];
+  visibleProjects?: VehicleProjectId[];
   onRowClick: (row: DtcRowData) => void;
   onEditGff: (row: DtcRowData) => void;
   onGffToggle?: (row: DtcRowData, checked: boolean) => void;
@@ -47,7 +48,8 @@ export function DtcDataTable({
   selectable,
   selected,
   onToggleSelect,
-  selectionProjectFilter,
+  selectionProjects,
+  visibleProjects = PROJECTS,
   onRowClick,
   onEditGff,
   onGffToggle,
@@ -58,7 +60,7 @@ export function DtcDataTable({
     (showEcu ? 2 : 0) +
     5 +
     (showErrorColumns && !showEcu ? 2 : 0) +
-    PROJECTS.length;
+    visibleProjects.length;
 
   return (
     <table className="min-w-full text-sm">
@@ -84,7 +86,7 @@ export function DtcDataTable({
               <th className="px-3 py-3">Setting conditions</th>
             </>
           ) : null}
-          {PROJECTS.map((project) => (
+          {visibleProjects.map((project) => (
             <th key={project} className="px-3 py-3">
               {project}
             </th>
@@ -172,7 +174,7 @@ export function DtcDataTable({
                   </td>
                 </>
               ) : null}
-              {PROJECTS.map((projectName) => {
+              {visibleProjects.map((projectName) => {
                 const { coverage, applicable } = projectCoverage(
                   row,
                   projectName,
@@ -180,8 +182,8 @@ export function DtcDataTable({
                 const showSelection =
                   selectable &&
                   applicable &&
-                  (!selectionProjectFilter ||
-                    selectionProjectFilter === projectName);
+                  (!selectionProjects?.length ||
+                    selectionProjects.includes(projectName));
 
                 return (
                   <td

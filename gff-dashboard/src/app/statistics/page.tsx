@@ -24,7 +24,7 @@ import { Card, PageHeader, SegmentedControl } from "@/components/ui";
 import type { DailyStat, PriorityStats, Settings, VehicleProjectId, WeeklyTrendPoint } from "@/lib/types";
 import { VEHICLE_PROJECTS } from "@/lib/types";
 import { buildDailyTrendForWeek, formatDisplayDate } from "@/lib/calculations";
-import { cn, formatNumber } from "@/lib/utils";
+import { cn, formatNumber, formatPercent, formatSlicePercent } from "@/lib/utils";
 
 const PIE_COLORS = ["#22c55e", "#6b7280", "#f59e0b"];
 const PIE_LABELS = ["Covered", "Faulty", "Pending"] as const;
@@ -36,7 +36,8 @@ const FORECAST_KPI_TOOLTIP = (
       <p className="text-foreground font-medium">Estimated (plan rate)</p>
       <p className="mt-1">
         Uses <strong>daily estimate</strong> from Settings (target slots covered
-        per working day). Days required = pending ÷ daily estimate.
+        per working day). Days required = (pending + faulty) ÷ daily estimate
+        in Total view; Feasible uses pending only.
       </p>
     </div>
     <div>
@@ -49,7 +50,8 @@ const FORECAST_KPI_TOOLTIP = (
       <p className="text-foreground font-medium">Average (actual rate)</p>
       <p className="mt-1">
         Uses the historical average of <strong>impl_for_day</strong> from daily
-        entries. Days required = pending ÷ daily average.
+        entries. Days required = (pending + faulty) ÷ daily average in Total
+        view; Feasible uses pending only.
       </p>
     </div>
     <div>
@@ -108,8 +110,10 @@ function KpiCard({
 
 function DonutLegend({
   items,
+  total,
 }: {
   items: Array<{ label: string; value: number; color: string }>;
+  total: number;
 }) {
   const visible = items.filter((item) => item.value > 0);
   if (visible.length === 0) return null;
@@ -126,7 +130,9 @@ function DonutLegend({
             style={{ backgroundColor: item.color }}
           />
           <span>{item.label}</span>
-          <span className="text-muted">({formatNumber(item.value)})</span>
+          <span className="text-muted">
+            ({formatSlicePercent(item.value, total)})
+          </span>
         </div>
       ))}
     </div>
@@ -368,24 +374,24 @@ export default function StatisticsPage() {
 
       <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4">
         {pieRows.map((row) => {
+          const pieTotal = row.implemented + row.faulty + row.pending;
           const chartData = [
             {
               name: "Covered",
-              label: `Covered (${formatNumber(row.implemented)})`,
+              label: `Covered (${formatSlicePercent(row.implemented, pieTotal)})`,
               value: row.implemented,
             },
             {
               name: "Faulty",
-              label: `Faulty (${formatNumber(row.faulty)})`,
+              label: `Faulty (${formatSlicePercent(row.faulty, pieTotal)})`,
               value: row.faulty,
             },
             {
               name: "Pending",
-              label: `Pending (${formatNumber(row.pending)})`,
+              label: `Pending (${formatSlicePercent(row.pending, pieTotal)})`,
               value: row.pending,
             },
           ].filter((slice) => slice.value > 0);
-          const pieTotal = row.implemented + row.faulty + row.pending;
           const displayData =
             chartData.length > 0
               ? chartData
@@ -434,6 +440,7 @@ export default function StatisticsPage() {
                 </ResponsiveContainer>
               </div>
               <DonutLegend
+                total={pieTotal}
                 items={[
                   { label: "Covered", value: row.implemented, color: PIE_COLORS[0] },
                   { label: "Faulty", value: row.faulty, color: PIE_COLORS[1] },
@@ -558,7 +565,7 @@ export default function StatisticsPage() {
                 <Card className="space-y-4">
                   <ForecastColumn
                     title="Total"
-                    description="Includes all applicable coverage slots. Progress bars show covered, pending, and faulty."
+                    description="Includes all applicable coverage slots. Forecast days use pending + faulty. Progress bars show covered, pending, and faulty."
                     stats={selectedRow}
                     projects={projects}
                     includeFaultyInBar

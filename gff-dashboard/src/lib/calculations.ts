@@ -19,36 +19,9 @@ import type {
   WeeklyTrendPoint,
 } from "./types";
 import { VEHICLE_PROJECTS } from "./types";
-import { isCoverageSlot } from "./gff";
+import { resolveCoverageSlotState, type CoverageSlotRow } from "./gff";
 
-const PROJECT_COLUMNS: Record<
-  VehicleProjectId,
-  "coverage_lb74x" | "coverage_lb636" | "coverage_lb63x"
-> = {
-  LB74x: "coverage_lb74x",
-  LB636: "coverage_lb636",
-  LB63x: "coverage_lb63x",
-};
-
-const SLOT_APPLICABLE_COLUMNS: Record<
-  VehicleProjectId,
-  "applicable_lb74x" | "applicable_lb636" | "applicable_lb63x"
-> = {
-  LB74x: "applicable_lb74x",
-  LB636: "applicable_lb636",
-  LB63x: "applicable_lb63x",
-};
-
-export interface CoverageRow {
-  coverage_lb74x: string | null;
-  coverage_lb636: string | null;
-  coverage_lb63x: string | null;
-  applicable_lb74x?: number;
-  applicable_lb636?: number;
-  applicable_lb63x?: number;
-  gff_available?: string | null;
-  dtc_id?: number;
-}
+export interface CoverageRow extends CoverageSlotRow {}
 
 function emptyProjectSegments(): Record<VehicleProjectId, ProjectSegments> {
   return {
@@ -63,22 +36,16 @@ export function countProjectCoverage(
   project: VehicleProjectId,
   faultyDtcIds?: Set<number>,
 ): ProjectCompletion {
-  const column = PROJECT_COLUMNS[project];
-  const applicableColumn = SLOT_APPLICABLE_COLUMNS[project];
   let covered = 0;
   let pending = 0;
   let faulty = 0;
 
   for (const row of rows) {
-    if (!isCoverageSlot(row, project)) continue;
+    const state = resolveCoverageSlotState(row, project, faultyDtcIds);
+    if (!state) continue;
 
-    if (row.dtc_id !== undefined && faultyDtcIds?.has(row.dtc_id)) {
-      faulty += 1;
-      continue;
-    }
-
-    const value = row[column];
-    if (value === "covered") covered += 1;
+    if (state === "faulty") faulty += 1;
+    else if (state === "covered") covered += 1;
     else pending += 1;
   }
 
@@ -136,63 +103,36 @@ export function aggregateCoverageStats(
   let faulty = 0;
   const perProject = emptyProjectSegments();
 
-  const feasibleCompletion = emptyProjectSegments();
-
   for (const row of rows) {
-    const isFaulty = faultyDtcIds?.has(row.dtc_id) ?? false;
-
     for (const project of VEHICLE_PROJECTS) {
-      if (!isCoverageSlot(row, project)) continue;
+      const state = resolveCoverageSlotState(row, project, faultyDtcIds);
+      if (!state) continue;
 
-      const value = row[PROJECT_COLUMNS[project]];
-
-      if (isFaulty) {
-        perProject[project].faulty += 1;
+      if (state === "faulty") {
         faulty += 1;
-
-        if (options?.excludeFaultyFromTotals) {
-          continue;
-        }
-
-        total += 1;
-        if (value === "covered") {
-          implemented += 1;
-        } else {
-          pending += 1;
+        perProject[project].faulty += 1;
+        if (!options?.excludeFaultyFromTotals) {
+          total += 1;
         }
         continue;
       }
 
       total += 1;
-      if (value === "covered") {
+      if (state === "covered") {
         implemented += 1;
         perProject[project].covered += 1;
       } else {
         pending += 1;
         perProject[project].pending += 1;
       }
-
-      if (options?.excludeFaultyFromTotals) {
-        if (value === "covered") {
-          feasibleCompletion[project].covered += 1;
-        } else {
-          feasibleCompletion[project].pending += 1;
-        }
-      }
     }
   }
 
   const completion = {} as Record<VehicleProjectId, number>;
   for (const project of VEHICLE_PROJECTS) {
-    if (options?.excludeFaultyFromTotals) {
-      const { covered, pending: p } = feasibleCompletion[project];
-      const denom = covered + p;
-      completion[project] = denom > 0 ? covered / denom : 0;
-    } else {
-      const { covered, pending: p } = perProject[project];
-      const denom = covered + p;
-      completion[project] = denom > 0 ? covered / denom : 0;
-    }
+    const { covered, pending: p } = perProject[project];
+    const denom = covered + p;
+    completion[project] = denom > 0 ? covered / denom : 0;
   }
 
   return {
@@ -216,12 +156,25 @@ export function addWorkdays(from: Date, days: number): Date {
   return addBusinessDays(from, Math.ceil(days));
 }
 
+function forecastWorkload(
+  stats: { pending: number; faulty: number },
+  options?: { includeFaultyInForecast?: boolean },
+): number {
+  return options?.includeFaultyInForecast
+    ? stats.pending + stats.faulty
+    : stats.pending;
+}
+
 export function buildPriorityStats(
   ecus: Ecu[],
   allRows: Array<CoverageRow & { ecu_id: string; priority: number; dtc_id: number }>,
   settings: Settings,
   dailyStats: DailyStat[],
-  options?: { faultyDtcIds?: Set<number>; excludeFaultyFromTotals?: boolean },
+  options?: {
+    faultyDtcIds?: Set<number>;
+    excludeFaultyFromTotals?: boolean;
+    includeFaultyInForecast?: boolean;
+  },
 ): PriorityStats[] {
   const dailyAverage = computeDailyAverage(dailyStats);
   const today = new Date();
@@ -251,8 +204,9 @@ export function buildPriorityStats(
     let endDateAverage: string | null = null;
 
     if (priority !== null) {
+      const remaining = forecastWorkload(stats, options);
       if (settings.daily_estimate > 0) {
-        daysRequiredEstimated = stats.pending / settings.daily_estimate;
+        daysRequiredEstimated = remaining / settings.daily_estimate;
         cumulativeDaysEstimated += daysRequiredEstimated;
         endDateEstimated = format(
           addWorkdays(today, cumulativeDaysEstimated),
@@ -260,7 +214,7 @@ export function buildPriorityStats(
         );
       }
       if (dailyAverage > 0) {
-        daysRequiredAverage = stats.pending / dailyAverage;
+        daysRequiredAverage = remaining / dailyAverage;
         cumulativeDaysAverage += daysRequiredAverage;
         endDateAverage = format(
           addWorkdays(today, cumulativeDaysAverage),
@@ -268,15 +222,16 @@ export function buildPriorityStats(
         );
       }
     } else {
+      const remaining = forecastWorkload(stats, options);
       if (settings.daily_estimate > 0) {
-        daysRequiredEstimated = stats.pending / settings.daily_estimate;
+        daysRequiredEstimated = remaining / settings.daily_estimate;
         endDateEstimated = format(
           addWorkdays(today, daysRequiredEstimated),
           "yyyy-MM-dd",
         );
       }
       if (dailyAverage > 0) {
-        daysRequiredAverage = stats.pending / dailyAverage;
+        daysRequiredAverage = remaining / dailyAverage;
         endDateAverage = format(
           addWorkdays(today, daysRequiredAverage),
           "yyyy-MM-dd",

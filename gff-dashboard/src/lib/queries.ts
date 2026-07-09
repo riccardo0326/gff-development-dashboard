@@ -15,6 +15,7 @@ import {
   parseSettings,
 } from "./calculations";
 import { compareEcuCodeHex } from "./utils";
+import { hasGffAvailable } from "./gff";
 import type {
   DailyStat,
   Dtc,
@@ -94,6 +95,11 @@ export function getEcus(filters?: {
   const rows = db.prepare(query).all(...params) as Ecu[];
   rows.sort((a, b) => a.priority - b.priority || compareEcuCodeHex(a.code, b.code));
   return rows;
+}
+
+export function getEcuCount(): number {
+  const db = getDb();
+  return (db.prepare("SELECT COUNT(*) as c FROM ecus").get() as { c: number }).c;
 }
 
 export function getEcuById(id: string): Ecu | null {
@@ -199,6 +205,7 @@ export function getStatisticsSummary() {
   const faultyDtcIds = getFaultyDtcIds();
   const priorityStats = buildPriorityStats(ecus, rows, settings, dailyStats, {
     faultyDtcIds,
+    includeFaultyInForecast: true,
   });
   const priorityStatsFeasible = buildPriorityStats(ecus, rows, settings, dailyStats, {
     faultyDtcIds,
@@ -256,6 +263,31 @@ const APPLICABLE_COLUMN: Record<
   LB63x: "applicable_lb63x",
 };
 
+function resolveProjectFilters(filters?: {
+  project?: VehicleProjectId;
+  projects?: VehicleProjectId[];
+}): VehicleProjectId[] {
+  if (filters?.projects?.length) return filters.projects;
+  if (filters?.project) return [filters.project];
+  return [];
+}
+
+function appendCoverageProjectFilter(
+  query: string,
+  params: Array<string | number>,
+  columnPrefix: string,
+  projects: VehicleProjectId[],
+  coverage: "pending" | "covered",
+): { query: string; params: Array<string | number> } {
+  const clauses = projects.map(
+    (project) => `${columnPrefix}${PROJECT_COLUMN[project]} = ?`,
+  );
+  return {
+    query: `${query} AND (${clauses.join(" OR ")})`,
+    params: [...params, ...projects.map(() => coverage)],
+  };
+}
+
 export function getDtcsForEcu(
   ecuId: string,
   filters?: {
@@ -263,12 +295,14 @@ export function getDtcsForEcu(
     category?: number;
     coverage?: "pending" | "covered";
     project?: VehicleProjectId;
+    projects?: VehicleProjectId[];
   },
   pagination?: { page: number; pageSize: number },
 ) {
   const db = getDb();
   let query = "SELECT * FROM dtcs WHERE ecu_id = ?";
-  const params: Array<string | number> = [ecuId];
+  let params: Array<string | number> = [ecuId];
+  const projects = resolveProjectFilters(filters);
 
   if (filters?.search) {
     query += ` AND (
@@ -284,7 +318,15 @@ export function getDtcsForEcu(
     params.push(filters.category);
   }
 
-  if (filters?.project && filters?.coverage) {
+  if (projects.length > 0 && filters?.coverage) {
+    ({ query, params } = appendCoverageProjectFilter(
+      query,
+      params,
+      "",
+      projects,
+      filters.coverage,
+    ));
+  } else if (filters?.project && filters?.coverage) {
     query += ` AND ${PROJECT_COLUMN[filters.project]} = ?`;
     params.push(filters.coverage);
   } else if (filters?.coverage) {
@@ -418,6 +460,8 @@ export function searchDtcs(filters?: {
   category?: number;
   coverage?: "pending" | "covered";
   project?: VehicleProjectId;
+  projects?: VehicleProjectId[];
+  priority?: number;
   page?: number;
   pageSize?: number;
 }) {
@@ -428,7 +472,8 @@ export function searchDtcs(filters?: {
     JOIN ecus e ON e.id = d.ecu_id
     WHERE 1=1
   `;
-  const params: Array<string | number> = [];
+  let params: Array<string | number> = [];
+  const projects = resolveProjectFilters(filters);
 
   if (filters?.search) {
     query += ` AND (
@@ -450,7 +495,20 @@ export function searchDtcs(filters?: {
     params.push(filters.category);
   }
 
-  if (filters?.project && filters?.coverage) {
+  if (filters?.priority !== undefined) {
+    query += " AND e.priority = ?";
+    params.push(filters.priority);
+  }
+
+  if (projects.length > 0 && filters?.coverage) {
+    ({ query, params } = appendCoverageProjectFilter(
+      query,
+      params,
+      "d.",
+      projects,
+      filters.coverage,
+    ));
+  } else if (filters?.project && filters?.coverage) {
     query += ` AND d.${PROJECT_COLUMN[filters.project]} = ?`;
     params.push(filters.coverage);
   } else if (filters?.coverage) {
@@ -652,7 +710,13 @@ export function getFaultyDtcs(filters?: {
   query += " LIMIT ? OFFSET ?";
   params.push(pageSize, (page - 1) * pageSize);
 
-  const items = db.prepare(query).all(...params) as FaultyDtc[];
+  const items = (db.prepare(query).all(...params) as FaultyDtc[]).map(
+    (row) => ({
+      ...row,
+      counts_as_faulty:
+        row.matched_dtc_id != null && !hasGffAvailable(row.gff_available),
+    }),
+  );
   return { items, total, page, pageSize };
 }
 

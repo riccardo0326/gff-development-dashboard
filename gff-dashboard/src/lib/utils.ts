@@ -13,6 +13,11 @@ export function formatPercent(value: number): string {
   return `${(value * 100).toFixed(1)}%`;
 }
 
+export function formatSlicePercent(value: number, total: number): string {
+  if (total <= 0) return "0.0%";
+  return `${((value / total) * 100).toFixed(1)}%`;
+}
+
 export function parseEcuCodeHex(code: string): number {
   const normalized = code.replace(/^DA/i, "").trim();
   const parsed = Number.parseInt(normalized, 16);

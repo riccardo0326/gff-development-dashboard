@@ -57,6 +57,8 @@ export interface FaultyDtc {
   applicable_lb636?: number;
   applicable_lb63x?: number;
   ecu_code?: string | null;
+  /** False when a matched DTC has gff_available=y and is counted as covered instead. */
+  counts_as_faulty?: boolean;
 }
 
 export interface DailyStat {

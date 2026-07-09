@@ -56,6 +56,12 @@ export function ProjectProgressPanel({
   const barSegments = includeFaultyInBar
     ? slice
     : { covered: slice.covered, pending: slice.pending, faulty: 0 };
+  const totalSlots = slice.covered + slice.pending + slice.faulty;
+  const displayCompletion = includeFaultyInBar
+    ? totalSlots > 0
+      ? slice.covered / totalSlots
+      : 0
+    : completion[selectedProject];
 
   return (
     <div className="space-y-3">
@@ -71,11 +77,11 @@ export function ProjectProgressPanel({
       <Card className="bg-background/40">
         <p className="mb-2 text-sm font-medium">{selectedProject}</p>
         <ProgressBar
-          value={completion[selectedProject]}
+          value={displayCompletion}
           segments={barSegments}
         />
         <p className="text-muted mt-2 text-xs">
-          {formatPercent(completion[selectedProject])} completion
+          {formatPercent(displayCompletion)} completion
           {includeFaultyInBar && slice.faulty > 0
             ? ` · ${formatNumber(slice.faulty)} faulty`
             : ""}
