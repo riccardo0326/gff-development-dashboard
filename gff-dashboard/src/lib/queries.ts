@@ -15,6 +15,7 @@ import {
   parseSettings,
 } from "./calculations";
 import { compareEcuCodeHex } from "./utils";
+import { hasGffAvailable } from "./gff";
 import type {
   DailyStat,
   Dtc,
@@ -652,7 +653,13 @@ export function getFaultyDtcs(filters?: {
   query += " LIMIT ? OFFSET ?";
   params.push(pageSize, (page - 1) * pageSize);
 
-  const items = db.prepare(query).all(...params) as FaultyDtc[];
+  const items = (db.prepare(query).all(...params) as FaultyDtc[]).map(
+    (row) => ({
+      ...row,
+      counts_as_faulty:
+        row.matched_dtc_id != null && !hasGffAvailable(row.gff_available),
+    }),
+  );
   return { items, total, page, pageSize };
 }
 

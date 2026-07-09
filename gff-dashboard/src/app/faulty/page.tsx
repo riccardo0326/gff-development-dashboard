@@ -112,7 +112,7 @@ export default function FaultyPage() {
     <div>
       <PageHeader
         title="Faulty DTCs"
-        description="DTC records flagged with data quality issues. Matched ECU data shown when available."
+        description="DTC records flagged with data quality issues. Matched ECU data shown when available. Records with an existing GFF are counted as covered, not faulty."
         actions={
           <Button variant="secondary" onClick={handleExport} disabled={exporting}>
             <span className="inline-flex items-center gap-2">
@@ -163,6 +163,9 @@ export default function FaultyPage() {
         <div className="border-card-border flex items-center justify-between border-b px-4 py-3">
           <p className="text-muted text-sm">
             {formatNumber(total)} faulty records
+            {items.some((row) => row.counts_as_faulty === false)
+              ? " (some matched records with GFF count as covered in statistics)"
+              : ""}
           </p>
           <div className="flex items-center gap-2">
             <Button

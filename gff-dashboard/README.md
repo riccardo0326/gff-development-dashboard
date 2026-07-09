@@ -17,6 +17,7 @@ The Excel `x` / `used` values are mapped to:
 - **Coverage slot**: a single applicable cell in columns H/I/J on an ECU sheet (one vehicle project per DTC row).
 - **`gff_available = y`**: a GFF function already exists for that DTC (column F). Without `y`, the GFF still needs to be developed.
 - KPI totals count **all applicable coverage slots**, regardless of `y`. Covered/pending status comes from the H/I/J cells (`used` / `x`).
+- **Faulty DTCs** are a third exclusive state: a slot is either covered, pending, or faulty — never two at once. DTCs listed in `DTCs_faulty` without a GFF (`gff_available = y`) count as faulty; if a GFF exists, they count as **covered** instead.
 
 ## Stack
 

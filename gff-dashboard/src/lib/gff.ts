@@ -54,3 +54,40 @@ export function isTrackableGffSlot(
 export function needsGffDevelopment(value: string | null | undefined): boolean {
   return !hasGffAvailable(value);
 }
+
+export type CoverageSlotState = "covered" | "pending" | "faulty";
+
+const PROJECT_COVERAGE_COLUMNS: Record<
+  VehicleProjectId,
+  "coverage_lb74x" | "coverage_lb636" | "coverage_lb63x"
+> = {
+  LB74x: "coverage_lb74x",
+  LB636: "coverage_lb636",
+  LB63x: "coverage_lb63x",
+};
+
+export interface CoverageSlotRow extends GffSlotRow {
+  dtc_id?: number;
+}
+
+/**
+ * Resolve the exclusive coverage state for one applicable slot.
+ * Listed faulty DTCs without a GFF count as faulty; with a GFF they count as covered.
+ */
+export function resolveCoverageSlotState(
+  row: CoverageSlotRow,
+  project: VehicleProjectId,
+  faultyDtcIds?: Set<number>,
+): CoverageSlotState | null {
+  if (!isCoverageSlot(row, project)) return null;
+
+  const isListedFaulty =
+    row.dtc_id !== undefined && (faultyDtcIds?.has(row.dtc_id) ?? false);
+
+  if (isListedFaulty) {
+    return hasGffAvailable(row.gff_available) ? "covered" : "faulty";
+  }
+
+  const value = row[PROJECT_COVERAGE_COLUMNS[project]];
+  return value === "covered" ? "covered" : "pending";
+}
