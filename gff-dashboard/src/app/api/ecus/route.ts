@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getEcuCompletions } from "@/lib/queries";
+import { getEcuCompletions, getEcuCount } from "@/lib/queries";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -11,5 +11,5 @@ export async function GET(request: Request) {
     search,
   });
 
-  return NextResponse.json(ecus);
+  return NextResponse.json({ items: ecus, total: getEcuCount() });
 }

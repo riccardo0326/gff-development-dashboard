@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireSession, sessionToAuditUser } from "@/lib/auth";
+import { parseProjectFilterParams } from "@/lib/project-filters";
 import { bulkUpdateDtcCoverage, searchDtcs } from "@/lib/queries";
 import type { VehicleProjectId } from "@/lib/types";
 
@@ -14,14 +15,19 @@ export async function GET(request: Request) {
     | "pending"
     | "covered"
     | undefined;
+  const projects = parseProjectFilterParams(searchParams);
   const project = searchParams.get("project") as VehicleProjectId | undefined;
+  const priorityParam = searchParams.get("priority");
+  const priority = priorityParam ? Number(priorityParam) : undefined;
 
   const result = searchDtcs({
     search,
     ecuId,
     category: category ? Number(category) : undefined,
     coverage: coverage || undefined,
-    project,
+    project: projects.length === 0 ? project : undefined,
+    projects: projects.length > 0 ? projects : undefined,
+    priority: Number.isFinite(priority) ? priority : undefined,
     page,
     pageSize,
   });

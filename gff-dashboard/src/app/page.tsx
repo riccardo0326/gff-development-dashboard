@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ArrowUpDown, ChevronDown, ChevronUp } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { ActiveProjectsCard } from "@/components/dashboard/active-projects-card";
 import { EcuPriorityEditor } from "@/components/ecu-priority-editor";
 import { ProgressBar, ProgressBarLegend } from "@/components/progress-bar";
 import {
@@ -15,12 +16,22 @@ import {
 import { VisualizationFilter } from "@/components/visualization-filter";
 import type { EcuCompletion, VehicleProjectId } from "@/lib/types";
 import { VEHICLE_PROJECTS } from "@/lib/types";
-import { cn, compareEcuCodeHex, formatNumber, formatPercent } from "@/lib/utils";
+import { cn, compareEcuCodeHex, formatNumber } from "@/lib/utils";
 
 const PROJECTS: VehicleProjectId[] = VEHICLE_PROJECTS;
 
 type SortField = "priority" | VehicleProjectId;
 type SortDirection = "asc" | "desc";
+
+interface EcusResponse {
+  items: EcuCompletion[];
+  total: number;
+}
+
+interface ProjectRow {
+  id: VehicleProjectId;
+  name: string;
+}
 
 function SortHeader({
   label,
@@ -58,23 +69,26 @@ function SortHeader({
 
 export default function DashboardPage() {
   const [ecus, setEcus] = useState<EcuCompletion[]>([]);
+  const [totalEcus, setTotalEcus] = useState(0);
   const [priority, setPriority] = useState("");
   const [search, setSearch] = useState("");
   const [sortField, setSortField] = useState<SortField>("priority");
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
   const [loading, setLoading] = useState(true);
-  const [projects, setProjects] = useState<VehicleProjectId[]>(PROJECTS);
+  const [projects, setProjects] = useState<ProjectRow[]>(
+    PROJECTS.map((id) => ({ id, name: id })),
+  );
 
   useEffect(() => {
     fetch("/api/projects")
       .then((res) => res.json())
-      .then((data: Array<{ id: VehicleProjectId }>) => {
+      .then((data: ProjectRow[]) => {
         if (Array.isArray(data) && data.length > 0) {
-          setProjects(data.map((row) => row.id));
+          setProjects(data);
         }
       })
       .catch(() => {
-        setProjects(PROJECTS);
+        setProjects(PROJECTS.map((id) => ({ id, name: id })));
       });
   }, []);
 
@@ -86,12 +100,16 @@ export default function DashboardPage() {
     setLoading(true);
     fetch(`/api/ecus?${params.toString()}`)
       .then((res) => res.json())
-      .then((data) => setEcus(data))
+      .then((data: EcusResponse) => {
+        setEcus(data.items ?? []);
+        setTotalEcus(data.total ?? data.items?.length ?? 0);
+      })
       .finally(() => setLoading(false));
   }, [priority, search]);
 
   const sortedEcus = useMemo(() => {
     const copy = [...ecus];
+    const projectIds = projects.map((project) => project.id);
     copy.sort((a, b) => {
       let cmp = 0;
       if (sortField === "priority") {
@@ -107,25 +125,9 @@ export default function DashboardPage() {
       return sortDirection === "asc" ? cmp : -cmp;
     });
     return copy;
-  }, [ecus, sortField, sortDirection]);
+  }, [ecus, sortField, sortDirection, projects]);
 
-  const summary = useMemo(() => {
-    const totals = { covered: 0, pending: 0, total: 0 };
-    for (const ecu of sortedEcus) {
-      for (const project of projects) {
-        const stats = ecu.projects[project];
-        if (!stats) continue;
-        totals.covered += stats.covered;
-        totals.pending += stats.pending;
-        totals.total += stats.total;
-      }
-    }
-    return {
-      ecuCount: sortedEcus.length,
-      coverageSlots: totals.total,
-      completion: totals.total > 0 ? totals.covered / totals.total : 0,
-    };
-  }, [sortedEcus, projects]);
+  const tableProjects = projects.map((project) => project.id);
 
   function toggleSort(field: SortField) {
     if (sortField === field) {
@@ -148,28 +150,17 @@ export default function DashboardPage() {
     <div>
       <PageHeader title="Dashboard" />
 
-      <div className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <Card>
-          <p className="text-muted text-sm">ECUs shown</p>
-          <p className="mt-2 text-3xl font-semibold">{summary.ecuCount}</p>
+      <div className="mb-6 grid gap-4 sm:grid-cols-2">
+        <Card className="flex flex-col justify-center">
+          <p className="text-muted text-sm">ECU caricate</p>
+          <p className="mt-2 text-3xl font-semibold">{formatNumber(totalEcus)}</p>
+          {ecus.length !== totalEcus ? (
+            <p className="text-muted mt-1 text-xs">
+              {formatNumber(ecus.length)} shown with current filters
+            </p>
+          ) : null}
         </Card>
-        <Card>
-          <p className="text-muted text-sm">Coverage slots (filtered)</p>
-          <p className="mt-2 text-3xl font-semibold">
-            {formatNumber(summary.coverageSlots)}
-          </p>
-        </Card>
-        <Card>
-          <p className="text-muted text-sm">Coverage completion</p>
-          <p className="mt-2 text-3xl font-semibold">
-            {formatPercent(summary.completion)}
-          </p>
-          <p className="text-muted mt-1 text-xs">Covered / coverage slots</p>
-        </Card>
-        <Card>
-          <p className="text-muted text-sm">Vehicle projects</p>
-          <p className="mt-2 text-3xl font-semibold">{projects.length}</p>
-        </Card>
+        <ActiveProjectsCard projects={projects} />
       </div>
 
       <VisualizationFilter columns={2}>
@@ -207,12 +198,13 @@ export default function DashboardPage() {
                     onClick={() => toggleSort("priority")}
                   />
                 </th>
-                {projects.map((project, index) => (
+                {tableProjects.map((project, index) => (
                   <th
                     key={project}
                     className={cn(
                       "min-w-[180px] px-4 py-3",
-                      index < projects.length - 1 && "border-card-border border-r",
+                      index < tableProjects.length - 1 &&
+                        "border-card-border border-r",
                     )}
                   >
                     <SortHeader
@@ -228,13 +220,19 @@ export default function DashboardPage() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={2 + projects.length} className="text-muted px-4 py-8 text-center">
+                  <td
+                    colSpan={2 + tableProjects.length}
+                    className="text-muted px-4 py-8 text-center"
+                  >
                     Loading ECUs...
                   </td>
                 </tr>
               ) : sortedEcus.length === 0 ? (
                 <tr>
-                  <td colSpan={2 + projects.length} className="text-muted px-4 py-8 text-center">
+                  <td
+                    colSpan={2 + tableProjects.length}
+                    className="text-muted px-4 py-8 text-center"
+                  >
                     No ECUs match the current filters.
                   </td>
                 </tr>
@@ -261,7 +259,7 @@ export default function DashboardPage() {
                         }
                       />
                     </td>
-                    {projects.map((project, index) => {
+                    {tableProjects.map((project, index) => {
                       const stats = ecu.projects[project];
                       if (!stats) {
                         return (
@@ -269,7 +267,7 @@ export default function DashboardPage() {
                             key={project}
                             className={cn(
                               "px-4 py-3",
-                              index < projects.length - 1 &&
+                              index < tableProjects.length - 1 &&
                                 "border-card-border border-r",
                             )}
                           >
@@ -282,7 +280,7 @@ export default function DashboardPage() {
                           key={project}
                           className={cn(
                             "px-4 py-3",
-                            index < projects.length - 1 &&
+                            index < tableProjects.length - 1 &&
                               "border-card-border border-r",
                           )}
                         >

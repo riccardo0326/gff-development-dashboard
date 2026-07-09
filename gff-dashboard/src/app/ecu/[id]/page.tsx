@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { BackToDashboard } from "@/components/back-to-dashboard";
 import {
@@ -13,6 +13,7 @@ import { DtcDetailModal } from "@/components/dtc/dtc-detail-modal";
 import type { DtcRowData } from "@/components/dtc/dtc-types";
 import { PriorityBadge } from "@/components/priority-badge";
 import { ProgressBar, ProgressBarLegend } from "@/components/progress-bar";
+import { ProjectMultiSelect } from "@/components/project-multi-select";
 import {
   Button,
   Card,
@@ -29,6 +30,7 @@ import type {
   ProjectCompletion,
   VehicleProjectId,
 } from "@/lib/types";
+import { resolveVisibleProjects } from "@/lib/project-filters";
 import { formatNumber, formatPercent } from "@/lib/utils";
 import { projectCoverage } from "@/components/dtc/dtc-types";
 
@@ -50,7 +52,9 @@ export default function EcuDetailPage() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
   const [coverage, setCoverage] = useState("");
-  const [project, setProject] = useState("");
+  const [selectedProjects, setSelectedProjects] = useState<VehicleProjectId[]>(
+    [],
+  );
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<Set<string>>(new Set());
@@ -60,6 +64,11 @@ export default function EcuDetailPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalEdit, setModalEdit] = useState(false);
 
+  const visibleProjects = useMemo(
+    () => resolveVisibleProjects(DTC_PROJECTS, selectedProjects),
+    [selectedProjects],
+  );
+
   const loadData = useCallback(async () => {
     const paramsObj = new URLSearchParams({
       page: String(page),
@@ -68,14 +77,16 @@ export default function EcuDetailPage() {
     if (search) paramsObj.set("search", search);
     if (category) paramsObj.set("category", category);
     if (coverage) paramsObj.set("coverage", coverage);
-    if (project) paramsObj.set("project", project);
+    for (const projectName of selectedProjects) {
+      paramsObj.append("project", projectName);
+    }
 
     setLoading(true);
     const response = await fetch(`/api/ecus/${ecuId}?${paramsObj.toString()}`);
     const json = (await response.json()) as EcuResponse;
     setData(json);
     setLoading(false);
-  }, [ecuId, page, search, category, coverage, project]);
+  }, [ecuId, page, search, category, coverage, selectedProjects]);
 
   useEffect(() => {
     loadData();
@@ -94,11 +105,8 @@ export default function EcuDetailPage() {
   function selectFiltered() {
     if (!data?.items) return;
     const next = new Set(selected);
-    const projectsToSelect = project
-      ? [project as VehicleProjectId]
-      : DTC_PROJECTS;
     for (const dtc of data.items) {
-      for (const projectName of projectsToSelect) {
+      for (const projectName of visibleProjects) {
         const { applicable } = projectCoverage(dtc, projectName);
         if (applicable) next.add(dtcSelectionKey(dtc.id, projectName));
       }
@@ -271,16 +279,13 @@ export default function EcuDetailPage() {
             { value: "covered", label: "Covered" },
           ]}
         />
-        <SelectInput
-          value={project}
+        <ProjectMultiSelect
+          projects={DTC_PROJECTS}
+          selected={selectedProjects}
           onChange={(value) => {
             setPage(1);
-            setProject(value);
+            setSelectedProjects(value);
           }}
-          options={[
-            { value: "", label: "All projects" },
-            ...DTC_PROJECTS.map((value) => ({ value, label: value })),
-          ]}
         />
       </VisualizationFilter>
 
@@ -347,7 +352,8 @@ export default function EcuDetailPage() {
             showErrorColumns
             selectable
             selected={selected}
-            selectionProjectFilter={project as VehicleProjectId | ""}
+            selectionProjects={visibleProjects}
+            visibleProjects={visibleProjects}
             onToggleSelect={toggleSelect}
             onRowClick={(row) => openModal(row)}
             onEditGff={(row) => openModal(row, true)}

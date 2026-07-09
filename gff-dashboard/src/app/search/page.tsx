@@ -2,7 +2,7 @@
 
 import { CoverageBadge } from "@/components/coverage-badge";
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import {
   DTC_PROJECTS,
@@ -13,6 +13,7 @@ import { DtcDetailModal } from "@/components/dtc/dtc-detail-modal";
 import type { DtcRowData } from "@/components/dtc/dtc-types";
 import { projectCoverage } from "@/components/dtc/dtc-types";
 import { PriorityBadge } from "@/components/priority-badge";
+import { ProjectMultiSelect } from "@/components/project-multi-select";
 import {
   Button,
   Card,
@@ -22,6 +23,7 @@ import {
 } from "@/components/ui";
 import { VisualizationFilter } from "@/components/visualization-filter";
 import type { CoverageStatus, VehicleProjectId } from "@/lib/types";
+import { resolveVisibleProjects } from "@/lib/project-filters";
 import { formatNumber } from "@/lib/utils";
 
 export default function SearchPage() {
@@ -31,13 +33,21 @@ export default function SearchPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [coverage, setCoverage] = useState("");
-  const [project, setProject] = useState("");
+  const [priority, setPriority] = useState("");
+  const [selectedProjects, setSelectedProjects] = useState<VehicleProjectId[]>(
+    [],
+  );
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [bulkStatus, setBulkStatus] = useState<CoverageStatus>("covered");
   const [applying, setApplying] = useState(false);
   const [modalDtc, setModalDtc] = useState<DtcRowData | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalEdit, setModalEdit] = useState(false);
+
+  const visibleProjects = useMemo(
+    () => resolveVisibleProjects(DTC_PROJECTS, selectedProjects),
+    [selectedProjects],
+  );
 
   const loadData = useCallback(async () => {
     const params = new URLSearchParams({
@@ -46,7 +56,10 @@ export default function SearchPage() {
     });
     if (search) params.set("search", search);
     if (coverage) params.set("coverage", coverage);
-    if (project) params.set("project", project);
+    if (priority) params.set("priority", priority);
+    for (const projectName of selectedProjects) {
+      params.append("project", projectName);
+    }
 
     setLoading(true);
     const response = await fetch(`/api/dtcs/search?${params.toString()}`);
@@ -57,7 +70,7 @@ export default function SearchPage() {
     setItems(json.items ?? []);
     setTotal(json.total ?? 0);
     setLoading(false);
-  }, [page, search, coverage, project]);
+  }, [page, search, coverage, priority, selectedProjects]);
 
   useEffect(() => {
     loadData();
@@ -77,12 +90,9 @@ export default function SearchPage() {
 
   function selectFiltered() {
     const next = new Set(selected);
-    const projectsToSelect = project
-      ? [project as VehicleProjectId]
-      : DTC_PROJECTS;
     for (const row of items) {
       if (!row.id) continue;
-      for (const projectName of projectsToSelect) {
+      for (const projectName of visibleProjects) {
         const { applicable } = projectCoverage(row, projectName);
         if (applicable) next.add(dtcSelectionKey(row.id, projectName));
       }
@@ -158,7 +168,7 @@ export default function SearchPage() {
         description="Search DTCs across all ECUs. Click a row for full details including error handling fields."
       />
 
-      <VisualizationFilter>
+      <VisualizationFilter columns={4}>
         <FilterInput
           value={search}
           onChange={(value) => {
@@ -166,6 +176,19 @@ export default function SearchPage() {
             setSearch(value);
           }}
           placeholder="Search code, symptom, text, ECU..."
+        />
+        <SelectInput
+          value={priority}
+          onChange={(value) => {
+            setPage(1);
+            setPriority(value);
+          }}
+          options={[
+            { value: "", label: "All priorities" },
+            { value: "1", label: "PRIO 1" },
+            { value: "2", label: "PRIO 2" },
+            { value: "3", label: "PRIO 3" },
+          ]}
         />
         <SelectInput
           value={coverage}
@@ -179,16 +202,13 @@ export default function SearchPage() {
             { value: "covered", label: "Covered" },
           ]}
         />
-        <SelectInput
-          value={project}
+        <ProjectMultiSelect
+          projects={DTC_PROJECTS}
+          selected={selectedProjects}
           onChange={(value) => {
             setPage(1);
-            setProject(value);
+            setSelectedProjects(value);
           }}
-          options={[
-            { value: "", label: "All projects" },
-            ...DTC_PROJECTS.map((value) => ({ value, label: value })),
-          ]}
         />
       </VisualizationFilter>
 
@@ -259,7 +279,7 @@ export default function SearchPage() {
                 <th className="px-3 py-3">Text</th>
                 <th className="px-3 py-3">GFF</th>
                 <th className="px-3 py-3">GFF name</th>
-                {DTC_PROJECTS.map((p) => (
+                {visibleProjects.map((p) => (
                   <th key={p} className="px-3 py-3">
                     {p}
                   </th>
@@ -269,7 +289,10 @@ export default function SearchPage() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={9} className="text-muted px-4 py-8 text-center">
+                  <td
+                    colSpan={7 + visibleProjects.length}
+                    className="text-muted px-4 py-8 text-center"
+                  >
                     Searching...
                   </td>
                 </tr>
@@ -316,14 +339,11 @@ export default function SearchPage() {
                         {(row.gff_program?.length ?? 0) > 24 ? "…" : ""}
                       </button>
                     </td>
-                    {DTC_PROJECTS.map((projectName) => {
+                    {visibleProjects.map((projectName) => {
                       const { coverage: cov, applicable } = projectCoverage(
                         row,
                         projectName,
                       );
-                      const showSelection =
-                        applicable &&
-                        (!project || project === projectName);
 
                       return (
                         <td
@@ -335,7 +355,7 @@ export default function SearchPage() {
                             "—"
                           ) : (
                             <div className="flex flex-col gap-1">
-                              {showSelection && row.id ? (
+                              {row.id ? (
                                 <input
                                   type="checkbox"
                                   checked={selected.has(

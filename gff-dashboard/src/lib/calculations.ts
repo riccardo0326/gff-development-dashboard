@@ -156,12 +156,25 @@ export function addWorkdays(from: Date, days: number): Date {
   return addBusinessDays(from, Math.ceil(days));
 }
 
+function forecastWorkload(
+  stats: { pending: number; faulty: number },
+  options?: { includeFaultyInForecast?: boolean },
+): number {
+  return options?.includeFaultyInForecast
+    ? stats.pending + stats.faulty
+    : stats.pending;
+}
+
 export function buildPriorityStats(
   ecus: Ecu[],
   allRows: Array<CoverageRow & { ecu_id: string; priority: number; dtc_id: number }>,
   settings: Settings,
   dailyStats: DailyStat[],
-  options?: { faultyDtcIds?: Set<number>; excludeFaultyFromTotals?: boolean },
+  options?: {
+    faultyDtcIds?: Set<number>;
+    excludeFaultyFromTotals?: boolean;
+    includeFaultyInForecast?: boolean;
+  },
 ): PriorityStats[] {
   const dailyAverage = computeDailyAverage(dailyStats);
   const today = new Date();
@@ -191,8 +204,9 @@ export function buildPriorityStats(
     let endDateAverage: string | null = null;
 
     if (priority !== null) {
+      const remaining = forecastWorkload(stats, options);
       if (settings.daily_estimate > 0) {
-        daysRequiredEstimated = stats.pending / settings.daily_estimate;
+        daysRequiredEstimated = remaining / settings.daily_estimate;
         cumulativeDaysEstimated += daysRequiredEstimated;
         endDateEstimated = format(
           addWorkdays(today, cumulativeDaysEstimated),
@@ -200,7 +214,7 @@ export function buildPriorityStats(
         );
       }
       if (dailyAverage > 0) {
-        daysRequiredAverage = stats.pending / dailyAverage;
+        daysRequiredAverage = remaining / dailyAverage;
         cumulativeDaysAverage += daysRequiredAverage;
         endDateAverage = format(
           addWorkdays(today, cumulativeDaysAverage),
@@ -208,15 +222,16 @@ export function buildPriorityStats(
         );
       }
     } else {
+      const remaining = forecastWorkload(stats, options);
       if (settings.daily_estimate > 0) {
-        daysRequiredEstimated = stats.pending / settings.daily_estimate;
+        daysRequiredEstimated = remaining / settings.daily_estimate;
         endDateEstimated = format(
           addWorkdays(today, daysRequiredEstimated),
           "yyyy-MM-dd",
         );
       }
       if (dailyAverage > 0) {
-        daysRequiredAverage = stats.pending / dailyAverage;
+        daysRequiredAverage = remaining / dailyAverage;
         endDateAverage = format(
           addWorkdays(today, daysRequiredAverage),
           "yyyy-MM-dd",
