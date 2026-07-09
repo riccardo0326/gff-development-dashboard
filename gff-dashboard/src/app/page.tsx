@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { ArrowUpDown, ChevronDown, ChevronUp } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { ActiveProjectsCard } from "@/components/dashboard/active-projects-card";
+import { VehicleProjectBanner } from "@/components/dashboard/vehicle-project-banner";
 import { EcuPriorityEditor } from "@/components/ecu-priority-editor";
 import { ProgressBar, ProgressBarLegend } from "@/components/progress-bar";
 import {
@@ -16,7 +16,7 @@ import {
 import { VisualizationFilter } from "@/components/visualization-filter";
 import type { EcuCompletion, VehicleProjectId } from "@/lib/types";
 import { VEHICLE_PROJECTS } from "@/lib/types";
-import { cn, compareEcuCodeHex, formatNumber } from "@/lib/utils";
+import { cn, compareEcuCodeHex } from "@/lib/utils";
 
 const PROJECTS: VehicleProjectId[] = VEHICLE_PROJECTS;
 
@@ -69,7 +69,6 @@ function SortHeader({
 
 export default function DashboardPage() {
   const [ecus, setEcus] = useState<EcuCompletion[]>([]);
-  const [totalEcus, setTotalEcus] = useState(0);
   const [priority, setPriority] = useState("");
   const [search, setSearch] = useState("");
   const [sortField, setSortField] = useState<SortField>("priority");
@@ -102,7 +101,6 @@ export default function DashboardPage() {
       .then((res) => res.json())
       .then((data: EcusResponse) => {
         setEcus(data.items ?? []);
-        setTotalEcus(data.total ?? data.items?.length ?? 0);
       })
       .finally(() => setLoading(false));
   }, [priority, search]);
@@ -150,17 +148,8 @@ export default function DashboardPage() {
     <div>
       <PageHeader title="Dashboard" />
 
-      <div className="mb-6 grid gap-4 sm:grid-cols-2">
-        <Card className="flex flex-col justify-center">
-          <p className="text-muted text-sm">ECU caricate</p>
-          <p className="mt-2 text-3xl font-semibold">{formatNumber(totalEcus)}</p>
-          {ecus.length !== totalEcus ? (
-            <p className="text-muted mt-1 text-xs">
-              {formatNumber(ecus.length)} shown with current filters
-            </p>
-          ) : null}
-        </Card>
-        <ActiveProjectsCard projects={projects} />
+      <div className="mb-6">
+        <VehicleProjectBanner />
       </div>
 
       <VisualizationFilter columns={2}>

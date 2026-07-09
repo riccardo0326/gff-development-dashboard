@@ -63,3 +63,93 @@ textarea {
 ::-webkit-scrollbar-track {
   background: transparent;
 }
+
+/* ── Vehicle project banner — entrance animations ── */
+
+@keyframes vehicle-banner-slide-left {
+  0% {
+    opacity: 0;
+    transform: translateX(-48px) scale(0.96);
+  }
+  70% {
+    opacity: 1;
+    transform: translateX(4px) scale(1.01);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes vehicle-banner-slide-right {
+  0% {
+    opacity: 0;
+    transform: translateX(48px) scale(0.96);
+  }
+  70% {
+    opacity: 1;
+    transform: translateX(-4px) scale(1.01);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes vehicle-banner-slide-center {
+  0% {
+    opacity: 0;
+    transform: translateY(24px) scale(0.94);
+  }
+  65% {
+    opacity: 1;
+    transform: translateY(-3px) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes vehicle-banner-silhouette-fade {
+  0% {
+    opacity: 0;
+    filter: blur(4px);
+  }
+  100% {
+    opacity: 0.9;
+    filter: blur(0);
+  }
+}
+
+.vehicle-banner-enter-left,
+.vehicle-banner-enter-right,
+.vehicle-banner-enter-center {
+  opacity: 0;
+  animation: vehicle-banner-slide-left 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.vehicle-banner-enter-right {
+  animation-name: vehicle-banner-slide-right;
+}
+
+.vehicle-banner-enter-center {
+  animation-name: vehicle-banner-slide-center;
+}
+
+.vehicle-banner-silhouette {
+  opacity: 0;
+  animation: vehicle-banner-silhouette-fade 0.7s ease-out forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vehicle-banner-enter-left,
+  .vehicle-banner-enter-right,
+  .vehicle-banner-enter-center,
+  .vehicle-banner-silhouette {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}

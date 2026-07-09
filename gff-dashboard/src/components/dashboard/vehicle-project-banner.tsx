@@ -1,0 +1,142 @@
+"use client";
+
+import { Card } from "@/components/ui";
+import { cn } from "@/lib/utils";
+import {
+  RevueltoSilhouette,
+  TemerarioSilhouette,
+  UrusSilhouette,
+} from "./vehicle-silhouettes";
+
+/** Visual config for each Lamborghini vehicle project card. */
+const PROJECT_CARDS = [
+  {
+    id: "LB63x",
+    model: "Temerario",
+    accent: "#e87d3e",
+    accentGlow: "rgba(232, 125, 62, 0.35)",
+    labelGlow: "0 0 12px rgba(232, 125, 62, 0.6), 0 0 24px rgba(232, 125, 62, 0.25)",
+    Silhouette: TemerarioSilhouette,
+    /** Stagger delay for entrance animation (ms). */
+    delay: 0,
+    /** Slide direction: left card enters from the left. */
+    from: "left" as const,
+  },
+  {
+    id: "LB74x",
+    model: "Revuelto",
+    accent: "#22d3ee",
+    accentGlow: "rgba(34, 211, 238, 0.35)",
+    labelGlow: "0 0 12px rgba(34, 211, 238, 0.6), 0 0 24px rgba(34, 211, 238, 0.25)",
+    Silhouette: RevueltoSilhouette,
+    delay: 180,
+    from: "center" as const,
+  },
+  {
+    id: "LB636",
+    model: "Urus",
+    accent: "#fbbf24",
+    accentGlow: "rgba(251, 191, 36, 0.35)",
+    labelGlow: "0 0 12px rgba(251, 191, 36, 0.6), 0 0 24px rgba(251, 191, 36, 0.25)",
+    Silhouette: UrusSilhouette,
+    delay: 360,
+    from: "right" as const,
+  },
+] as const;
+
+function ProjectCard({
+  id,
+  model,
+  accent,
+  accentGlow,
+  labelGlow,
+  Silhouette,
+  delay,
+  from,
+}: (typeof PROJECT_CARDS)[number]) {
+  const slideClass =
+    from === "left"
+      ? "vehicle-banner-enter-left"
+      : from === "right"
+        ? "vehicle-banner-enter-right"
+        : "vehicle-banner-enter-center";
+
+  return (
+    <article
+      className={cn(
+        "group relative flex flex-1 flex-col items-center overflow-hidden rounded-lg",
+        "border border-white/5 bg-white/[0.02]",
+        "transition-colors duration-300 hover:border-white/10 hover:bg-white/[0.04]",
+        slideClass,
+      )}
+      style={{
+        animationDelay: `${delay}ms`,
+        // Accent ambient glow behind the silhouette
+        boxShadow: `inset 0 -40px 60px -20px ${accentGlow}`,
+      }}
+    >
+      {/* Subtle top accent line */}
+      <div
+        className="absolute inset-x-0 top-0 h-px opacity-60"
+        style={{
+          background: `linear-gradient(90deg, transparent, ${accent}, transparent)`,
+        }}
+      />
+
+      {/* Vehicle silhouette area */}
+      <div className="relative flex h-24 w-full items-center justify-center px-4 pt-4 sm:h-28 md:h-32">
+        <div
+          className="vehicle-banner-silhouette w-full max-w-[280px] opacity-90 transition-opacity duration-300 group-hover:opacity-100"
+          style={{ animationDelay: `${delay + 80}ms` }}
+        >
+          <Silhouette accentColor={accent} />
+        </div>
+      </div>
+
+      {/* Project label */}
+      <div className="flex flex-col items-center gap-0.5 pb-4 pt-1">
+        <span
+          className="text-sm font-semibold tracking-[0.2em] sm:text-base"
+          style={{ color: accent, textShadow: labelGlow }}
+        >
+          {id}
+        </span>
+        <span className="text-muted text-[10px] uppercase tracking-widest sm:text-xs">
+          {model}
+        </span>
+      </div>
+    </article>
+  );
+}
+
+/**
+ * Full-width horizontal banner showcasing the three Lamborghini
+ * vehicle projects with neon-outline silhouettes and staggered
+ * entrance animations.
+ */
+export function VehicleProjectBanner({ className }: { className?: string }) {
+  return (
+    <Card
+      className={cn(
+        "relative overflow-hidden p-3 sm:p-4",
+        className,
+      )}
+    >
+      {/* Ambient background gradient */}
+      <div
+        className="pointer-events-none absolute inset-0 opacity-40"
+        aria-hidden
+        style={{
+          background:
+            "radial-gradient(ellipse 80% 60% at 50% 100%, rgba(59,130,246,0.08), transparent)",
+        }}
+      />
+
+      <div className="relative flex flex-col gap-3 sm:flex-row sm:gap-4">
+        {PROJECT_CARDS.map((project) => (
+          <ProjectCard key={project.id} {...project} />
+        ))}
+      </div>
+    </Card>
+  );
+}
