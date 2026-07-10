@@ -16,6 +16,11 @@ import {
 } from "./calculations";
 import { compareEcuCodeHex } from "./utils";
 import { hasGffAvailable } from "./gff";
+import {
+  appendFaultyOnlyFilter,
+  enrichDtcRow,
+  getFaultyDtcMetadataMap,
+} from "./faulty-dtc";
 import type {
   DailyStat,
   Dtc,
@@ -123,6 +128,7 @@ export function updateEcuPriority(id: string, priority: number): Ecu | null {
 export function getEcuCompletions(filters?: {
   priority?: number;
   search?: string;
+  hasFaulty?: boolean;
 }): EcuCompletion[] {
   const ecus = getEcus(filters);
   const db = getDb();
@@ -135,7 +141,7 @@ export function getEcuCompletions(filters?: {
     FROM dtcs WHERE ecu_id = ?
   `);
 
-  return ecus.map((ecu) => ({
+  let results = ecus.map((ecu) => ({
     ...ecu,
     projects: computeEcuProjectCompletion(
       ecu,
@@ -152,6 +158,14 @@ export function getEcuCompletions(filters?: {
       faultyDtcIds,
     ),
   }));
+
+  if (filters?.hasFaulty) {
+    results = results.filter((ecu) =>
+      Object.values(ecu.projects).some((project) => (project?.faulty ?? 0) > 0),
+    );
+  }
+
+  return results;
 }
 
 export function getAllCoverageRows() {
@@ -296,6 +310,7 @@ export function getDtcsForEcu(
     coverage?: "pending" | "covered";
     project?: VehicleProjectId;
     projects?: VehicleProjectId[];
+    faultyOnly?: boolean;
   },
   pagination?: { page: number; pageSize: number },
 ) {
@@ -335,6 +350,10 @@ export function getDtcsForEcu(
     params.push(filters.coverage, filters.coverage, filters.coverage);
   }
 
+  if (filters?.faultyOnly) {
+    ({ query, params } = appendFaultyOnlyFilter(query, params));
+  }
+
   const countQuery = query.replace("SELECT *", "SELECT COUNT(*) as count");
   const total = (
     db.prepare(countQuery).get(...params) as { count: number }
@@ -347,7 +366,13 @@ export function getDtcsForEcu(
   }
 
   const items = db.prepare(query).all(...params) as Dtc[];
-  return { items, total };
+  const faultyDtcIds = getFaultyDtcIds();
+  const metadata = getFaultyDtcMetadataMap();
+
+  return {
+    items: items.map((row) => enrichDtcRow(row, faultyDtcIds, metadata)),
+    total,
+  };
 }
 
 export function updateDtcCoverage(
@@ -462,6 +487,7 @@ export function searchDtcs(filters?: {
   project?: VehicleProjectId;
   projects?: VehicleProjectId[];
   priority?: number;
+  faultyOnly?: boolean;
   page?: number;
   pageSize?: number;
 }) {
@@ -517,6 +543,13 @@ export function searchDtcs(filters?: {
     params.push(filters.coverage, filters.coverage, filters.coverage);
   }
 
+  if (filters?.faultyOnly) {
+    ({ query, params } = appendFaultyOnlyFilter(query, params, {
+      idColumn: "d.id",
+      gffColumn: "d.gff_available",
+    }));
+  }
+
   const countQuery = query.replace(
     "SELECT d.*, e.code as ecu_code, e.priority as ecu_priority",
     "SELECT COUNT(*) as count",
@@ -533,7 +566,15 @@ export function searchDtcs(filters?: {
   params.push(pageSize, (page - 1) * pageSize);
 
   const items = db.prepare(query).all(...params) as DtcSearchRow[];
-  return { items, total, page, pageSize };
+  const faultyDtcIds = getFaultyDtcIds();
+  const metadata = getFaultyDtcMetadataMap();
+
+  return {
+    items: items.map((row) => enrichDtcRow(row, faultyDtcIds, metadata)),
+    total,
+    page,
+    pageSize,
+  };
 }
 
 export interface BulkUpdateItem {
@@ -728,22 +769,4 @@ export function getCategoriesForEcu(ecuId: string): number[] {
     )
     .all(ecuId) as Array<{ category: number }>;
   return rows.map((r) => r.category);
-}
-
-export function getFaultyFilterOptions() {
-  const db = getDb();
-  const daCodes = db
-    .prepare(
-      "SELECT DISTINCT da_code FROM faulty_dtcs WHERE da_code IS NOT NULL ORDER BY da_code ASC LIMIT 200",
-    )
-    .all() as Array<{ da_code: string }>;
-  const issues = db
-    .prepare(
-      "SELECT DISTINCT issue_description FROM faulty_dtcs WHERE issue_description IS NOT NULL ORDER BY issue_description ASC LIMIT 50",
-    )
-    .all() as Array<{ issue_description: string }>;
-  return {
-    daCodes: daCodes.map((r) => r.da_code),
-    issues: issues.map((r) => r.issue_description),
-  };
 }

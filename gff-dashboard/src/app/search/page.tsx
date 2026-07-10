@@ -6,12 +6,13 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import {
   DTC_PROJECTS,
-  DtcDataTable,
   dtcSelectionKey,
 } from "@/components/dtc/dtc-data-table";
 import { DtcDetailModal } from "@/components/dtc/dtc-detail-modal";
 import type { DtcRowData } from "@/components/dtc/dtc-types";
 import { projectCoverage } from "@/components/dtc/dtc-types";
+import { FaultyFilterToggle } from "@/components/faulty-filter-toggle";
+import { FaultyRowIndicator } from "@/components/faulty-row-indicator";
 import { PriorityBadge } from "@/components/priority-badge";
 import { ProjectMultiSelect } from "@/components/project-multi-select";
 import {
@@ -24,7 +25,7 @@ import {
 import { VisualizationFilter } from "@/components/visualization-filter";
 import type { CoverageStatus, VehicleProjectId } from "@/lib/types";
 import { resolveVisibleProjects } from "@/lib/project-filters";
-import { formatNumber } from "@/lib/utils";
+import { cn, formatNumber } from "@/lib/utils";
 
 export default function SearchPage() {
   const [items, setItems] = useState<DtcRowData[]>([]);
@@ -34,6 +35,7 @@ export default function SearchPage() {
   const [search, setSearch] = useState("");
   const [coverage, setCoverage] = useState("");
   const [priority, setPriority] = useState("");
+  const [faultyOnly, setFaultyOnly] = useState(false);
   const [selectedProjects, setSelectedProjects] = useState<VehicleProjectId[]>(
     [],
   );
@@ -49,6 +51,20 @@ export default function SearchPage() {
     [selectedProjects],
   );
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const projects = params.getAll("project") as VehicleProjectId[];
+    if (projects.length > 0) {
+      setSelectedProjects(projects.filter((p) => DTC_PROJECTS.includes(p)));
+    }
+    if (params.get("coverage") === "pending" || params.get("coverage") === "covered") {
+      setCoverage(params.get("coverage")!);
+    }
+    if (params.get("faultyOnly") === "1") {
+      setFaultyOnly(true);
+    }
+  }, []);
+
   const loadData = useCallback(async () => {
     const params = new URLSearchParams({
       page: String(page),
@@ -57,6 +73,7 @@ export default function SearchPage() {
     if (search) params.set("search", search);
     if (coverage) params.set("coverage", coverage);
     if (priority) params.set("priority", priority);
+    if (faultyOnly) params.set("faultyOnly", "1");
     for (const projectName of selectedProjects) {
       params.append("project", projectName);
     }
@@ -70,7 +87,7 @@ export default function SearchPage() {
     setItems(json.items ?? []);
     setTotal(json.total ?? 0);
     setLoading(false);
-  }, [page, search, coverage, priority, selectedProjects]);
+  }, [page, search, coverage, priority, faultyOnly, selectedProjects]);
 
   useEffect(() => {
     loadData();
@@ -168,7 +185,18 @@ export default function SearchPage() {
         description="Search DTCs across all ECUs. Click a row for full details including error handling fields."
       />
 
-      <VisualizationFilter columns={4}>
+      <VisualizationFilter
+        columns={4}
+        footer={
+          <FaultyFilterToggle
+            active={faultyOnly}
+            onChange={(value) => {
+              setPage(1);
+              setFaultyOnly(value);
+            }}
+          />
+        }
+      >
         <FilterInput
           value={search}
           onChange={(value) => {
@@ -272,6 +300,7 @@ export default function SearchPage() {
           <table className="min-w-full text-sm">
             <thead className="border-card-border bg-white/5 border-b">
               <tr className="text-muted text-left">
+                <th className="w-8 px-2 py-3" aria-label="Faulty" />
                 <th className="px-3 py-3">ECU</th>
                 <th className="px-3 py-3">Prio</th>
                 <th className="px-3 py-3">Symptom</th>
@@ -290,7 +319,7 @@ export default function SearchPage() {
               {loading ? (
                 <tr>
                   <td
-                    colSpan={7 + visibleProjects.length}
+                    colSpan={8 + visibleProjects.length}
                     className="text-muted px-4 py-8 text-center"
                   >
                     Searching...
@@ -300,9 +329,15 @@ export default function SearchPage() {
                 tableRows.map((row) => (
                   <tr
                     key={row.id}
-                    className="border-card-border hover:bg-accent-soft/40 cursor-pointer border-b align-top transition-colors last:border-b-0"
+                    className={cn(
+                      "border-card-border hover:bg-accent-soft/40 cursor-pointer border-b align-top transition-colors last:border-b-0",
+                      row.is_faulty && "border-l-2 border-l-warning bg-warning/5",
+                    )}
                     onClick={() => openModal(row)}
                   >
+                    <td className="px-2 py-3">
+                      <FaultyRowIndicator faulty={row.is_faulty} />
+                    </td>
                     <td className="px-3 py-3" onClick={(e) => e.stopPropagation()}>
                       <Link
                         href={`/ecu/${row.ecu_id}`}

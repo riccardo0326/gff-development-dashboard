@@ -19,6 +19,7 @@ export async function GET(request: Request) {
   const project = searchParams.get("project") as VehicleProjectId | undefined;
   const priorityParam = searchParams.get("priority");
   const priority = priorityParam ? Number(priorityParam) : undefined;
+  const faultyOnly = searchParams.get("faultyOnly") === "1";
 
   const result = searchDtcs({
     search,
@@ -28,6 +29,7 @@ export async function GET(request: Request) {
     project: projects.length === 0 ? project : undefined,
     projects: projects.length > 0 ? projects : undefined,
     priority: Number.isFinite(priority) ? priority : undefined,
+    faultyOnly: faultyOnly || undefined,
     page,
     pageSize,
   });

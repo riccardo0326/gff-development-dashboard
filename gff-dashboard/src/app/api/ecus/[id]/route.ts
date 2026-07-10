@@ -31,6 +31,7 @@ export async function GET(
     | null;
   const projects = parseProjectFilterParams(searchParams);
   const project = searchParams.get("project") as VehicleProjectId | null;
+  const faultyOnly = searchParams.get("faultyOnly") === "1";
 
   const completion = getEcuCompletions().find((e) => e.id === id);
   const dtcs = getDtcsForEcu(
@@ -41,6 +42,7 @@ export async function GET(
       coverage: coverage ?? undefined,
       project: projects.length === 0 ? (project ?? undefined) : undefined,
       projects: projects.length > 0 ? projects : undefined,
+      faultyOnly: faultyOnly || undefined,
     },
     { page, pageSize },
   );

@@ -11,6 +11,7 @@ import {
 } from "@/components/dtc/dtc-data-table";
 import { DtcDetailModal } from "@/components/dtc/dtc-detail-modal";
 import type { DtcRowData } from "@/components/dtc/dtc-types";
+import { FaultyFilterToggle } from "@/components/faulty-filter-toggle";
 import { PriorityBadge } from "@/components/priority-badge";
 import { ProgressBar, ProgressBarLegend } from "@/components/progress-bar";
 import { ProjectMultiSelect } from "@/components/project-multi-select";
@@ -52,6 +53,7 @@ export default function EcuDetailPage() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
   const [coverage, setCoverage] = useState("");
+  const [faultyOnly, setFaultyOnly] = useState(false);
   const [selectedProjects, setSelectedProjects] = useState<VehicleProjectId[]>(
     [],
   );
@@ -77,6 +79,7 @@ export default function EcuDetailPage() {
     if (search) paramsObj.set("search", search);
     if (category) paramsObj.set("category", category);
     if (coverage) paramsObj.set("coverage", coverage);
+    if (faultyOnly) paramsObj.set("faultyOnly", "1");
     for (const projectName of selectedProjects) {
       paramsObj.append("project", projectName);
     }
@@ -86,7 +89,7 @@ export default function EcuDetailPage() {
     const json = (await response.json()) as EcuResponse;
     setData(json);
     setLoading(false);
-  }, [ecuId, page, search, category, coverage, selectedProjects]);
+  }, [ecuId, page, search, category, coverage, faultyOnly, selectedProjects]);
 
   useEffect(() => {
     loadData();
@@ -244,7 +247,18 @@ export default function EcuDetailPage() {
         </Card>
       </div>
 
-      <VisualizationFilter columns={4}>
+      <VisualizationFilter
+        columns={4}
+        footer={
+          <FaultyFilterToggle
+            active={faultyOnly}
+            onChange={(value) => {
+              setPage(1);
+              setFaultyOnly(value);
+            }}
+          />
+        }
+      >
         <FilterInput
           value={search}
           onChange={(value) => {

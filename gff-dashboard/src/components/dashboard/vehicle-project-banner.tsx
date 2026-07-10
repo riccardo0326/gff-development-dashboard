@@ -5,7 +5,7 @@ import { Card } from "@/components/ui";
 import { cn } from "@/lib/utils";
 
 /** Visual config for each Lamborghini vehicle project card. */
-const PROJECT_CARDS = [
+export const PROJECT_CARDS = [
   {
     id: "LB63x",
     model: "Temerario",
@@ -49,7 +49,8 @@ function ProjectCard({
   labelGlow,
   delay,
   from,
-}: (typeof PROJECT_CARDS)[number]) {
+  onSelect,
+}: (typeof PROJECT_CARDS)[number] & { onSelect?: () => void }) {
   const slideClass =
     from === "left"
       ? "vehicle-banner-enter-left"
@@ -58,11 +59,14 @@ function ProjectCard({
         : "vehicle-banner-enter-center";
 
   return (
-    <article
+    <button
+      type="button"
+      onClick={onSelect}
       className={cn(
-        "group relative flex flex-1 flex-col items-center overflow-hidden rounded-lg",
+        "group relative flex flex-1 flex-col items-center overflow-hidden rounded-lg text-left",
         "border border-white/5 bg-white/[0.02]",
-        "transition-colors duration-300 hover:border-white/10 hover:bg-white/[0.04]",
+        "cursor-pointer transition-colors duration-300 hover:border-white/10 hover:bg-white/[0.04]",
+        "focus-visible:ring-accent focus-visible:ring-2 focus-visible:outline-none",
         slideClass,
       )}
       style={{
@@ -108,7 +112,7 @@ function ProjectCard({
           {model}
         </span>
       </div>
-    </article>
+    </button>
   );
 }
 
@@ -117,7 +121,13 @@ function ProjectCard({
  * vehicle projects with PNG imagery and staggered
  * entrance animations.
  */
-export function VehicleProjectBanner({ className }: { className?: string }) {
+export function VehicleProjectBanner({
+  className,
+  onSelectProject,
+}: {
+  className?: string;
+  onSelectProject?: (projectId: (typeof PROJECT_CARDS)[number]["id"]) => void;
+}) {
   return (
     <Card
       className={cn(
@@ -137,7 +147,11 @@ export function VehicleProjectBanner({ className }: { className?: string }) {
 
       <div className="relative flex flex-col gap-3 sm:flex-row sm:gap-4">
         {PROJECT_CARDS.map((project) => (
-          <ProjectCard key={project.id} {...project} />
+          <ProjectCard
+            key={project.id}
+            {...project}
+            onSelect={() => onSelectProject?.(project.id)}
+          />
         ))}
       </div>
     </Card>

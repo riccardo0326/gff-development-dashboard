@@ -149,13 +149,13 @@ export function DtcDetailModal({
           <Field label="Symptom" value={dtc.symptom} />
           <Field label="Code" value={dtc.trouble_code} mono />
           <Field label="Text" value={dtc.dtc_text} className="sm:col-span-2" />
-          {dtc.issue_description ? (
-            <Field
-              label="Issue"
-              value={dtc.issue_description}
-              className="sm:col-span-2"
-            />
-          ) : null}
+          <Field
+            label="Issue"
+            value={dtc.issue_description ?? "—"}
+            className="sm:col-span-2"
+          />
+          <Field label="EV name" value={dtc.ev_name ?? "—"} />
+          <Field label="Projects impacted" value={dtc.projects_impacted ?? "—"} />
         </div>
 
         <div className="mt-5 grid gap-4">
