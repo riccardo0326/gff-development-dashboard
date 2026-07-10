@@ -25,6 +25,10 @@ export async function proxy(req: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!login|api/auth|_next/static|_next/image|favicon.ico).*)",
+    /*
+     * Allow static assets from /public (png, svg, etc.) so next/image and
+     * direct <img> requests are not redirected to /login.
+     */
+    "/((?!login|api/auth|_next/static|_next/image|favicon.ico|.*\\.(?:png|jpg|jpeg|gif|webp|svg|ico)$).*)",
   ],
 };
