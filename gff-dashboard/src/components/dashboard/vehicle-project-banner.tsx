@@ -1,22 +1,18 @@
 "use client";
 
+import Image from "next/image";
 import { Card } from "@/components/ui";
 import { cn } from "@/lib/utils";
-import {
-  RevueltoSilhouette,
-  TemerarioSilhouette,
-  UrusSilhouette,
-} from "./vehicle-silhouettes";
 
 /** Visual config for each Lamborghini vehicle project card. */
 const PROJECT_CARDS = [
   {
     id: "LB63x",
     model: "Temerario",
+    image: "/temerario-removebg-preview.png",
     accent: "#e87d3e",
     accentGlow: "rgba(232, 125, 62, 0.35)",
     labelGlow: "0 0 12px rgba(232, 125, 62, 0.6), 0 0 24px rgba(232, 125, 62, 0.25)",
-    Silhouette: TemerarioSilhouette,
     /** Stagger delay for entrance animation (ms). */
     delay: 0,
     /** Slide direction: left card enters from the left. */
@@ -25,20 +21,20 @@ const PROJECT_CARDS = [
   {
     id: "LB74x",
     model: "Revuelto",
+    image: "/revuelto-removebg-preview.png",
     accent: "#22d3ee",
     accentGlow: "rgba(34, 211, 238, 0.35)",
     labelGlow: "0 0 12px rgba(34, 211, 238, 0.6), 0 0 24px rgba(34, 211, 238, 0.25)",
-    Silhouette: RevueltoSilhouette,
     delay: 180,
     from: "center" as const,
   },
   {
     id: "LB636",
     model: "Urus",
+    image: "/urus-removebg-preview.png",
     accent: "#fbbf24",
     accentGlow: "rgba(251, 191, 36, 0.35)",
     labelGlow: "0 0 12px rgba(251, 191, 36, 0.6), 0 0 24px rgba(251, 191, 36, 0.25)",
-    Silhouette: UrusSilhouette,
     delay: 360,
     from: "right" as const,
   },
@@ -47,10 +43,10 @@ const PROJECT_CARDS = [
 function ProjectCard({
   id,
   model,
+  image,
   accent,
   accentGlow,
   labelGlow,
-  Silhouette,
   delay,
   from,
 }: (typeof PROJECT_CARDS)[number]) {
@@ -83,13 +79,20 @@ function ProjectCard({
         }}
       />
 
-      {/* Vehicle silhouette area */}
+      {/* Vehicle image area */}
       <div className="relative flex h-24 w-full items-center justify-center px-4 pt-4 sm:h-28 md:h-32">
         <div
-          className="vehicle-banner-silhouette w-full max-w-[280px] opacity-90 transition-opacity duration-300 group-hover:opacity-100"
+          className="vehicle-banner-silhouette relative h-full w-full max-w-[280px] opacity-90 transition-opacity duration-300 group-hover:opacity-100"
           style={{ animationDelay: `${delay + 80}ms` }}
         >
-          <Silhouette accentColor={accent} />
+          <Image
+            src={image}
+            alt={`Lamborghini ${model}`}
+            fill
+            className="object-contain object-center"
+            sizes="(max-width: 640px) 100vw, 280px"
+            priority
+          />
         </div>
       </div>
 
@@ -111,7 +114,7 @@ function ProjectCard({
 
 /**
  * Full-width horizontal banner showcasing the three Lamborghini
- * vehicle projects with neon-outline silhouettes and staggered
+ * vehicle projects with PNG imagery and staggered
  * entrance animations.
  */
 export function VehicleProjectBanner({ className }: { className?: string }) {
