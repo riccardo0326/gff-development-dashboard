@@ -6,9 +6,7 @@ import { X } from "lucide-react";
 import { KpiCard } from "@/components/statistics/kpi-card";
 import { ProgressBar, ProgressBarLegend } from "@/components/progress-bar";
 import { Button, Card } from "@/components/ui";
-import { addWorkdays, formatDisplayDate } from "@/lib/calculations";
 import type { PriorityStats, VehicleProjectId } from "@/lib/types";
-import { format, startOfToday } from "date-fns";
 import { formatNumber, formatPercent } from "@/lib/utils";
 import { PROJECT_CARDS } from "./vehicle-project-banner";
 
@@ -46,14 +44,6 @@ export function ProjectDetailModal({
   if (!card || !slice || !tot) return null;
 
   const slots = slice.covered + slice.pending + slice.faulty;
-  const remaining = slice.pending + slice.faulty;
-  const dailyAverage = tot.daily_average ?? 0;
-  const daysRequired =
-    dailyAverage > 0 ? Math.ceil(remaining / dailyAverage) : null;
-  const endDateAverage =
-    daysRequired != null
-      ? format(addWorkdays(startOfToday(), daysRequired), "yyyy-MM-dd")
-      : null;
 
   return (
     <div
@@ -135,32 +125,6 @@ export function ProjectDetailModal({
           />
         </Card>
 
-        <div className="mt-5 grid gap-4 sm:grid-cols-2">
-          <Card className="border-success/30 bg-success/5">
-            <p className="text-foreground/80 text-xs font-semibold tracking-wide uppercase">
-              Forecast (average rate)
-            </p>
-            <p className="mt-2 text-xl font-semibold">
-              {daysRequired != null ? `${formatNumber(daysRequired)} days` : "—"}
-            </p>
-            <p className="text-muted mt-1 text-xs">
-              Based on daily average of {formatNumber(Math.round(dailyAverage))}{" "}
-              GFF/day
-            </p>
-          </Card>
-          <Card className="border-success/30 bg-success/5">
-            <p className="text-foreground/80 text-xs font-semibold tracking-wide uppercase">
-              Est. end date (average)
-            </p>
-            <p className="mt-2 text-xl font-semibold">
-              {endDateAverage ? formatDisplayDate(endDateAverage) : "—"}
-            </p>
-            <p className="text-muted mt-1 text-xs">
-              Pending + faulty slots at current pace
-            </p>
-          </Card>
-        </div>
-
         <Card className="mt-5 overflow-hidden p-0">
           <div className="border-card-border border-b px-4 py-3">
             <p className="text-sm font-medium">Priority breakdown</p>
@@ -180,10 +144,6 @@ export function ProjectDetailModal({
                 const row = priorityStats.find((entry) => entry.label === label);
                 const projectSlice = row?.segments[project];
                 if (!row || !projectSlice) return null;
-                const projectSlots =
-                  projectSlice.covered +
-                  projectSlice.pending +
-                  projectSlice.faulty;
                 const projectCompletion = row.completion[project] ?? 0;
 
                 return (
