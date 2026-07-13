@@ -16,6 +16,7 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import { X } from "lucide-react";
 import { DarkChartTooltip } from "@/components/chart-tooltip";
+import { KpiCard } from "@/components/statistics/kpi-card";
 import { DailyForecastAccordion } from "@/components/statistics/daily-forecast-accordion";
 import { ForecastColumn } from "@/components/statistics/forecast-column";
 import { InfoTooltip } from "@/components/info-tooltip";
@@ -76,36 +77,6 @@ interface StatisticsResponse {
   weeklyTrend: WeeklyTrendPoint[];
   dailyStats: DailyStat[];
   settings: Settings;
-}
-
-function KpiCard({
-  label,
-  value,
-  hint,
-  accent,
-}: {
-  label: string;
-  value: string;
-  hint?: string;
-  accent?: "success" | "warning" | "accent";
-}) {
-  return (
-    <Card
-      className={cn(
-        accent === "success" && "border-success/20",
-        accent === "warning" && "border-warning/20",
-        accent === "accent" && "border-accent/20",
-      )}
-    >
-      <p className="text-foreground/80 text-xs font-medium tracking-wide uppercase">
-        {label}
-      </p>
-      <p className="mt-2 text-2xl font-semibold">{value}</p>
-      {hint ? (
-        <p className="text-foreground/60 mt-1 text-xs">{hint}</p>
-      ) : null}
-    </Card>
-  );
 }
 
 function DonutLegend({
@@ -531,7 +502,12 @@ export default function StatisticsPage() {
                 />
               }
             />
-            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            <div
+              className={cn(
+                "grid gap-4 sm:grid-cols-2",
+                selectedScope === "TOT" ? "xl:grid-cols-5" : "xl:grid-cols-4",
+              )}
+            >
               <KpiCard
                 label="Coverage slots"
                 value={formatNumber(selectedRow.total_dtcs)}
@@ -551,6 +527,16 @@ export default function StatisticsPage() {
                 label="Faulty DTCs"
                 value={formatNumber(selectedRow.faulty)}
               />
+              {selectedScope === "TOT" ? (
+                <KpiCard
+                  label="Daily Average"
+                  value={formatNumber(
+                    Math.round(selectedRow.daily_average ?? 0),
+                  )}
+                  hint="Average GFF implementations per day (impl_for_day)"
+                  accent="accent"
+                />
+              ) : null}
             </div>
           </section>
 

@@ -22,6 +22,7 @@ export interface DtcRowData {
   issue_description?: string | null;
   ev_name?: string | null;
   projects_impacted?: string | null;
+  is_faulty?: boolean;
 }
 
 export { hasGffAvailable } from "@/lib/gff";

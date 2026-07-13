@@ -2,7 +2,9 @@
 
 import { Pencil } from "lucide-react";
 import { CoverageBadge } from "@/components/coverage-badge";
+import { FaultyRowIndicator } from "@/components/faulty-row-indicator";
 import { TruncateText } from "@/components/truncate-text";
+import { cn } from "@/lib/utils";
 import type { VehicleProjectId } from "@/lib/types";
 import {
   type DtcRowData,
@@ -56,6 +58,7 @@ export function DtcDataTable({
   emptyMessage = "No records found.",
 }: DtcDataTableProps) {
   const colSpan =
+    1 +
     (showDa ? 1 : 0) +
     (showEcu ? 2 : 0) +
     5 +
@@ -66,6 +69,7 @@ export function DtcDataTable({
     <table className="min-w-full text-sm">
       <thead className="border-card-border bg-white/5 border-b">
         <tr className="text-muted text-left">
+          <th className="w-8 px-2 py-3" aria-label="Faulty" />
           {showDa ? <th className="px-3 py-3">DA</th> : null}
           {showEcu ? (
             <>
@@ -110,9 +114,15 @@ export function DtcDataTable({
           rows.map((row) => (
             <tr
               key={row.id ?? `${row.trouble_code}-${row.symptom}`}
-              className="border-card-border hover:bg-accent-soft/40 cursor-pointer border-b align-top transition-colors last:border-b-0"
+              className={cn(
+                "border-card-border hover:bg-accent-soft/40 cursor-pointer border-b align-top transition-colors last:border-b-0",
+                row.is_faulty && "border-l-2 border-l-warning bg-warning/5",
+              )}
               onClick={() => onRowClick(row)}
             >
+              <td className="px-2 py-3">
+                <FaultyRowIndicator faulty={row.is_faulty} />
+              </td>
               {showDa ? (
                 <td className="px-3 py-3 font-mono text-xs">
                   {formatDaCode(row.da_code ?? row.ecu_code)}

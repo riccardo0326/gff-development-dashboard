@@ -3,8 +3,10 @@
 import Link from "next/link";
 import { ArrowUpDown, ChevronDown, ChevronUp } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { ActiveProjectsCard } from "@/components/dashboard/active-projects-card";
+import { ProjectDetailModal } from "@/components/dashboard/project-detail-modal";
+import { VehicleProjectBanner } from "@/components/dashboard/vehicle-project-banner";
 import { EcuPriorityEditor } from "@/components/ecu-priority-editor";
+import { FaultyFilterToggle } from "@/components/faulty-filter-toggle";
 import { ProgressBar, ProgressBarLegend } from "@/components/progress-bar";
 import {
   Card,
@@ -14,9 +16,9 @@ import {
   SelectInput,
 } from "@/components/ui";
 import { VisualizationFilter } from "@/components/visualization-filter";
-import type { EcuCompletion, VehicleProjectId } from "@/lib/types";
+import type { EcuCompletion, PriorityStats, VehicleProjectId } from "@/lib/types";
 import { VEHICLE_PROJECTS } from "@/lib/types";
-import { cn, compareEcuCodeHex, formatNumber } from "@/lib/utils";
+import { cn, compareEcuCodeHex } from "@/lib/utils";
 
 const PROJECTS: VehicleProjectId[] = VEHICLE_PROJECTS;
 
@@ -69,15 +71,28 @@ function SortHeader({
 
 export default function DashboardPage() {
   const [ecus, setEcus] = useState<EcuCompletion[]>([]);
-  const [totalEcus, setTotalEcus] = useState(0);
   const [priority, setPriority] = useState("");
   const [search, setSearch] = useState("");
+  const [faultyOnly, setFaultyOnly] = useState(false);
   const [sortField, setSortField] = useState<SortField>("priority");
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
   const [loading, setLoading] = useState(true);
+  const [priorityStats, setPriorityStats] = useState<PriorityStats[]>([]);
+  const [selectedProject, setSelectedProject] = useState<VehicleProjectId | null>(
+    null,
+  );
   const [projects, setProjects] = useState<ProjectRow[]>(
     PROJECTS.map((id) => ({ id, name: id })),
   );
+
+  useEffect(() => {
+    fetch("/api/statistics")
+      .then((res) => res.json())
+      .then((data: { priorityStats?: PriorityStats[] }) => {
+        setPriorityStats(data.priorityStats ?? []);
+      })
+      .catch(() => setPriorityStats([]));
+  }, []);
 
   useEffect(() => {
     fetch("/api/projects")
@@ -96,16 +111,16 @@ export default function DashboardPage() {
     const params = new URLSearchParams();
     if (priority) params.set("priority", priority);
     if (search) params.set("search", search);
+    if (faultyOnly) params.set("hasFaulty", "1");
 
     setLoading(true);
     fetch(`/api/ecus?${params.toString()}`)
       .then((res) => res.json())
       .then((data: EcusResponse) => {
         setEcus(data.items ?? []);
-        setTotalEcus(data.total ?? data.items?.length ?? 0);
       })
       .finally(() => setLoading(false));
-  }, [priority, search]);
+  }, [priority, search, faultyOnly]);
 
   const sortedEcus = useMemo(() => {
     const copy = [...ecus];
@@ -150,20 +165,26 @@ export default function DashboardPage() {
     <div>
       <PageHeader title="Dashboard" />
 
-      <div className="mb-6 grid gap-4 sm:grid-cols-2">
-        <Card className="flex flex-col justify-center">
-          <p className="text-muted text-sm">ECU caricate</p>
-          <p className="mt-2 text-3xl font-semibold">{formatNumber(totalEcus)}</p>
-          {ecus.length !== totalEcus ? (
-            <p className="text-muted mt-1 text-xs">
-              {formatNumber(ecus.length)} shown with current filters
-            </p>
-          ) : null}
-        </Card>
-        <ActiveProjectsCard projects={projects} />
+      <div className="mb-6">
+        <VehicleProjectBanner onSelectProject={setSelectedProject} />
       </div>
 
-      <VisualizationFilter columns={2}>
+      <ProjectDetailModal
+        project={selectedProject}
+        priorityStats={priorityStats}
+        open={selectedProject !== null}
+        onClose={() => setSelectedProject(null)}
+      />
+
+      <VisualizationFilter
+        columns={2}
+        footer={
+          <FaultyFilterToggle
+            active={faultyOnly}
+            onChange={(value) => setFaultyOnly(value)}
+          />
+        }
+      >
         <SelectInput
           value={priority}
           onChange={setPriority}

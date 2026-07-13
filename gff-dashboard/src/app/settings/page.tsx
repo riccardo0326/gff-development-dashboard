@@ -32,6 +32,7 @@ export default function SettingsPage() {
   const [error, setError] = useState("");
   const [importing, setImporting] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const [exportingFaulty, setExportingFaulty] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const showExport = canExportWorkbook(role);
@@ -90,6 +91,34 @@ export default function SettingsPage() {
       );
     } finally {
       setExporting(false);
+    }
+  }
+
+  async function handleFaultyExport() {
+    setExportingFaulty(true);
+    setError("");
+    try {
+      const response = await fetch("/api/faulty/export");
+      if (!response.ok) {
+        throw new Error("Faulty DTC export failed");
+      }
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = `faulty_dtcs_${filenameDateStamp()}.xlsx`;
+      anchor.click();
+      URL.revokeObjectURL(url);
+      setMessage("Faulty DTC list exported.");
+    } catch (exportError) {
+      setError(
+        exportError instanceof Error
+          ? exportError.message
+          : "Could not export faulty DTCs.",
+      );
+    } finally {
+      setExportingFaulty(false);
     }
   }
 
@@ -169,12 +198,24 @@ export default function SettingsPage() {
           </p>
           <div className="flex flex-wrap gap-3">
             {showExport ? (
-              <Button onClick={handleExport} disabled={exporting}>
-                <span className="inline-flex items-center gap-2">
-                  <Download className="h-4 w-4" />
-                  {exporting ? "Exporting..." : "Export workbook"}
-                </span>
-              </Button>
+              <>
+                <Button onClick={handleExport} disabled={exporting}>
+                  <span className="inline-flex items-center gap-2">
+                    <Download className="h-4 w-4" />
+                    {exporting ? "Exporting..." : "Export workbook"}
+                  </span>
+                </Button>
+                <Button
+                  variant="secondary"
+                  onClick={handleFaultyExport}
+                  disabled={exportingFaulty}
+                >
+                  <span className="inline-flex items-center gap-2">
+                    <Download className="h-4 w-4" />
+                    {exportingFaulty ? "Exporting..." : "Export faulty DTCs"}
+                  </span>
+                </Button>
+              </>
             ) : null}
             {showImport ? (
               <>
