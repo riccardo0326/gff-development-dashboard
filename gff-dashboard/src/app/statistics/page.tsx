@@ -511,7 +511,6 @@ export default function StatisticsPage() {
               <KpiCard
                 label="Coverage slots"
                 value={formatNumber(selectedRow.total_dtcs)}
-                hint="Applicable vehicle-project cells (1 slot = 1 project per DTC)"
               />
               <KpiCard
                 label="Covered"
@@ -533,7 +532,6 @@ export default function StatisticsPage() {
                   value={formatNumber(
                     Math.round(selectedRow.daily_average ?? 0),
                   )}
-                  hint="Average GFF implementations per day (impl_for_day)"
                   accent="accent"
                 />
               ) : null}

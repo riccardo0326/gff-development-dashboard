@@ -6,10 +6,20 @@ export const PROGRESS_BAR_LEGEND = [
   { key: "faulty", label: "Faulty", color: "#6b7280" },
 ] as const;
 
-export function ProgressBarLegend({ className }: { className?: string }) {
+export function ProgressBarLegend({
+  className,
+  hideFaulty,
+}: {
+  className?: string;
+  hideFaulty?: boolean;
+}) {
+  const items = hideFaulty
+    ? PROGRESS_BAR_LEGEND.filter((item) => item.key !== "faulty")
+    : PROGRESS_BAR_LEGEND;
+
   return (
     <div className={cn("flex flex-wrap gap-x-4 gap-y-1 text-xs", className)}>
-      {PROGRESS_BAR_LEGEND.map((item) => (
+      {items.map((item) => (
         <span
           key={item.key}
           className="text-foreground/70 inline-flex items-center gap-1.5"
