@@ -118,7 +118,7 @@ export function recordCoverageTransition(input: {
   username?: string | null;
   troubleCode?: string | null;
   symptom?: string | null;
-  changeSource?: "manual" | "bulk";
+  changeSource?: "manual" | "bulk" | "ev_update";
   syncDaily?: boolean;
 }): { dailyStat: DailyStat | null; changeId: number } {
   const db = getDb();

@@ -11,6 +11,7 @@ import {
   LayoutDashboard,
   PanelLeftClose,
   PanelLeftOpen,
+  RefreshCw,
   Search,
   Settings,
 } from "lucide-react";
@@ -21,6 +22,7 @@ const NAV = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
   { href: "/statistics", label: "Statistics", icon: BarChart3 },
   { href: "/search", label: "Search", icon: Search },
+  { href: "/ev-update", label: "EV Update", icon: RefreshCw },
   { href: "/activity", label: "Activity", icon: Activity },
   { href: "/reports", label: "Reports", icon: FileBarChart },
   { href: "/settings", label: "Settings", icon: Settings },

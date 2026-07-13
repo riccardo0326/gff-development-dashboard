@@ -11,6 +11,10 @@ export function canAccessRoute(
 ): boolean {
   const r = normalizeRole(role);
 
+  if (pathname.startsWith("/ev-update")) {
+    return r === "admin" || r === "user";
+  }
+
   if (pathname.startsWith("/reports")) {
     return r === "admin";
   }
@@ -44,6 +48,11 @@ export function canEditForecastParameters(role: string | undefined | null): bool
 export function canExportWorkbook(role: string | undefined | null): boolean {
   const r = normalizeRole(role);
   return r === "admin" || r === "user" || r === "lambo";
+}
+
+export function canEvUpdate(role: string | undefined | null): boolean {
+  const r = normalizeRole(role);
+  return r === "admin" || r === "user";
 }
 
 export function canImportWorkbook(role: string | undefined | null): boolean {

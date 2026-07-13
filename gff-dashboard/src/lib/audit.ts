@@ -9,7 +9,8 @@ export type AuditEventType =
   | "bulk_update"
   | "import"
   | "export"
-  | "report";
+  | "report"
+  | "ev_update";
 
 export interface AuditUser {
   userId: number | null;
