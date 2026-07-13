@@ -7,26 +7,14 @@ import { cn } from "@/lib/utils";
 /** Visual config for each Lamborghini vehicle project card. */
 export const PROJECT_CARDS = [
   {
-    id: "LB63x",
-    model: "Temerario",
-    image: "/temerario-removebg-preview.png",
-    accent: "#e87d3e",
-    accentGlow: "rgba(232, 125, 62, 0.35)",
-    labelGlow: "0 0 12px rgba(232, 125, 62, 0.6), 0 0 24px rgba(232, 125, 62, 0.25)",
-    /** Stagger delay for entrance animation (ms). */
-    delay: 0,
-    /** Slide direction: left card enters from the left. */
-    from: "left" as const,
-  },
-  {
     id: "LB74x",
     model: "Revuelto",
     image: "/revuelto-removebg-preview.png",
     accent: "#22d3ee",
     accentGlow: "rgba(34, 211, 238, 0.35)",
     labelGlow: "0 0 12px rgba(34, 211, 238, 0.6), 0 0 24px rgba(34, 211, 238, 0.25)",
-    delay: 180,
-    from: "center" as const,
+    delay: 0,
+    from: "left" as const,
   },
   {
     id: "LB636",
@@ -35,6 +23,16 @@ export const PROJECT_CARDS = [
     accent: "#fbbf24",
     accentGlow: "rgba(251, 191, 36, 0.35)",
     labelGlow: "0 0 12px rgba(251, 191, 36, 0.6), 0 0 24px rgba(251, 191, 36, 0.25)",
+    delay: 180,
+    from: "center" as const,
+  },
+  {
+    id: "LB63x",
+    model: "Temerario",
+    image: "/temerario-removebg-preview.png",
+    accent: "#e87d3e",
+    accentGlow: "rgba(232, 125, 62, 0.35)",
+    labelGlow: "0 0 12px rgba(232, 125, 62, 0.6), 0 0 24px rgba(232, 125, 62, 0.25)",
     delay: 360,
     from: "right" as const,
   },

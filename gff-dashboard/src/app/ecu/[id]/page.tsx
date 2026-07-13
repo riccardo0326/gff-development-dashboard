@@ -65,6 +65,7 @@ export default function EcuDetailPage() {
   const [modalDtc, setModalDtc] = useState<DtcRowData | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalEdit, setModalEdit] = useState(false);
+  const [hideFaultyInBars, setHideFaultyInBars] = useState(false);
 
   const visibleProjects = useMemo(
     () => resolveVisibleProjects(DTC_PROJECTS, selectedProjects),
@@ -210,8 +211,17 @@ export default function EcuDetailPage() {
           <PriorityBadge priority={data.ecu.priority} size="lg" />
         </Card>
         <Card className="lg:col-span-3">
-          <p className="text-muted mb-3 text-sm">Project completion</p>
-          <ProgressBarLegend className="mb-3" />
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+            <p className="text-muted text-sm">Project completion</p>
+            <button
+              type="button"
+              onClick={() => setHideFaultyInBars((value) => !value)}
+              className="border-card-border bg-background text-muted hover:text-foreground rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors hover:bg-white/5"
+            >
+              {hideFaultyInBars ? "Show faulty" : "Hide faulty"}
+            </button>
+          </div>
+          <ProgressBarLegend className="mb-3" hideFaulty={hideFaultyInBars} />
           <div className="flex w-full flex-col gap-3">
             {DTC_PROJECTS.map((projectName) => {
               const stats = data.completion?.[projectName];
@@ -229,14 +239,14 @@ export default function EcuDetailPage() {
                     segments={{
                       covered: stats.covered,
                       pending: stats.pending,
-                      faulty: stats.faulty,
+                      faulty: hideFaultyInBars ? 0 : stats.faulty,
                     }}
                     label={`${projectName} (${formatPercent(stats.completion_pct)})`}
                   />
                   <p className="text-muted mt-1 text-xs">
                     {formatNumber(stats.covered)} covered /{" "}
                     {formatNumber(stats.total)} coverage slots
-                    {stats.faulty > 0
+                    {!hideFaultyInBars && stats.faulty > 0
                       ? ` · ${formatNumber(stats.faulty)} faulty`
                       : ""}
                   </p>

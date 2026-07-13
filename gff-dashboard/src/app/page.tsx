@@ -6,7 +6,6 @@ import { useEffect, useMemo, useState } from "react";
 import { ProjectDetailModal } from "@/components/dashboard/project-detail-modal";
 import { VehicleProjectBanner } from "@/components/dashboard/vehicle-project-banner";
 import { EcuPriorityEditor } from "@/components/ecu-priority-editor";
-import { FaultyFilterToggle } from "@/components/faulty-filter-toggle";
 import { ProgressBar, ProgressBarLegend } from "@/components/progress-bar";
 import {
   Card,
@@ -73,7 +72,6 @@ export default function DashboardPage() {
   const [ecus, setEcus] = useState<EcuCompletion[]>([]);
   const [priority, setPriority] = useState("");
   const [search, setSearch] = useState("");
-  const [faultyOnly, setFaultyOnly] = useState(false);
   const [sortField, setSortField] = useState<SortField>("priority");
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
   const [loading, setLoading] = useState(true);
@@ -111,7 +109,6 @@ export default function DashboardPage() {
     const params = new URLSearchParams();
     if (priority) params.set("priority", priority);
     if (search) params.set("search", search);
-    if (faultyOnly) params.set("hasFaulty", "1");
 
     setLoading(true);
     fetch(`/api/ecus?${params.toString()}`)
@@ -120,7 +117,7 @@ export default function DashboardPage() {
         setEcus(data.items ?? []);
       })
       .finally(() => setLoading(false));
-  }, [priority, search, faultyOnly]);
+  }, [priority, search]);
 
   const sortedEcus = useMemo(() => {
     const copy = [...ecus];
@@ -176,15 +173,7 @@ export default function DashboardPage() {
         onClose={() => setSelectedProject(null)}
       />
 
-      <VisualizationFilter
-        columns={2}
-        footer={
-          <FaultyFilterToggle
-            active={faultyOnly}
-            onChange={(value) => setFaultyOnly(value)}
-          />
-        }
-      >
+      <VisualizationFilter columns={2}>
         <SelectInput
           value={priority}
           onChange={setPriority}
