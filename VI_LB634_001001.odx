@@ -1,0 +1,974 @@
+<?xml version="1.0" encoding="UTF-8"?><ODX xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" MODEL-VERSION="2.0.1" xsi:noNamespaceSchemaLocation="odx.xsd">
+  <VEHICLE-INFO-SPEC ID="VI_LB634">
+    <SHORT-NAME>VI_LB634</SHORT-NAME>
+    <LONG-NAME>LB634</LONG-NAME>
+    <DESC>
+      <p>Vehicle-Info-Spec (VIS) für alle LB634-Fahrzeugprojekte.</p>
+    </DESC>
+    <ADMIN-DATA>
+      <LANGUAGE>deu</LANGUAGE>
+      <DOC-REVISIONS>
+        <DOC-REVISION>
+          <TEAM-MEMBER-REF ID-REF="Compy_LB.TM_LB"/>
+          <REVISION-LABEL>001001</REVISION-LABEL>
+          <STATE>DRAFT</STATE>
+          <DATE>2026-05-20T12:10:14</DATE>
+          <TOOL>DVRKonverter, 11.00.000, Tarvos</TOOL>
+          <MODIFICATIONS>
+            <MODIFICATION>
+              <CHANGE>Grundbedatung</CHANGE>
+              <REASON>Dokumentationspflicht</REASON>
+            </MODIFICATION>
+          </MODIFICATIONS>
+        </DOC-REVISION>
+      </DOC-REVISIONS>
+    </ADMIN-DATA>
+    <COMPANY-DATAS>
+      <COMPANY-DATA ID="Compy_LB">
+        <SHORT-NAME>Compy_LB</SHORT-NAME>
+        <LONG-NAME>LB</LONG-NAME>
+        <DESC>
+          <p>Lamborghini</p>
+        </DESC>
+        <TEAM-MEMBERS>
+          <TEAM-MEMBER ID="Compy_LB.TM_LB">
+            <SHORT-NAME>TM_LB</SHORT-NAME>
+            <LONG-NAME>LB</LONG-NAME>
+            <ROLES>
+              <ROLE>Contact person OEM</ROLE>
+            </ROLES>
+            <DEPARTMENT>LB</DEPARTMENT>
+          </TEAM-MEMBER>
+        </TEAM-MEMBERS>
+      </COMPANY-DATA>
+    </COMPANY-DATAS>
+    <INFO-COMPONENTS>
+      <INFO-COMPONENT ID="VI_LB634.IC_2026" xsi:type="MODEL-YEAR">
+        <SHORT-NAME>IC_2026</SHORT-NAME>
+        <LONG-NAME>2026</LONG-NAME>
+      </INFO-COMPONENT>
+      <INFO-COMPONENT ID="VI_LB634.IC_LB" xsi:type="OEM">
+        <SHORT-NAME>IC_LB</SHORT-NAME>
+        <LONG-NAME>LB</LONG-NAME>
+      </INFO-COMPONENT>
+      <INFO-COMPONENT ID="VI_LB634.IC_LB634" xsi:type="VEHICLE-MODEL">
+        <SHORT-NAME>IC_LB634</SHORT-NAME>
+        <LONG-NAME>LB634</LONG-NAME>
+      </INFO-COMPONENT>
+    </INFO-COMPONENTS>
+    <VEHICLE-INFORMATIONS>
+      <VEHICLE-INFORMATION>
+        <SHORT-NAME>VINFO_LB634CAN</SHORT-NAME>
+        <LONG-NAME>LB634 CAN</LONG-NAME>
+        <INFO-COMPONENT-REFS>
+          <INFO-COMPONENT-REF ID-REF="VI_LB634.IC_2026"/>
+          <INFO-COMPONENT-REF ID-REF="VI_LB634.IC_LB"/>
+          <INFO-COMPONENT-REF ID-REF="VI_LB634.IC_LB634"/>
+        </INFO-COMPONENT-REFS>
+        <VEHICLE-CONNECTORS>
+          <VEHICLE-CONNECTOR>
+            <SHORT-NAME>VC_DiagnOnCANConne</SHORT-NAME>
+            <LONG-NAME>Diagnostics On CAN Connector</LONG-NAME>
+            <VEHICLE-CONNECTOR-PINS>
+              <VEHICLE-CONNECTOR-PIN ID="VINFO_LB634CAN.CANH" TYPE="HI">
+                <SHORT-NAME>CANH</SHORT-NAME>
+                <LONG-NAME>CAN High</LONG-NAME>
+                <PIN_NUMBER>6</PIN_NUMBER>
+              </VEHICLE-CONNECTOR-PIN>
+              <VEHICLE-CONNECTOR-PIN ID="VINFO_LB634CAN.CANL" TYPE="LOW">
+                <SHORT-NAME>CANL</SHORT-NAME>
+                <LONG-NAME>CAN Low</LONG-NAME>
+                <PIN_NUMBER>14</PIN_NUMBER>
+              </VEHICLE-CONNECTOR-PIN>
+            </VEHICLE-CONNECTOR-PINS>
+          </VEHICLE-CONNECTOR>
+        </VEHICLE-CONNECTORS>
+        <LOGICAL-LINKS>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_AllEmissRelatUDSSyste" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_AllEmissRelatUDSSyste</SHORT-NAME>
+            <LONG-NAME>All emissions-related UDS systems</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <FUNCTIONAL-GROUP-REF DOCREF="FG_AllEmissRelatUDSSyste" DOCTYPE="LAYER" ID-REF="FG_AllEmissRelatUDSSyste"/>
+            <LINK-COMPARAM-REFS>
+              <LINK-COMPARAM-REF DOCREF="ISO_15765_3_on_ISO_15765_2" DOCTYPE="COMPARAM-SPEC" ID-REF="ISO_15765_2.CP_CanFuncReqId">
+                <VALUE>1795</VALUE>
+              </LINK-COMPARAM-REF>
+              <LINK-COMPARAM-REF DOCREF="ISO_15765_3_on_ISO_15765_2" DOCTYPE="COMPARAM-SPEC" ID-REF="ISO_15765_2.CP_RequestAddrMode">
+                <VALUE>Functional</VALUE>
+              </LINK-COMPARAM-REF>
+            </LINK-COMPARAM-REFS>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_AllOBDSyste" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_AllOBDSyste</SHORT-NAME>
+            <LONG-NAME>All OBD systems</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_VWOBDOnCAN" DOCTYPE="LAYER" ID-REF="PR_VWOBDOnCAN"/>
+            <FUNCTIONAL-GROUP-REF DOCREF="FG_AllOBDSyste" DOCTYPE="LAYER" ID-REF="FG_AllOBDSyste"/>
+            <LINK-COMPARAM-REFS>
+              <LINK-COMPARAM-REF DOCREF="ISO_15765_3_on_ISO_15765_2" DOCTYPE="COMPARAM-SPEC" ID-REF="ISO_15765_2.CP_CanFuncReqId">
+                <VALUE>1792</VALUE>
+              </LINK-COMPARAM-REF>
+              <LINK-COMPARAM-REF DOCREF="ISO_15765_3_on_ISO_15765_2" DOCTYPE="COMPARAM-SPEC" ID-REF="ISO_15765_2.CP_RequestAddrMode">
+                <VALUE>Functional</VALUE>
+              </LINK-COMPARAM-REF>
+            </LINK-COMPARAM-REFS>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_AllUDSDistrSysteVW80127" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_AllUDSDistrSysteVW80127</SHORT-NAME>
+            <LONG-NAME>All UDS Distributed Systems VW 80127</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <FUNCTIONAL-GROUP-REF DOCREF="FG_AllUDSDistrSysteVW80127" DOCTYPE="LAYER" ID-REF="FG_AllUDSDistrSysteVW80127"/>
+            <LINK-COMPARAM-REFS>
+              <LINK-COMPARAM-REF DOCREF="ISO_15765_3_on_ISO_15765_2" DOCTYPE="COMPARAM-SPEC" ID-REF="ISO_15765_2.CP_RequestAddrMode">
+                <VALUE>Functional</VALUE>
+              </LINK-COMPARAM-REF>
+            </LINK-COMPARAM-REFS>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_AllUDSSyste" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_AllUDSSyste</SHORT-NAME>
+            <LONG-NAME>All UDS Systems</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <FUNCTIONAL-GROUP-REF DOCREF="FG_AllUDSSyste" DOCTYPE="LAYER" ID-REF="FG_AllUDSSyste"/>
+            <LINK-COMPARAM-REFS>
+              <LINK-COMPARAM-REF DOCREF="ISO_15765_3_on_ISO_15765_2" DOCTYPE="COMPARAM-SPEC" ID-REF="ISO_15765_2.CP_RequestAddrMode">
+                <VALUE>Functional</VALUE>
+              </LINK-COMPARAM-REF>
+            </LINK-COMPARAM-REFS>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_AllOBDSysteLegisAddre" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_AllOBDSysteLegisAddre</SHORT-NAME>
+            <LONG-NAME>All OBD Systems legislated address</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_OBDOnCAN" DOCTYPE="LAYER" ID-REF="PR_OBDOnCAN"/>
+            <FUNCTIONAL-GROUP-REF DOCREF="FG_AllOBDSyste" DOCTYPE="LAYER" ID-REF="FG_AllOBDSyste"/>
+            <LINK-COMPARAM-REFS>
+              <LINK-COMPARAM-REF DOCREF="ISO_OBD_on_ISO_15765_4" DOCTYPE="COMPARAM-SPEC" ID-REF="ISO_15765_4.CP_CanFuncReqId">
+                <VALUE>2015</VALUE>
+              </LINK-COMPARAM-REF>
+              <LINK-COMPARAM-REF DOCREF="ISO_OBD_on_ISO_15765_4" DOCTYPE="COMPARAM-SPEC" ID-REF="ISO_15765_4.CP_RequestAddrMode">
+                <VALUE>Functional</VALUE>
+              </LINK-COMPARAM-REF>
+            </LINK-COMPARAM-REFS>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_ActuaForExterNoiseUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_ActuaForExterNoiseUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT000C0">Actuator For Exterior Noise UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_ActuaForExterNoiseUDS" DOCTYPE="LAYER" ID-REF="BV_ActuaForExterNoiseUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_AdaptCruisContrUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_AdaptCruisContrUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT00013">Adaptive Cruise Control UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_AdaptCruisContrUDS" DOCTYPE="LAYER" ID-REF="BV_AdaptCruisContrUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_AirbaUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_AirbaUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT00015">Airbag UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_AirbaUDS" DOCTYPE="LAYER" ID-REF="BV_AirbaUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_AirCondiComprSubUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_AirCondiComprSubUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT4265D">Air Conditioning Compressor Sub UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_AirCondiComprSubUDS" DOCTYPE="LAYER" ID-REF="BV_AirCondiComprSubUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_BatteChargContrModulUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_BatteChargContrModulUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT000C6">Battery Charger Control Module UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_BatteChargContrModulUDS" DOCTYPE="LAYER" ID-REF="BV_BatteChargContrModulUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_BatteEnergContrModulUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_BatteEnergContrModulUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT0008C">Battery Energy Control Module UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_BatteEnergContrModulUDS" DOCTYPE="LAYER" ID-REF="BV_BatteEnergContrModulUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_BatteMonitContrModulUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_BatteMonitContrModulUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT42637">Battery Monitoring Control Module UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_BatteMonitContrModulUDS" DOCTYPE="LAYER" ID-REF="BV_BatteMonitContrModulUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_Brake1UDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_Brake1UDS</SHORT-NAME>
+            <LONG-NAME TI="SFT00003">Brakes 1 UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_Brake1UDS" DOCTYPE="LAYER" ID-REF="BV_Brake1UDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_CentrElectUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_CentrElectUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT00009">Central Electrics UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_CentrElectUDS" DOCTYPE="LAYER" ID-REF="BV_CentrElectUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_CentrModulComfoSysteUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_CentrModulComfoSysteUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT00046">Central Module Comfort System UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_CentrModulComfoSysteUDS" DOCTYPE="LAYER" ID-REF="BV_CentrModulComfoSysteUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_ChassContrUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_ChassContrUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT00074">Chassis Control UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_ChassContrUDS" DOCTYPE="LAYER" ID-REF="BV_ChassContrUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_ContrUnitForWiperMotorUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_ContrUnitForWiperMotorUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT42601">Control Unit For Wiper Motor UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_ContrUnitForWiperMotorUDS" DOCTYPE="LAYER" ID-REF="BV_ContrUnitForWiperMotorUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_ContrUnitLaneChangAssis2UDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_ContrUnitLaneChangAssis2UDS</SHORT-NAME>
+            <LONG-NAME TI="SFT000CF">Control Unit Lane Change Assistant 2 UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_ContrUnitLaneChangAssis2UDS" DOCTYPE="LAYER" ID-REF="BV_ContrUnitLaneChangAssis2UDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_DashBoardUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_DashBoardUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT00017">Dash Board UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_DashBoardUDS" DOCTYPE="LAYER" ID-REF="BV_DashBoardUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_DCDCConveContrModulHVUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_DCDCConveContrModulHVUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT08104">DC/DC Converter Control Module HV UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_DCDCConveContrModulHVUDS" DOCTYPE="LAYER" ID-REF="BV_DCDCConveContrModulHVUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_DoorElectDriveSideUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_DoorElectDriveSideUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT00042">Door Electronics Driver Side UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_DoorElectDriveSideUDS" DOCTYPE="LAYER" ID-REF="BV_DoorElectDriveSideUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_DoorElectPasseSideUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_DoorElectPasseSideUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT00052">Door Electronics Passenger Side UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_DoorElectPasseSideUDS" DOCTYPE="LAYER" ID-REF="BV_DoorElectPasseSideUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_DoorLatchModulDriveSideUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_DoorLatchModulDriveSideUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT08141">Door Latch Module Driver Side UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_DoorLatchModulDriveSideUDS" DOCTYPE="LAYER" ID-REF="BV_DoorLatchModulDriveSideUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_DoorLatchModulPasseSideUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_DoorLatchModulPasseSideUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT08142">Door Latch Module Passenger Side UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_DoorLatchModulPasseSideUDS" DOCTYPE="LAYER" ID-REF="BV_DoorLatchModulPasseSideUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_DriveMotorContrModul2UDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_DriveMotorContrModul2UDS</SHORT-NAME>
+            <LONG-NAME TI="SFT000CE">Drive Motor Control Module 2 UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_DriveMotorContrModul2UDS" DOCTYPE="LAYER" ID-REF="BV_DriveMotorContrModul2UDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_DriveMotorContrModulUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_DriveMotorContrModulUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT00051">Drive Motor Control Module UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_DriveMotorContrModulUDS" DOCTYPE="LAYER" ID-REF="BV_DriveMotorContrModulUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_ElectAdjusSteerColumUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_ElectAdjusSteerColumUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT42649">Electrically Adjustable Steering Column UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_ElectAdjusSteerColumUDS" DOCTYPE="LAYER" ID-REF="BV_ElectAdjusSteerColumUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_ElectRoofContrUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_ElectRoofContrUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT00026">Electronic Roof Control UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_ElectRoofContrUDS" DOCTYPE="LAYER" ID-REF="BV_ElectRoofContrUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_EnginContrModul1UDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_EnginContrModul1UDS</SHORT-NAME>
+            <LONG-NAME TI="SFT00001">Engine Control Module 1 UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_EnginContrModul1UDS" DOCTYPE="LAYER" ID-REF="BV_EnginContrModul1UDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_EnginContrModul2UDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_EnginContrModul2UDS</SHORT-NAME>
+            <LONG-NAME TI="SFT00011">Engine Control Module 2 UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_EnginContrModul2UDS" DOCTYPE="LAYER" ID-REF="BV_EnginContrModul2UDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_FreshAirBloweFrontUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_FreshAirBloweFrontUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT4261B">Fresh Air Blower Front UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_FreshAirBloweFrontUDS" DOCTYPE="LAYER" ID-REF="BV_FreshAirBloweFrontUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_FrontCorneRadar1UDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_FrontCorneRadar1UDS</SHORT-NAME>
+            <LONG-NAME TI="SFT000DB">Front Corner Radar 1 UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_FrontCorneRadar1UDS" DOCTYPE="LAYER" ID-REF="BV_FrontCorneRadar1UDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_FrontCorneRadar2UDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_FrontCorneRadar2UDS</SHORT-NAME>
+            <LONG-NAME TI="SFT000DC">Front Corner Radar 2 UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_FrontCorneRadar2UDS" DOCTYPE="LAYER" ID-REF="BV_FrontCorneRadar2UDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_FrontSensoDriveAssisSysteUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_FrontSensoDriveAssisSysteUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT000A5">Front Sensors Driver Assistance System UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_FrontSensoDriveAssisSysteUDS" DOCTYPE="LAYER" ID-REF="BV_FrontSensoDriveAssisSysteUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_GaragDoorOpeneContrModulUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_GaragDoorOpeneContrModulUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT42604">Garage Door Opener Control Module UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_GaragDoorOpeneContrModulUDS" DOCTYPE="LAYER" ID-REF="BV_GaragDoorOpeneContrModulUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_GatewUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_GatewUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT00019">Gateway UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_GatewUDS" DOCTYPE="LAYER" ID-REF="BV_GatewUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_ImageProceElectUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_ImageProceElectUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT0008E">Image Processing Electronics UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_ImageProceElectUDS" DOCTYPE="LAYER" ID-REF="BV_ImageProceElectUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_InforContrUnit1UDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_InforContrUnit1UDS</SHORT-NAME>
+            <LONG-NAME TI="SFT0005F">Information Control Unit 1 UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_InforContrUnit1UDS" DOCTYPE="LAYER" ID-REF="BV_InforContrUnit1UDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_InterLightModulUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_InterLightModulUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT4261E">Interior Light Module UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_InterLightModulUDS" DOCTYPE="LAYER" ID-REF="BV_InterLightModulUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_LaneChangAssisUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_LaneChangAssisUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT0003C">Lane Change Assistant UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_LaneChangAssisUDS" DOCTYPE="LAYER" ID-REF="BV_LaneChangAssisUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_LightContrLeft2UDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_LightContrLeft2UDS</SHORT-NAME>
+            <LONG-NAME TI="SFT000D6">Light Control Left 2 UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_LightContrLeft2UDS" DOCTYPE="LAYER" ID-REF="BV_LightContrLeft2UDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_LightContrRight2UDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_LightContrRight2UDS</SHORT-NAME>
+            <LONG-NAME TI="SFT000D7">Light Control Right 2 UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_LightContrRight2UDS" DOCTYPE="LAYER" ID-REF="BV_LightContrRight2UDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_MultiFunctSteerWheelContrModulUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_MultiFunctSteerWheelContrModulUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT42631">Multi Function Steering Wheel Control Module UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_MultiFunctSteerWheelContrModulUDS" DOCTYPE="LAYER" ID-REF="BV_MultiFunctSteerWheelContrModulUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_RainLightRecogSensoUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_RainLightRecogSensoUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT42602">Rain Light Recognition Sensor UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_RainLightRecogSensoUDS" DOCTYPE="LAYER" ID-REF="BV_RainLightRecogSensoUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_SeatAdjusDriveSideUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_SeatAdjusDriveSideUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT00036">Seat Adjustment Driver Side UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_SeatAdjusDriveSideUDS" DOCTYPE="LAYER" ID-REF="BV_SeatAdjusDriveSideUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_SeatAdjusPasseSideUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_SeatAdjusPasseSideUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT00006">Seat Adjustment Passenger Side UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_SeatAdjusPasseSideUDS" DOCTYPE="LAYER" ID-REF="BV_SeatAdjusPasseSideUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_SeatAdjusRearDriveSideUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_SeatAdjusRearDriveSideUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT00048">Seat Adjustment Rear Driver Side UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_SeatAdjusRearDriveSideUDS" DOCTYPE="LAYER" ID-REF="BV_SeatAdjusRearDriveSideUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_SeatAdjusRearPasseSideUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_SeatAdjusRearPasseSideUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT0005B">Seat Adjustment Rear Passenger Side UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_SeatAdjusRearPasseSideUDS" DOCTYPE="LAYER" ID-REF="BV_SeatAdjusRearPasseSideUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_SoundSysteUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_SoundSysteUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT00047">Sound System UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_SoundSysteUDS" DOCTYPE="LAYER" ID-REF="BV_SoundSysteUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_SteerAssisUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_SteerAssisUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT00044">Steering Assistance UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_SteerAssisUDS" DOCTYPE="LAYER" ID-REF="BV_SteerAssisUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_SteerColumElectUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_SteerColumElectUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT00016">Steering Column Electronics UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_SteerColumElectUDS" DOCTYPE="LAYER" ID-REF="BV_SteerColumElectUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_SteerColumLockiUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_SteerColumLockiUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT0002B">Steering Column Locking UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_SteerColumLockiUDS" DOCTYPE="LAYER" ID-REF="BV_SteerColumLockiUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_TelemCommuUnitUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_TelemCommuUnitUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT00075">Telematics Communication Unit UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_TelemCommuUnitUDS" DOCTYPE="LAYER" ID-REF="BV_TelemCommuUnitUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_ThermManagUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_ThermManagUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT000C5">Thermal Management UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_ThermManagUDS" DOCTYPE="LAYER" ID-REF="BV_ThermManagUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_TirePressMonit1UDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_TirePressMonit1UDS</SHORT-NAME>
+            <LONG-NAME TI="SFT00065">Tire Pressure Monitoring 1 UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_TirePressMonit1UDS" DOCTYPE="LAYER" ID-REF="BV_TirePressMonit1UDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634CAN.LL_TransContrModulUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_TransContrModulUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT00002">Transmission Control Module UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="CAN1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnCAN" DOCTYPE="LAYER" ID-REF="PR_UDSOnCAN"/>
+            <BASE-VARIANT-REF DOCREF="BV_TransContrModulUDS" DOCTYPE="LAYER" ID-REF="BV_TransContrModulUDS"/>
+          </LOGICAL-LINK>
+        </LOGICAL-LINKS>
+        <PHYSICAL-VEHICLE-LINKS>
+          <PHYSICAL-VEHICLE-LINK ID="CAN1" TYPE="ISO_11898_2_DWCAN">
+            <SHORT-NAME>CAN1</SHORT-NAME>
+            <LONG-NAME>CAN1 (500kBit)</LONG-NAME>
+            <VEHICLE-CONNECTOR-PIN-REFS>
+              <VEHICLE-CONNECTOR-PIN-REF ID-REF="VINFO_LB634CAN.CANH"/>
+              <VEHICLE-CONNECTOR-PIN-REF ID-REF="VINFO_LB634CAN.CANL"/>
+            </VEHICLE-CONNECTOR-PIN-REFS>
+          </PHYSICAL-VEHICLE-LINK>
+        </PHYSICAL-VEHICLE-LINKS>
+      </VEHICLE-INFORMATION>
+      <VEHICLE-INFORMATION>
+        <SHORT-NAME>VINFO_LB634DoIP</SHORT-NAME>
+        <LONG-NAME>LB634 DoIP</LONG-NAME>
+        <INFO-COMPONENT-REFS>
+          <INFO-COMPONENT-REF ID-REF="VI_LB634.IC_2026"/>
+          <INFO-COMPONENT-REF ID-REF="VI_LB634.IC_LB"/>
+          <INFO-COMPONENT-REF ID-REF="VI_LB634.IC_LB634"/>
+        </INFO-COMPONENT-REFS>
+        <VEHICLE-CONNECTORS>
+          <VEHICLE-CONNECTOR>
+            <SHORT-NAME>VC_DiagnOnIPConne</SHORT-NAME>
+            <LONG-NAME>Diagnostics On IP Connector</LONG-NAME>
+            <VEHICLE-CONNECTOR-PINS>
+              <VEHICLE-CONNECTOR-PIN ID="VINFO_LB634DoIP.RXPlus" TYPE="RX">
+                <SHORT-NAME>RXPlus</SHORT-NAME>
+                <LONG-NAME>RX_plus</LONG-NAME>
+                <PIN_NUMBER>3</PIN_NUMBER>
+              </VEHICLE-CONNECTOR-PIN>
+              <VEHICLE-CONNECTOR-PIN ID="VINFO_LB634DoIP.TXPlus" TYPE="TX">
+                <SHORT-NAME>TXPlus</SHORT-NAME>
+                <LONG-NAME>TX_plus</LONG-NAME>
+                <PIN_NUMBER>12</PIN_NUMBER>
+              </VEHICLE-CONNECTOR-PIN>
+            </VEHICLE-CONNECTOR-PINS>
+          </VEHICLE-CONNECTOR>
+        </VEHICLE-CONNECTORS>
+        <LOGICAL-LINKS>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_AllEmissRelatUDSSyste" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_AllEmissRelatUDSSyste</SHORT-NAME>
+            <LONG-NAME>All emissions-related UDS systems</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <FUNCTIONAL-GROUP-REF DOCREF="FG_AllEmissRelatUDSSyste" DOCTYPE="LAYER" ID-REF="FG_AllEmissRelatUDSSyste"/>
+            <LINK-COMPARAM-REFS>
+              <LINK-COMPARAM-REF DOCREF="ISO_14229_5_on_ISO_13400_2" DOCTYPE="COMPARAM-SPEC" ID-REF="ISO_13400_2.CP_DoIPLogicalFunctionalAddress">
+                <VALUE>59907</VALUE>
+              </LINK-COMPARAM-REF>
+              <LINK-COMPARAM-REF DOCREF="ISO_14229_5_on_ISO_13400_2" DOCTYPE="COMPARAM-SPEC" ID-REF="ISO_13400_2.CP_RequestAddrMode">
+                <VALUE>Functional</VALUE>
+              </LINK-COMPARAM-REF>
+            </LINK-COMPARAM-REFS>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_AllOBDSyste" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_AllOBDSyste</SHORT-NAME>
+            <LONG-NAME>All OBD systems</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_VWOBDOnIP" DOCTYPE="LAYER" ID-REF="PR_VWOBDOnIP"/>
+            <FUNCTIONAL-GROUP-REF DOCREF="FG_AllOBDSyste" DOCTYPE="LAYER" ID-REF="FG_AllOBDSyste"/>
+            <LINK-COMPARAM-REFS>
+              <LINK-COMPARAM-REF DOCREF="ISO_14229_5_on_ISO_13400_2" DOCTYPE="COMPARAM-SPEC" ID-REF="ISO_13400_2.CP_RequestAddrMode">
+                <VALUE>Functional</VALUE>
+              </LINK-COMPARAM-REF>
+            </LINK-COMPARAM-REFS>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_AllUDSDistrSysteVW80127" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_AllUDSDistrSysteVW80127</SHORT-NAME>
+            <LONG-NAME>All UDS Distributed Systems VW 80127</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <FUNCTIONAL-GROUP-REF DOCREF="FG_AllUDSDistrSysteVW80127" DOCTYPE="LAYER" ID-REF="FG_AllUDSDistrSysteVW80127"/>
+            <LINK-COMPARAM-REFS>
+              <LINK-COMPARAM-REF DOCREF="ISO_14229_5_on_ISO_13400_2" DOCTYPE="COMPARAM-SPEC" ID-REF="ISO_13400_2.CP_RequestAddrMode">
+                <VALUE>Functional</VALUE>
+              </LINK-COMPARAM-REF>
+            </LINK-COMPARAM-REFS>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_AllUDSSyste" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_AllUDSSyste</SHORT-NAME>
+            <LONG-NAME>All UDS Systems</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <FUNCTIONAL-GROUP-REF DOCREF="FG_AllUDSSyste" DOCTYPE="LAYER" ID-REF="FG_AllUDSSyste"/>
+            <LINK-COMPARAM-REFS>
+              <LINK-COMPARAM-REF DOCREF="ISO_14229_5_on_ISO_13400_2" DOCTYPE="COMPARAM-SPEC" ID-REF="ISO_13400_2.CP_RequestAddrMode">
+                <VALUE>Functional</VALUE>
+              </LINK-COMPARAM-REF>
+            </LINK-COMPARAM-REFS>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_ActuaForExterNoiseUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_ActuaForExterNoiseUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT000C0">Actuator For Exterior Noise UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_ActuaForExterNoiseUDS" DOCTYPE="LAYER" ID-REF="BV_ActuaForExterNoiseUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_AdaptCruisContrUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_AdaptCruisContrUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT00013">Adaptive Cruise Control UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_AdaptCruisContrUDS" DOCTYPE="LAYER" ID-REF="BV_AdaptCruisContrUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_AirbaUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_AirbaUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT00015">Airbag UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_AirbaUDS" DOCTYPE="LAYER" ID-REF="BV_AirbaUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_AirCondiComprSubUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_AirCondiComprSubUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT4265D">Air Conditioning Compressor Sub UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_AirCondiComprSubUDS" DOCTYPE="LAYER" ID-REF="BV_AirCondiComprSubUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_BatteChargContrModulUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_BatteChargContrModulUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT000C6">Battery Charger Control Module UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_BatteChargContrModulUDS" DOCTYPE="LAYER" ID-REF="BV_BatteChargContrModulUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_BatteEnergContrModulUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_BatteEnergContrModulUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT0008C">Battery Energy Control Module UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_BatteEnergContrModulUDS" DOCTYPE="LAYER" ID-REF="BV_BatteEnergContrModulUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_BatteMonitContrModulUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_BatteMonitContrModulUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT42637">Battery Monitoring Control Module UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_BatteMonitContrModulUDS" DOCTYPE="LAYER" ID-REF="BV_BatteMonitContrModulUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_Brake1UDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_Brake1UDS</SHORT-NAME>
+            <LONG-NAME TI="SFT00003">Brakes 1 UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_Brake1UDS" DOCTYPE="LAYER" ID-REF="BV_Brake1UDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_CentrElectUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_CentrElectUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT00009">Central Electrics UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_CentrElectUDS" DOCTYPE="LAYER" ID-REF="BV_CentrElectUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_CentrModulComfoSysteUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_CentrModulComfoSysteUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT00046">Central Module Comfort System UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_CentrModulComfoSysteUDS" DOCTYPE="LAYER" ID-REF="BV_CentrModulComfoSysteUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_ChassContrUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_ChassContrUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT00074">Chassis Control UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_ChassContrUDS" DOCTYPE="LAYER" ID-REF="BV_ChassContrUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_ContrUnitForWiperMotorUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_ContrUnitForWiperMotorUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT42601">Control Unit For Wiper Motor UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_ContrUnitForWiperMotorUDS" DOCTYPE="LAYER" ID-REF="BV_ContrUnitForWiperMotorUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_ContrUnitLaneChangAssis2UDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_ContrUnitLaneChangAssis2UDS</SHORT-NAME>
+            <LONG-NAME TI="SFT000CF">Control Unit Lane Change Assistant 2 UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_ContrUnitLaneChangAssis2UDS" DOCTYPE="LAYER" ID-REF="BV_ContrUnitLaneChangAssis2UDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_DashBoardUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_DashBoardUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT00017">Dash Board UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_DashBoardUDS" DOCTYPE="LAYER" ID-REF="BV_DashBoardUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_DCDCConveContrModulHVUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_DCDCConveContrModulHVUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT08104">DC/DC Converter Control Module HV UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_DCDCConveContrModulHVUDS" DOCTYPE="LAYER" ID-REF="BV_DCDCConveContrModulHVUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_DoorElectDriveSideUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_DoorElectDriveSideUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT00042">Door Electronics Driver Side UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_DoorElectDriveSideUDS" DOCTYPE="LAYER" ID-REF="BV_DoorElectDriveSideUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_DoorElectPasseSideUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_DoorElectPasseSideUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT00052">Door Electronics Passenger Side UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_DoorElectPasseSideUDS" DOCTYPE="LAYER" ID-REF="BV_DoorElectPasseSideUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_DoorLatchModulDriveSideUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_DoorLatchModulDriveSideUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT08141">Door Latch Module Driver Side UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_DoorLatchModulDriveSideUDS" DOCTYPE="LAYER" ID-REF="BV_DoorLatchModulDriveSideUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_DoorLatchModulPasseSideUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_DoorLatchModulPasseSideUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT08142">Door Latch Module Passenger Side UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_DoorLatchModulPasseSideUDS" DOCTYPE="LAYER" ID-REF="BV_DoorLatchModulPasseSideUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_DriveMotorContrModul2UDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_DriveMotorContrModul2UDS</SHORT-NAME>
+            <LONG-NAME TI="SFT000CE">Drive Motor Control Module 2 UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_DriveMotorContrModul2UDS" DOCTYPE="LAYER" ID-REF="BV_DriveMotorContrModul2UDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_DriveMotorContrModulUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_DriveMotorContrModulUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT00051">Drive Motor Control Module UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_DriveMotorContrModulUDS" DOCTYPE="LAYER" ID-REF="BV_DriveMotorContrModulUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_ElectAdjusSteerColumUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_ElectAdjusSteerColumUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT42649">Electrically Adjustable Steering Column UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_ElectAdjusSteerColumUDS" DOCTYPE="LAYER" ID-REF="BV_ElectAdjusSteerColumUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_ElectRoofContrUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_ElectRoofContrUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT00026">Electronic Roof Control UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_ElectRoofContrUDS" DOCTYPE="LAYER" ID-REF="BV_ElectRoofContrUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_EnginContrModul1UDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_EnginContrModul1UDS</SHORT-NAME>
+            <LONG-NAME TI="SFT00001">Engine Control Module 1 UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_EnginContrModul1UDS" DOCTYPE="LAYER" ID-REF="BV_EnginContrModul1UDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_EnginContrModul2UDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_EnginContrModul2UDS</SHORT-NAME>
+            <LONG-NAME TI="SFT00011">Engine Control Module 2 UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_EnginContrModul2UDS" DOCTYPE="LAYER" ID-REF="BV_EnginContrModul2UDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_FreshAirBloweFrontUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_FreshAirBloweFrontUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT4261B">Fresh Air Blower Front UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_FreshAirBloweFrontUDS" DOCTYPE="LAYER" ID-REF="BV_FreshAirBloweFrontUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_FrontCorneRadar1UDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_FrontCorneRadar1UDS</SHORT-NAME>
+            <LONG-NAME TI="SFT000DB">Front Corner Radar 1 UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_FrontCorneRadar1UDS" DOCTYPE="LAYER" ID-REF="BV_FrontCorneRadar1UDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_FrontCorneRadar2UDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_FrontCorneRadar2UDS</SHORT-NAME>
+            <LONG-NAME TI="SFT000DC">Front Corner Radar 2 UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_FrontCorneRadar2UDS" DOCTYPE="LAYER" ID-REF="BV_FrontCorneRadar2UDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_FrontSensoDriveAssisSysteUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_FrontSensoDriveAssisSysteUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT000A5">Front Sensors Driver Assistance System UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_FrontSensoDriveAssisSysteUDS" DOCTYPE="LAYER" ID-REF="BV_FrontSensoDriveAssisSysteUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_GaragDoorOpeneContrModulUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_GaragDoorOpeneContrModulUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT42604">Garage Door Opener Control Module UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_GaragDoorOpeneContrModulUDS" DOCTYPE="LAYER" ID-REF="BV_GaragDoorOpeneContrModulUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_GatewUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_GatewUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT00019">Gateway UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_GatewUDS" DOCTYPE="LAYER" ID-REF="BV_GatewUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_ImageProceElectUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_ImageProceElectUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT0008E">Image Processing Electronics UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_ImageProceElectUDS" DOCTYPE="LAYER" ID-REF="BV_ImageProceElectUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_InforContrUnit1UDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_InforContrUnit1UDS</SHORT-NAME>
+            <LONG-NAME TI="SFT0005F">Information Control Unit 1 UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_InforContrUnit1UDS" DOCTYPE="LAYER" ID-REF="BV_InforContrUnit1UDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_InterLightModulUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_InterLightModulUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT4261E">Interior Light Module UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_InterLightModulUDS" DOCTYPE="LAYER" ID-REF="BV_InterLightModulUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_LaneChangAssisUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_LaneChangAssisUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT0003C">Lane Change Assistant UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_LaneChangAssisUDS" DOCTYPE="LAYER" ID-REF="BV_LaneChangAssisUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_LightContrLeft2UDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_LightContrLeft2UDS</SHORT-NAME>
+            <LONG-NAME TI="SFT000D6">Light Control Left 2 UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_LightContrLeft2UDS" DOCTYPE="LAYER" ID-REF="BV_LightContrLeft2UDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_LightContrRight2UDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_LightContrRight2UDS</SHORT-NAME>
+            <LONG-NAME TI="SFT000D7">Light Control Right 2 UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_LightContrRight2UDS" DOCTYPE="LAYER" ID-REF="BV_LightContrRight2UDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_MultiFunctSteerWheelContrModulUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_MultiFunctSteerWheelContrModulUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT42631">Multi Function Steering Wheel Control Module UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_MultiFunctSteerWheelContrModulUDS" DOCTYPE="LAYER" ID-REF="BV_MultiFunctSteerWheelContrModulUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_RainLightRecogSensoUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_RainLightRecogSensoUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT42602">Rain Light Recognition Sensor UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_RainLightRecogSensoUDS" DOCTYPE="LAYER" ID-REF="BV_RainLightRecogSensoUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_SeatAdjusDriveSideUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_SeatAdjusDriveSideUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT00036">Seat Adjustment Driver Side UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_SeatAdjusDriveSideUDS" DOCTYPE="LAYER" ID-REF="BV_SeatAdjusDriveSideUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_SeatAdjusPasseSideUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_SeatAdjusPasseSideUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT00006">Seat Adjustment Passenger Side UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_SeatAdjusPasseSideUDS" DOCTYPE="LAYER" ID-REF="BV_SeatAdjusPasseSideUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_SeatAdjusRearDriveSideUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_SeatAdjusRearDriveSideUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT00048">Seat Adjustment Rear Driver Side UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_SeatAdjusRearDriveSideUDS" DOCTYPE="LAYER" ID-REF="BV_SeatAdjusRearDriveSideUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_SeatAdjusRearPasseSideUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_SeatAdjusRearPasseSideUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT0005B">Seat Adjustment Rear Passenger Side UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_SeatAdjusRearPasseSideUDS" DOCTYPE="LAYER" ID-REF="BV_SeatAdjusRearPasseSideUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_SoundSysteUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_SoundSysteUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT00047">Sound System UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_SoundSysteUDS" DOCTYPE="LAYER" ID-REF="BV_SoundSysteUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_SteerAssisUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_SteerAssisUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT00044">Steering Assistance UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_SteerAssisUDS" DOCTYPE="LAYER" ID-REF="BV_SteerAssisUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_SteerColumElectUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_SteerColumElectUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT00016">Steering Column Electronics UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_SteerColumElectUDS" DOCTYPE="LAYER" ID-REF="BV_SteerColumElectUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_SteerColumLockiUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_SteerColumLockiUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT0002B">Steering Column Locking UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_SteerColumLockiUDS" DOCTYPE="LAYER" ID-REF="BV_SteerColumLockiUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_TelemCommuUnitUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_TelemCommuUnitUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT00075">Telematics Communication Unit UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_TelemCommuUnitUDS" DOCTYPE="LAYER" ID-REF="BV_TelemCommuUnitUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_ThermManagUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_ThermManagUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT000C5">Thermal Management UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_ThermManagUDS" DOCTYPE="LAYER" ID-REF="BV_ThermManagUDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_TirePressMonit1UDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_TirePressMonit1UDS</SHORT-NAME>
+            <LONG-NAME TI="SFT00065">Tire Pressure Monitoring 1 UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_TirePressMonit1UDS" DOCTYPE="LAYER" ID-REF="BV_TirePressMonit1UDS"/>
+          </LOGICAL-LINK>
+          <LOGICAL-LINK ID="VINFO_LB634DoIP.LL_TransContrModulUDS" xsi:type="MEMBER-LOGICAL-LINK">
+            <SHORT-NAME>LL_TransContrModulUDS</SHORT-NAME>
+            <LONG-NAME TI="SFT00002">Transmission Control Module UDS</LONG-NAME>
+            <PHYSICAL-VEHICLE-LINK-REF ID-REF="VINFO_LB634DoIP.Ether1"/>
+            <PROTOCOL-REF DOCREF="PR_UDSOnIP" DOCTYPE="LAYER" ID-REF="PR_UDSOnIP"/>
+            <BASE-VARIANT-REF DOCREF="BV_TransContrModulUDS" DOCTYPE="LAYER" ID-REF="BV_TransContrModulUDS"/>
+          </LOGICAL-LINK>
+        </LOGICAL-LINKS>
+        <PHYSICAL-VEHICLE-LINKS>
+          <PHYSICAL-VEHICLE-LINK ID="VINFO_LB634DoIP.Ether1" TYPE="XDE_5024_UART">
+            <SHORT-NAME>Ether1</SHORT-NAME>
+            <LONG-NAME>Ethernet 1</LONG-NAME>
+            <VEHICLE-CONNECTOR-PIN-REFS>
+              <VEHICLE-CONNECTOR-PIN-REF ID-REF="VINFO_LB634DoIP.RXPlus"/>
+              <VEHICLE-CONNECTOR-PIN-REF ID-REF="VINFO_LB634DoIP.TXPlus"/>
+            </VEHICLE-CONNECTOR-PIN-REFS>
+          </PHYSICAL-VEHICLE-LINK>
+        </PHYSICAL-VEHICLE-LINKS>
+      </VEHICLE-INFORMATION>
+    </VEHICLE-INFORMATIONS>
+  </VEHICLE-INFO-SPEC>
+</ODX>

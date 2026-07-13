@@ -1,0 +1,1172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ODX MODEL-VERSION="2.0.1" xsi:noNamespaceSchemaLocation="odx.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+ <DIAG-LAYER-CONTAINER ID="DLC_ES_LIBEtherMediaAccesContrV14">
+  <SHORT-NAME>DLC_ES_LIBEtherMediaAccesContrV14</SHORT-NAME>
+  <LONG-NAME>LIB Ethernet Media Access Control V1.4</LONG-NAME>
+  <ECU-SHARED-DATAS>
+   <ECU-SHARED-DATA ID="ES_LIBEtherMediaAccesContrV14">
+    <SHORT-NAME>ES_LIBEtherMediaAccesContrV14</SHORT-NAME>
+    <LONG-NAME>LIB Ethernet Media Access Control V1.4</LONG-NAME>
+    <DESC>
+     <p>Datenbibliothek zum Lastenheft Ethernet Media Access Control V1.4</p>
+    </DESC>
+    <ADMIN-DATA>
+     <DOC-REVISIONS>
+      <DOC-REVISION>
+       <TEAM-MEMBER-REF ID-REF="Compy_IAVGmbH.TM_AndiPetzo"/>
+       <REVISION-LABEL>005001</REVISION-LABEL>
+       <STATE>RELEASE</STATE>
+       <DATE>2024-12-12T01:00:00+01:00</DATE>
+       <TOOL>XMLSPY</TOOL>
+       <MODIFICATIONS>
+        <MODIFICATION>
+         <CHANGE>Neu erstellt fuer Ethernet Media Access Control V1.4 auf Basis der ES_LIBEtherMediaAccesContrV12_005001.odx</CHANGE>
+        </MODIFICATION>
+        <MODIFICATION>
+         <CHANGE>Unterschiede zur Lib Ethernet Media Access Control V1.2:
+- Hinzufuegen von einem Messwert 0xC127 'Counter_dropped_ethernet_mirror_frames_switch_layer_2'
+- Hinzufuegen von einer Routine 0xC113 'Reset_counter_dropped_ethernet_mirror_frames_switch_layer_2'</CHANGE>
+         <REASON>Diagnosevorgabedaten in DiDAS [LIB-1364.5.1] Ethernet Media Access and Forwarding_V1.4</REASON>
+        </MODIFICATION>
+       </MODIFICATIONS>
+      </DOC-REVISION>
+      <DOC-REVISION>
+       <TEAM-MEMBER-REF ID-REF="Compy_CARIASE.TM_UlricBrand"/>
+       <REVISION-LABEL>004001</REVISION-LABEL>
+       <STATE>RELEASE</STATE>
+       <DATE>2025-01-29T01:00:00+01:00</DATE>
+       <TOOL>XMLSPY</TOOL>
+       <MODIFICATIONS>
+        <MODIFICATION>
+         <CHANGE>Im ODX-Element den Wert des MODEL-VERSION-Attributs zu '2.0.1' geaendert (bisheriger Wert: '2.2.0')</CHANGE>
+         <REASON>Umstellung der ODX-Schemaversion auf 2.0.1</REASON>
+        </MODIFICATION>
+       </MODIFICATIONS>
+      </DOC-REVISION>
+     </DOC-REVISIONS>
+    </ADMIN-DATA>
+    <COMPANY-DATAS>
+     <COMPANY-DATA ID="Compy_CARIASE">
+      <SHORT-NAME>Compy_CARIASE</SHORT-NAME>
+      <LONG-NAME>CARIAD SE</LONG-NAME>
+      <TEAM-MEMBERS>
+       <TEAM-MEMBER ID="Compy_CARIASE.TM_AmmarChaff">
+        <SHORT-NAME>TM_AmmarChaff</SHORT-NAME>
+        <LONG-NAME>Ammar Chaffai</LONG-NAME>
+        <ROLES>
+         <ROLE>contact person OEM</ROLE>
+        </ROLES>
+       </TEAM-MEMBER>
+       <TEAM-MEMBER ID="Compy_CARIASE.TM_SalimZaariJabir">
+        <SHORT-NAME>TM_SalimZaariJabir</SHORT-NAME>
+        <LONG-NAME>Salima Zaari Jabiri</LONG-NAME>
+        <ROLES>
+         <ROLE>contact person OEM</ROLE>
+        </ROLES>
+       </TEAM-MEMBER>
+       <TEAM-MEMBER ID="Compy_CARIASE.TM_UlricBrand">
+        <SHORT-NAME>TM_UlricBrand</SHORT-NAME>
+        <LONG-NAME>Ulrich Brandes</LONG-NAME>
+        <ROLES>
+         <ROLE>contact person OEM</ROLE>
+        </ROLES>
+       </TEAM-MEMBER>
+      </TEAM-MEMBERS>
+     </COMPANY-DATA>
+     <COMPANY-DATA ID="Compy_IAVGmbH">
+      <SHORT-NAME>Compy_IAVGmbH</SHORT-NAME>
+      <LONG-NAME>IAV GmbH</LONG-NAME>
+      <TEAM-MEMBERS>
+       <TEAM-MEMBER ID="Compy_IAVGmbH.TM_AndiPetzo">
+        <SHORT-NAME>TM_AndiPetzo</SHORT-NAME>
+        <LONG-NAME>Andi Petzold</LONG-NAME>
+        <ROLES>
+         <ROLE>contact person consultant</ROLE>
+        </ROLES>
+       </TEAM-MEMBER>
+      </TEAM-MEMBERS>
+     </COMPANY-DATA>
+    </COMPANY-DATAS>
+    <DIAG-DATA-DICTIONARY-SPEC>
+     <DATA-OBJECT-PROPS>
+      <DATA-OBJECT-PROP ID="DOP_BYTEFIELD6Bytes">
+       <SHORT-NAME>DOP_BYTEFIELD6Bytes</SHORT-NAME>
+       <LONG-NAME>BYTE FIELD 6 Bytes</LONG-NAME>
+       <DESC>
+        <p>Bytefield der Laenge 6</p>
+       </DESC>
+       <COMPU-METHOD>
+        <CATEGORY>IDENTICAL</CATEGORY>
+       </COMPU-METHOD>
+       <DIAG-CODED-TYPE BASE-DATA-TYPE="A_BYTEFIELD" xsi:type="STANDARD-LENGTH-TYPE">
+        <BIT-LENGTH>48</BIT-LENGTH>
+       </DIAG-CODED-TYPE>
+       <PHYSICAL-TYPE BASE-DATA-TYPE="A_BYTEFIELD"/>
+      </DATA-OBJECT-PROP>
+      <DATA-OBJECT-PROP ID="DOP_TEXTTABLECountReset">
+       <SHORT-NAME>DOP_TEXTTABLECountReset</SHORT-NAME>
+       <LONG-NAME>TEXT TABLE Counter_reset</LONG-NAME>
+       <DESC>
+        <p>Eingabewert fuer die Grundeinstellung zum Ruecksetzen des Zaehlers</p>
+       </DESC>
+       <COMPU-METHOD>
+        <CATEGORY>TEXTTABLE</CATEGORY>
+        <COMPU-INTERNAL-TO-PHYS>
+         <COMPU-SCALES>
+          <COMPU-SCALE>
+           <LOWER-LIMIT>262144</LOWER-LIMIT>
+           <COMPU-CONST>
+            <VT TI="MAS00267">Counter_reset</VT>
+           </COMPU-CONST>
+          </COMPU-SCALE>
+         </COMPU-SCALES>
+        </COMPU-INTERNAL-TO-PHYS>
+       </COMPU-METHOD>
+       <DIAG-CODED-TYPE BASE-DATA-TYPE="A_UINT32" xsi:type="STANDARD-LENGTH-TYPE">
+        <BIT-LENGTH>24</BIT-LENGTH>
+       </DIAG-CODED-TYPE>
+       <PHYSICAL-TYPE BASE-DATA-TYPE="A_UNICODE2STRING"/>
+       <INTERNAL-CONSTR>
+        <LOWER-LIMIT>0</LOWER-LIMIT>
+        <UPPER-LIMIT>16777215</UPPER-LIMIT>
+        <SCALE-CONSTRS>
+         <SCALE-CONSTR VALIDITY="NOT-VALID">
+          <SHORT-LABEL TI="MAS00103">not valid</SHORT-LABEL>
+          <LOWER-LIMIT>0</LOWER-LIMIT>
+          <UPPER-LIMIT>262143</UPPER-LIMIT>
+         </SCALE-CONSTR>
+         <SCALE-CONSTR VALIDITY="NOT-VALID">
+          <SHORT-LABEL TI="MAS00103">not valid</SHORT-LABEL>
+          <LOWER-LIMIT>262145</LOWER-LIMIT>
+          <UPPER-LIMIT>16777215</UPPER-LIMIT>
+         </SCALE-CONSTR>
+        </SCALE-CONSTRS>
+       </INTERNAL-CONSTR>
+      </DATA-OBJECT-PROP>
+      <DATA-OBJECT-PROP ID="DOP_TEXTTABLEGrund">
+       <SHORT-NAME>DOP_TEXTTABLEGrund</SHORT-NAME>
+       <LONG-NAME>TEXT TABLE Grundeinstellung</LONG-NAME>
+       <DESC>
+        <p>TEXT TABLE Grundeinstellung</p>
+       </DESC>
+       <COMPU-METHOD>
+        <CATEGORY>TEXTTABLE</CATEGORY>
+        <COMPU-INTERNAL-TO-PHYS>
+         <COMPU-SCALES>
+          <COMPU-SCALE>
+           <LOWER-LIMIT>262144</LOWER-LIMIT>
+           <COMPU-CONST>
+            <VT>Grundeinstellung</VT>
+           </COMPU-CONST>
+          </COMPU-SCALE>
+         </COMPU-SCALES>
+         <COMPU-DEFAULT-VALUE>
+          <VT TI="MAS00624">not defined</VT>
+         </COMPU-DEFAULT-VALUE>
+        </COMPU-INTERNAL-TO-PHYS>
+       </COMPU-METHOD>
+       <DIAG-CODED-TYPE BASE-DATA-TYPE="A_UINT32" xsi:type="STANDARD-LENGTH-TYPE">
+        <BIT-LENGTH>24</BIT-LENGTH>
+       </DIAG-CODED-TYPE>
+       <PHYSICAL-TYPE BASE-DATA-TYPE="A_UNICODE2STRING"/>
+       <INTERNAL-CONSTR>
+        <LOWER-LIMIT>0</LOWER-LIMIT>
+        <UPPER-LIMIT>16777215</UPPER-LIMIT>
+        <SCALE-CONSTRS>
+         <SCALE-CONSTR VALIDITY="NOT-VALID">
+          <SHORT-LABEL TI="MAS00103">not valid</SHORT-LABEL>
+          <LOWER-LIMIT>0</LOWER-LIMIT>
+          <UPPER-LIMIT>262143</UPPER-LIMIT>
+         </SCALE-CONSTR>
+         <SCALE-CONSTR VALIDITY="NOT-VALID">
+          <SHORT-LABEL TI="MAS00103">not valid</SHORT-LABEL>
+          <LOWER-LIMIT>262145</LOWER-LIMIT>
+          <UPPER-LIMIT>16777215</UPPER-LIMIT>
+         </SCALE-CONSTR>
+        </SCALE-CONSTRS>
+       </INTERNAL-CONSTR>
+      </DATA-OBJECT-PROP>
+      <DATA-OBJECT-PROP ID="DOP_TEXTTABLERecorDataIdentMeasuValue">
+       <SHORT-NAME>DOP_TEXTTABLERecorDataIdentMeasuValue</SHORT-NAME>
+       <LONG-NAME>TEXT TABLE Record Data Identifier Measurement Value</LONG-NAME>
+       <DESC>
+        <p>Liste der dataIdentifier fuer die Messwerte</p>
+       </DESC>
+       <COMPU-METHOD>
+        <CATEGORY>TEXTTABLE</CATEGORY>
+        <COMPU-INTERNAL-TO-PHYS>
+         <COMPU-SCALES>
+          <COMPU-SCALE>
+           <SHORT-LABEL>$0140</SHORT-LABEL>
+           <LOWER-LIMIT>320</LOWER-LIMIT>
+           <COMPU-CONST>
+            <VT TI="IDE11755">Ip_vlans_list</VT>
+           </COMPU-CONST>
+          </COMPU-SCALE>
+          <COMPU-SCALE>
+           <SHORT-LABEL>$0141</SHORT-LABEL>
+           <LOWER-LIMIT>321</LOWER-LIMIT>
+           <COMPU-CONST>
+            <VT TI="IDE11761">Ip_mac_addresses_list</VT>
+           </COMPU-CONST>
+          </COMPU-SCALE>
+          <COMPU-SCALE>
+           <SHORT-LABEL>$019D</SHORT-LABEL>
+           <LOWER-LIMIT>413</LOWER-LIMIT>
+           <COMPU-CONST>
+            <VT TI="IDE14876">IP_network_MAC_adress_table</VT>
+           </COMPU-CONST>
+          </COMPU-SCALE>
+          <COMPU-SCALE>
+           <SHORT-LABEL>$019E</SHORT-LABEL>
+           <LOWER-LIMIT>414</LOWER-LIMIT>
+           <COMPU-CONST>
+            <VT TI="IDE14877">IP_network_VLAN_table</VT>
+           </COMPU-CONST>
+          </COMPU-SCALE>
+          <COMPU-SCALE>
+           <SHORT-LABEL>$019F</SHORT-LABEL>
+           <LOWER-LIMIT>415</LOWER-LIMIT>
+           <COMPU-CONST>
+            <VT TI="IDE14878">Ip_counter_dropped_ethernet_frames_layer_2</VT>
+           </COMPU-CONST>
+          </COMPU-SCALE>
+          <COMPU-SCALE>
+           <SHORT-LABEL>$01A2</SHORT-LABEL>
+           <LOWER-LIMIT>418</LOWER-LIMIT>
+           <COMPU-CONST>
+            <VT TI="IDE14884">Ip_counter_dropped_ethernet_frames_switch_layer_2</VT>
+           </COMPU-CONST>
+          </COMPU-SCALE>
+          <COMPU-SCALE>
+           <SHORT-LABEL>$0A2B</SHORT-LABEL>
+           <LOWER-LIMIT>2603</LOWER-LIMIT>
+           <COMPU-CONST>
+            <VT TI="IDE11756">Ip_counter_wrong_vlans</VT>
+           </COMPU-CONST>
+          </COMPU-SCALE>
+          <COMPU-SCALE>
+           <SHORT-LABEL>$C127</SHORT-LABEL>
+           <LOWER-LIMIT>49447</LOWER-LIMIT>
+           <COMPU-CONST>
+            <VT TI="MAS31107">Counter_dropped_ethernet_mirror_frames_switch_layer_2</VT>
+           </COMPU-CONST>
+          </COMPU-SCALE>
+         </COMPU-SCALES>
+        </COMPU-INTERNAL-TO-PHYS>
+       </COMPU-METHOD>
+       <DIAG-CODED-TYPE xsi:type="STANDARD-LENGTH-TYPE" BASE-DATA-TYPE="A_UINT32">
+        <BIT-LENGTH>16</BIT-LENGTH>
+       </DIAG-CODED-TYPE>
+       <PHYSICAL-TYPE BASE-DATA-TYPE="A_UNICODE2STRING"/>
+       <INTERNAL-CONSTR>
+        <LOWER-LIMIT INTERVAL-TYPE="CLOSED">0</LOWER-LIMIT>
+        <UPPER-LIMIT INTERVAL-TYPE="CLOSED">65535</UPPER-LIMIT>
+        <SCALE-CONSTRS>
+         <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+          <SHORT-LABEL TI="MAS00624">not defined</SHORT-LABEL>
+          <LOWER-LIMIT>0</LOWER-LIMIT>
+          <UPPER-LIMIT>319</UPPER-LIMIT>
+         </SCALE-CONSTR>
+         <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+          <SHORT-LABEL TI="MAS00624">not defined</SHORT-LABEL>
+          <LOWER-LIMIT>322</LOWER-LIMIT>
+          <UPPER-LIMIT>412</UPPER-LIMIT>
+         </SCALE-CONSTR>
+         <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+          <SHORT-LABEL TI="MAS00624">not defined</SHORT-LABEL>
+          <LOWER-LIMIT>416</LOWER-LIMIT>
+          <UPPER-LIMIT>417</UPPER-LIMIT>
+         </SCALE-CONSTR>
+         <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+          <SHORT-LABEL TI="MAS00624">not defined</SHORT-LABEL>
+          <LOWER-LIMIT>419</LOWER-LIMIT>
+          <UPPER-LIMIT>2602</UPPER-LIMIT>
+         </SCALE-CONSTR>
+         <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+          <SHORT-LABEL TI="MAS00624">not defined</SHORT-LABEL>
+          <LOWER-LIMIT>2604</LOWER-LIMIT>
+          <UPPER-LIMIT>49446</UPPER-LIMIT>
+         </SCALE-CONSTR>
+         <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+          <SHORT-LABEL TI="MAS00624">not defined</SHORT-LABEL>
+          <LOWER-LIMIT>49448</LOWER-LIMIT>
+          <UPPER-LIMIT>65535</UPPER-LIMIT>
+         </SCALE-CONSTR>
+        </SCALE-CONSTRS>
+       </INTERNAL-CONSTR>
+      </DATA-OBJECT-PROP>
+      <DATA-OBJECT-PROP ID="DOP_TEXTTABLERoutiContrBasicSetti">
+       <SHORT-NAME>DOP_TEXTTABLERoutiContrBasicSetti</SHORT-NAME>
+       <LONG-NAME>TEXT TABLE Routine Control Basic Settings</LONG-NAME>
+       <DESC>
+        <p>Liste der routineIdentifier fuer die Grundeinstellungsroutinen</p>
+       </DESC>
+       <COMPU-METHOD>
+        <CATEGORY>TEXTTABLE</CATEGORY>
+        <COMPU-INTERNAL-TO-PHYS>
+         <COMPU-SCALES>
+          <COMPU-SCALE>
+           <SHORT-LABEL>$05E3</SHORT-LABEL>
+           <LOWER-LIMIT>1507</LOWER-LIMIT>
+           <COMPU-CONST>
+            <VT TI="IDE13347">Reset_ip_counter_wrong_vlans</VT>
+           </COMPU-CONST>
+          </COMPU-SCALE>
+          <COMPU-SCALE>
+           <SHORT-LABEL>$065F</SHORT-LABEL>
+           <LOWER-LIMIT>1631</LOWER-LIMIT>
+           <COMPU-CONST>
+            <VT TI="IDE14881">Reset_ip_counter_dropped_ethernet_frames_layer_2</VT>
+           </COMPU-CONST>
+          </COMPU-SCALE>
+          <COMPU-SCALE>
+           <SHORT-LABEL>$068E</SHORT-LABEL>
+           <LOWER-LIMIT>1678</LOWER-LIMIT>
+           <COMPU-CONST>
+            <VT TI="IDE14885">Reset_ip_counter_dropped_ethernet_frames_switch_layer_2</VT>
+           </COMPU-CONST>
+          </COMPU-SCALE>
+          <COMPU-SCALE>
+           <SHORT-LABEL>$C113</SHORT-LABEL>
+           <LOWER-LIMIT>49427</LOWER-LIMIT>
+           <COMPU-CONST>
+            <VT TI="IDE21020">Reset_counter_dropped_ethernet_mirror_frames_switch_layer_2</VT>
+           </COMPU-CONST>
+          </COMPU-SCALE>
+         </COMPU-SCALES>
+        </COMPU-INTERNAL-TO-PHYS>
+       </COMPU-METHOD>
+       <DIAG-CODED-TYPE xsi:type="STANDARD-LENGTH-TYPE" BASE-DATA-TYPE="A_UINT32">
+        <BIT-LENGTH>16</BIT-LENGTH>
+       </DIAG-CODED-TYPE>
+       <PHYSICAL-TYPE BASE-DATA-TYPE="A_UNICODE2STRING"/>
+       <INTERNAL-CONSTR>
+        <LOWER-LIMIT INTERVAL-TYPE="CLOSED">0</LOWER-LIMIT>
+        <UPPER-LIMIT INTERVAL-TYPE="CLOSED">65535</UPPER-LIMIT>
+        <SCALE-CONSTRS>
+         <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+          <SHORT-LABEL TI="MAS00624">not defined</SHORT-LABEL>
+          <LOWER-LIMIT>0</LOWER-LIMIT>
+          <UPPER-LIMIT>1506</UPPER-LIMIT>
+         </SCALE-CONSTR>
+         <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+          <SHORT-LABEL TI="MAS00624">not defined</SHORT-LABEL>
+          <LOWER-LIMIT>1508</LOWER-LIMIT>
+          <UPPER-LIMIT>1630</UPPER-LIMIT>
+         </SCALE-CONSTR>
+         <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+          <SHORT-LABEL TI="MAS00624">not defined</SHORT-LABEL>
+          <LOWER-LIMIT>1632</LOWER-LIMIT>
+          <UPPER-LIMIT>1677</UPPER-LIMIT>
+         </SCALE-CONSTR>
+         <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+          <SHORT-LABEL TI="MAS00624">not defined</SHORT-LABEL>
+          <LOWER-LIMIT>1679</LOWER-LIMIT>
+          <UPPER-LIMIT>49426</UPPER-LIMIT>
+         </SCALE-CONSTR>
+         <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+          <SHORT-LABEL TI="MAS00624">not defined</SHORT-LABEL>
+          <LOWER-LIMIT>49428</LOWER-LIMIT>
+          <UPPER-LIMIT>65535</UPPER-LIMIT>
+         </SCALE-CONSTR>
+        </SCALE-CONSTRS>
+       </INTERNAL-CONSTR>
+      </DATA-OBJECT-PROP>
+      <DATA-OBJECT-PROP ID="DOP_TEXTTABLERoutiResul">
+       <SHORT-NAME>DOP_TEXTTABLERoutiResul</SHORT-NAME>
+       <LONG-NAME>TEXT TABLE Routine Result</LONG-NAME>
+       <DESC>
+        <p>Liste der RoutineResults</p>
+       </DESC>
+       <COMPU-METHOD>
+        <CATEGORY>TEXTTABLE</CATEGORY>
+        <COMPU-INTERNAL-TO-PHYS>
+         <COMPU-SCALES>
+          <COMPU-SCALE>
+           <LOWER-LIMIT>0</LOWER-LIMIT>
+           <COMPU-CONST>
+            <VT TI="MAS00498">Incorrect Results</VT>
+           </COMPU-CONST>
+          </COMPU-SCALE>
+          <COMPU-SCALE>
+           <LOWER-LIMIT>1</LOWER-LIMIT>
+           <COMPU-CONST>
+            <VT TI="MAS00500">No Results Available</VT>
+           </COMPU-CONST>
+          </COMPU-SCALE>
+          <COMPU-SCALE>
+           <LOWER-LIMIT>65535</LOWER-LIMIT>
+           <COMPU-CONST>
+            <VT TI="MAS00499">Correct Results</VT>
+           </COMPU-CONST>
+          </COMPU-SCALE>
+         </COMPU-SCALES>
+         <COMPU-DEFAULT-VALUE>
+          <VT TI="MAS00624">not defined</VT>
+         </COMPU-DEFAULT-VALUE>
+        </COMPU-INTERNAL-TO-PHYS>
+       </COMPU-METHOD>
+       <DIAG-CODED-TYPE BASE-DATA-TYPE="A_UINT32" xsi:type="STANDARD-LENGTH-TYPE">
+        <BIT-LENGTH>16</BIT-LENGTH>
+       </DIAG-CODED-TYPE>
+       <PHYSICAL-TYPE BASE-DATA-TYPE="A_UNICODE2STRING"/>
+       <INTERNAL-CONSTR>
+        <LOWER-LIMIT>0</LOWER-LIMIT>
+        <UPPER-LIMIT>65535</UPPER-LIMIT>
+       </INTERNAL-CONSTR>
+      </DATA-OBJECT-PROP>
+      <DATA-OBJECT-PROP ID="DOP_TEXTTABLERoutiStatu">
+       <SHORT-NAME>DOP_TEXTTABLERoutiStatu</SHORT-NAME>
+       <LONG-NAME>TEXT TABLE Routine Status</LONG-NAME>
+       <DESC>
+        <p>Liste der moeglichen RoutineStatus-Werte</p>
+       </DESC>
+       <COMPU-METHOD>
+        <CATEGORY>TEXTTABLE</CATEGORY>
+        <COMPU-INTERNAL-TO-PHYS>
+         <COMPU-SCALES>
+          <COMPU-SCALE>
+           <LOWER-LIMIT>0</LOWER-LIMIT>
+           <COMPU-CONST>
+            <VT TI="MAS15823">Routine Inactive</VT>
+           </COMPU-CONST>
+          </COMPU-SCALE>
+          <COMPU-SCALE>
+           <LOWER-LIMIT>1</LOWER-LIMIT>
+           <COMPU-CONST>
+            <VT TI="MAS14039">Routine Active</VT>
+           </COMPU-CONST>
+          </COMPU-SCALE>
+          <COMPU-SCALE>
+           <LOWER-LIMIT>2</LOWER-LIMIT>
+           <COMPU-CONST>
+            <VT TI="MAS08362">Routine Aborted</VT>
+           </COMPU-CONST>
+          </COMPU-SCALE>
+          <COMPU-SCALE>
+           <LOWER-LIMIT>3</LOWER-LIMIT>
+           <COMPU-CONST>
+            <VT TI="MAS15824">Routine Execution Stuck</VT>
+           </COMPU-CONST>
+          </COMPU-SCALE>
+          <COMPU-SCALE>
+           <LOWER-LIMIT>4</LOWER-LIMIT>
+           <COMPU-CONST>
+            <VT TI="MAS05327">Routine Finished Correctly</VT>
+           </COMPU-CONST>
+          </COMPU-SCALE>
+          <COMPU-SCALE>
+           <LOWER-LIMIT>5</LOWER-LIMIT>
+           <COMPU-CONST>
+            <VT TI="MAS15825">Routine Returned To Ecu Control</VT>
+           </COMPU-CONST>
+          </COMPU-SCALE>
+         </COMPU-SCALES>
+         <COMPU-DEFAULT-VALUE>
+          <VT TI="MAS00624">not defined</VT>
+         </COMPU-DEFAULT-VALUE>
+        </COMPU-INTERNAL-TO-PHYS>
+       </COMPU-METHOD>
+       <DIAG-CODED-TYPE BASE-DATA-TYPE="A_UINT32" xsi:type="STANDARD-LENGTH-TYPE">
+        <BIT-LENGTH>8</BIT-LENGTH>
+       </DIAG-CODED-TYPE>
+       <PHYSICAL-TYPE BASE-DATA-TYPE="A_UNICODE2STRING"/>
+       <INTERNAL-CONSTR>
+        <LOWER-LIMIT>0</LOWER-LIMIT>
+        <UPPER-LIMIT>255</UPPER-LIMIT>
+       </INTERNAL-CONSTR>
+      </DATA-OBJECT-PROP>
+      <DATA-OBJECT-PROP ID="DOP_UINTDEC1Byte">
+       <SHORT-NAME>DOP_UINTDEC1Byte</SHORT-NAME>
+       <LONG-NAME>UINT DEC 1 Byte</LONG-NAME>
+       <DESC>
+        <p>Ganzzahl-Wert (dezimal) im Intervall [0;255]</p>
+       </DESC>
+       <COMPU-METHOD>
+        <CATEGORY>IDENTICAL</CATEGORY>
+       </COMPU-METHOD>
+       <DIAG-CODED-TYPE xsi:type="STANDARD-LENGTH-TYPE" BASE-DATA-TYPE="A_UINT32">
+        <BIT-LENGTH>8</BIT-LENGTH>
+       </DIAG-CODED-TYPE>
+       <PHYSICAL-TYPE BASE-DATA-TYPE="A_UINT32" DISPLAY-RADIX="DEC"/>
+       <INTERNAL-CONSTR>
+        <LOWER-LIMIT>0</LOWER-LIMIT>
+        <UPPER-LIMIT>255</UPPER-LIMIT>
+       </INTERNAL-CONSTR>
+      </DATA-OBJECT-PROP>
+      <DATA-OBJECT-PROP ID="DOP_UINTDEC2Bytes">
+       <SHORT-NAME>DOP_UINTDEC2Bytes</SHORT-NAME>
+       <LONG-NAME>UINT DEC 2 Bytes</LONG-NAME>
+       <DESC>
+        <p>Ganzzahl-Wert (dezimal) im Intervall [0;65535]</p>
+       </DESC>
+       <COMPU-METHOD>
+        <CATEGORY>IDENTICAL</CATEGORY>
+       </COMPU-METHOD>
+       <DIAG-CODED-TYPE xsi:type="STANDARD-LENGTH-TYPE" BASE-DATA-TYPE="A_UINT32">
+        <BIT-LENGTH>16</BIT-LENGTH>
+       </DIAG-CODED-TYPE>
+       <PHYSICAL-TYPE BASE-DATA-TYPE="A_UINT32" DISPLAY-RADIX="DEC"/>
+       <INTERNAL-CONSTR>
+        <LOWER-LIMIT>0</LOWER-LIMIT>
+        <UPPER-LIMIT>65535</UPPER-LIMIT>
+       </INTERNAL-CONSTR>
+      </DATA-OBJECT-PROP>
+      <DATA-OBJECT-PROP ID="DOP_UINTDEC2Bytes04095">
+       <SHORT-NAME>DOP_UINTDEC2Bytes04095</SHORT-NAME>
+       <LONG-NAME>UINT DEC 2 Bytes [0;4095]</LONG-NAME>
+       <DESC>
+        <p>Ganzzahl-Wert (dezimal) im Intervall [0;4095]</p>
+       </DESC>
+       <COMPU-METHOD>
+        <CATEGORY>IDENTICAL</CATEGORY>
+       </COMPU-METHOD>
+       <DIAG-CODED-TYPE BASE-DATA-TYPE="A_UINT32" xsi:type="STANDARD-LENGTH-TYPE">
+        <BIT-LENGTH>16</BIT-LENGTH>
+       </DIAG-CODED-TYPE>
+       <PHYSICAL-TYPE BASE-DATA-TYPE="A_UINT32" DISPLAY-RADIX="DEC"/>
+       <INTERNAL-CONSTR>
+        <LOWER-LIMIT INTERVAL-TYPE="CLOSED">0</LOWER-LIMIT>
+        <UPPER-LIMIT INTERVAL-TYPE="CLOSED">65535</UPPER-LIMIT>
+        <SCALE-CONSTRS>
+         <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+          <SHORT-LABEL TI="MAS00624">not defined</SHORT-LABEL>
+          <LOWER-LIMIT>4096</LOWER-LIMIT>
+          <UPPER-LIMIT>65535</UPPER-LIMIT>
+         </SCALE-CONSTR>
+        </SCALE-CONSTRS>
+       </INTERNAL-CONSTR>
+      </DATA-OBJECT-PROP>
+      <DATA-OBJECT-PROP ID="DOP_UINTDEC3Bytes">
+       <SHORT-NAME>DOP_UINTDEC3Bytes</SHORT-NAME>
+       <LONG-NAME>UINT DEC 3 Bytes</LONG-NAME>
+       <DESC>
+        <p>Ganzzahl-Wert (dezimal) im Intervall [0;16777215]</p>
+       </DESC>
+       <COMPU-METHOD>
+        <CATEGORY>IDENTICAL</CATEGORY>
+       </COMPU-METHOD>
+       <DIAG-CODED-TYPE xsi:type="STANDARD-LENGTH-TYPE" BASE-DATA-TYPE="A_UINT32">
+        <BIT-LENGTH>24</BIT-LENGTH>
+       </DIAG-CODED-TYPE>
+       <PHYSICAL-TYPE BASE-DATA-TYPE="A_UINT32" DISPLAY-RADIX="DEC"/>
+       <INTERNAL-CONSTR>
+        <LOWER-LIMIT>0</LOWER-LIMIT>
+        <UPPER-LIMIT>16777215</UPPER-LIMIT>
+       </INTERNAL-CONSTR>
+      </DATA-OBJECT-PROP>
+      <DATA-OBJECT-PROP ID="DOP_UINTHEX1Byte">
+       <SHORT-NAME>DOP_UINTHEX1Byte</SHORT-NAME>
+       <LONG-NAME>UINT HEX 1 Byte</LONG-NAME>
+       <DESC>
+        <p>Ganzzahl-Wert (hexadezimal) im Intervall [0x00;0xFF]</p>
+       </DESC>
+       <COMPU-METHOD>
+        <CATEGORY>IDENTICAL</CATEGORY>
+       </COMPU-METHOD>
+       <DIAG-CODED-TYPE xsi:type="STANDARD-LENGTH-TYPE" BASE-DATA-TYPE="A_UINT32">
+        <BIT-LENGTH>8</BIT-LENGTH>
+       </DIAG-CODED-TYPE>
+       <PHYSICAL-TYPE BASE-DATA-TYPE="A_UINT32" DISPLAY-RADIX="HEX"/>
+       <INTERNAL-CONSTR>
+        <LOWER-LIMIT>0</LOWER-LIMIT>
+        <UPPER-LIMIT>255</UPPER-LIMIT>
+       </INTERNAL-CONSTR>
+      </DATA-OBJECT-PROP>
+     </DATA-OBJECT-PROPS>
+     <STRUCTURES>
+      <STRUCTURE ID="STRUC_DataRecorCountDroppEtherMirroFrameSwitcLayer2" IS-VISIBLE="true">
+       <SHORT-NAME>STRUC_DataRecorCountDroppEtherMirroFrameSwitcLayer2</SHORT-NAME>
+       <LONG-NAME>Data Record Counter_dropped_ethernet_mirror_frames_switch_layer_2</LONG-NAME>
+       <PARAMS>
+        <PARAM xsi:type="VALUE" SEMANTIC="DATA">
+         <SHORT-NAME>Param_VersiNumbe</SHORT-NAME>
+         <LONG-NAME TI="MAS01159">version_number</LONG-NAME>
+         <DESC>
+          <p>Version des Messwerts</p>
+         </DESC>
+         <BYTE-POSITION>0</BYTE-POSITION>
+         <DOP-REF ID-REF="DOP_UINTHEX1Byte"/>
+        </PARAM>
+        <PARAM xsi:type="VALUE" SEMANTIC="DATA">
+         <SHORT-NAME>Param_NumbeOfInter</SHORT-NAME>
+         <LONG-NAME>Number_of_interfaces</LONG-NAME>
+         <DESC>
+          <p>Anzahl Zähler verworfene Ethernet-Frames im Switch</p>
+         </DESC>
+         <BYTE-POSITION>1</BYTE-POSITION>
+         <DOP-REF ID-REF="DOP_UINTDEC1Byte"/>
+        </PARAM>
+        <PARAM xsi:type="VALUE" SEMANTIC="DATA">
+         <SHORT-NAME>Param_EtherInterAndCountDroppEtherMirroFrameList</SHORT-NAME>
+         <LONG-NAME>Ethernet_interface_and_counter_dropped_ethernet_mirror_frames_list</LONG-NAME>
+         <DESC>
+          <p>Iteration für 0xC127 "Zähler der verworfenen Ethernet-Mirror-Frames im Switch, Layer 2"</p>
+         </DESC>
+         <BYTE-POSITION>1</BYTE-POSITION>
+         <DOP-REF ID-REF="DYNLF_EtherInterAndCountDroppEtherMirroFrame"/>
+        </PARAM>
+       </PARAMS>
+      </STRUCTURE>
+      <STRUCTURE ID="STRUC_DataRecorIpCountDroppEtherFrameLayer2" IS-VISIBLE="false">
+       <SHORT-NAME>STRUC_DataRecorIpCountDroppEtherFrameLayer2</SHORT-NAME>
+       <LONG-NAME>Data Record Ip_counter_dropped_ethernet_frames_layer_2</LONG-NAME>
+       <BYTE-SIZE>2</BYTE-SIZE>
+       <PARAMS>
+        <PARAM xsi:type="VALUE" SEMANTIC="DATA">
+         <SHORT-NAME>Param_IpCountDroppEtherFrameLayer2</SHORT-NAME>
+         <LONG-NAME TI="MAS00194">Ip_counter_dropped_ethernet_frames_layer_2</LONG-NAME>
+         <DESC>
+          <p>Anzahl der in der ISO-/OSI-Schicht 2 durch die Funktionalitaet MAC verworfenen Ethernet-Frames</p>
+         </DESC>
+         <BYTE-POSITION>0</BYTE-POSITION>
+         <DOP-REF ID-REF="DOP_UINTDEC2Bytes"/>
+        </PARAM>
+       </PARAMS>
+      </STRUCTURE>
+      <STRUCTURE ID="STRUC_DataRecorIpCountDroppEtherFrameSwitcLayer2" IS-VISIBLE="true">
+       <SHORT-NAME>STRUC_DataRecorIpCountDroppEtherFrameSwitcLayer2</SHORT-NAME>
+       <LONG-NAME>Data Record Ip_counter_dropped_ethernet_frames_switch_layer_2</LONG-NAME>
+       <PARAMS>
+        <PARAM xsi:type="VALUE" SEMANTIC="DATA">
+         <SHORT-NAME>Param_VersiNumbe</SHORT-NAME>
+         <LONG-NAME TI="MAS01159">version_number</LONG-NAME>
+         <DESC>
+          <p>Version des Messwerts</p>
+         </DESC>
+         <BYTE-POSITION>0</BYTE-POSITION>
+         <DOP-REF ID-REF="DOP_UINTHEX1Byte"/>
+        </PARAM>
+        <PARAM xsi:type="VALUE" SEMANTIC="DATA">
+         <SHORT-NAME>Param_IpCountOfDroppEtherFrameCountSwitc</SHORT-NAME>
+         <LONG-NAME TI="MAS19559">Ip_count_of_dropped_ethernet_frame_counters_switch</LONG-NAME>
+         <DESC>
+          <p>Anzahl der an allen Ethernet-Schnittstellen des SGs vorhandenen Zaehler verworfene Ethernet-Frames im Switch</p>
+         </DESC>
+         <BYTE-POSITION>1</BYTE-POSITION>
+         <DOP-REF ID-REF="DOP_UINTDEC1Byte"/>
+        </PARAM>
+        <PARAM xsi:type="VALUE" SEMANTIC="DATA">
+         <SHORT-NAME>Param_ListOfIpCountDroppEtherFrameSwitcLayer2</SHORT-NAME>
+         <LONG-NAME>List_of_ip_counter_dropped_ethernet_frames_switch_layer_2</LONG-NAME>
+         <DESC>
+          <p>Liste Ethernet-Schnittstellen und Zaehler verworfene Ethernet-Frames im Switch, Layer 2</p>
+         </DESC>
+         <BYTE-POSITION>1</BYTE-POSITION>
+         <DOP-REF ID-REF="DYNLF_IpCountDroppEtherFrameSwitcLayer2"/>
+        </PARAM>
+       </PARAMS>
+      </STRUCTURE>
+      <STRUCTURE ID="STRUC_DataRecorIPNetwoMACAdresTable" IS-VISIBLE="true">
+       <SHORT-NAME>STRUC_DataRecorIPNetwoMACAdresTable</SHORT-NAME>
+       <LONG-NAME>Data Record IP_network_MAC_adress_table</LONG-NAME>
+       <PARAMS>
+        <PARAM xsi:type="VALUE" SEMANTIC="DATA">
+         <SHORT-NAME>Param_VersiNumbe</SHORT-NAME>
+         <LONG-NAME TI="MAS01159">version_number</LONG-NAME>
+         <DESC>
+          <p>Version des Messwerts</p>
+         </DESC>
+         <BYTE-POSITION>0</BYTE-POSITION>
+         <DOP-REF ID-REF="DOP_UINTHEX1Byte"/>
+        </PARAM>
+        <PARAM xsi:type="VALUE" SEMANTIC="DATA">
+         <SHORT-NAME>Param_IpCountOfMACAddre</SHORT-NAME>
+         <LONG-NAME TI="MAS19480">Ip_count_of_MAC_addresses</LONG-NAME>
+         <DESC>
+          <p>Anzahl der an allen Ethernet-Schnittstellen des SGs aufgetretenen MAC-Adressen</p>
+         </DESC>
+         <BYTE-POSITION>1</BYTE-POSITION>
+         <DOP-REF ID-REF="DOP_UINTDEC2Bytes"/>
+        </PARAM>
+        <PARAM xsi:type="VALUE" SEMANTIC="DATA">
+         <SHORT-NAME>Param_IPNetwoMACAdresTable</SHORT-NAME>
+         <LONG-NAME TI="IDE14876">IP_network_MAC_adress_table</LONG-NAME>
+         <DESC>
+          <p>Liste der Ethernet-Schnittstellen mit zugehoerigen MAC-Adressen</p>
+         </DESC>
+         <BYTE-POSITION>1</BYTE-POSITION>
+         <DOP-REF ID-REF="DYNLF_IPNetwoMACAdresTable"/>
+        </PARAM>
+       </PARAMS>
+      </STRUCTURE>
+      <STRUCTURE ID="STRUC_DataRecorIPNetwoVLANTable" IS-VISIBLE="true">
+       <SHORT-NAME>STRUC_DataRecorIPNetwoVLANTable</SHORT-NAME>
+       <LONG-NAME>Data Record IP_network_VLAN_table</LONG-NAME>
+       <PARAMS>
+        <PARAM xsi:type="VALUE" SEMANTIC="DATA">
+         <SHORT-NAME>Param_VersiNumbe</SHORT-NAME>
+         <LONG-NAME TI="MAS01159">version_number</LONG-NAME>
+         <DESC>
+          <p>Version des Messwerts</p>
+         </DESC>
+         <BYTE-POSITION>0</BYTE-POSITION>
+         <DOP-REF ID-REF="DOP_UINTHEX1Byte"/>
+        </PARAM>
+        <PARAM xsi:type="VALUE" SEMANTIC="DATA">
+         <SHORT-NAME>Param_IpCountOfVLANs</SHORT-NAME>
+         <LONG-NAME TI="MAS19482">Ip_count_of_VLANs</LONG-NAME>
+         <DESC>
+          <p>Anzahl der an allen Ethernet-Schnittstellen des SGs aufgetretenen VLANs</p>
+         </DESC>
+         <BYTE-POSITION>1</BYTE-POSITION>
+         <DOP-REF ID-REF="DOP_UINTDEC1Byte"/>
+        </PARAM>
+        <PARAM xsi:type="VALUE" SEMANTIC="DATA">
+         <SHORT-NAME>Param_IPNetwoVLANTable</SHORT-NAME>
+         <LONG-NAME TI="IDE14877">IP_network_VLAN_table</LONG-NAME>
+         <DESC>
+          <p>Liste der Ethernet-Schnittstellen mit zugehoerigen VLANS</p>
+         </DESC>
+         <BYTE-POSITION>1</BYTE-POSITION>
+         <DOP-REF ID-REF="DYNLF_IPNetwoVLANTable"/>
+        </PARAM>
+       </PARAMS>
+      </STRUCTURE>
+      <STRUCTURE ID="STRUC_EOPFWRAPPSTRUCLevel0IpMacAddreList" IS-VISIBLE="true">
+       <SHORT-NAME>STRUC_EOPFWRAPPSTRUCLevel0IpMacAddreList</SHORT-NAME>
+       <LONG-NAME>EOPF WRAPPER STRUCTURE Level 0 Ip_mac_addresses_list</LONG-NAME>
+       <BYTE-SIZE>6</BYTE-SIZE>
+       <PARAMS>
+        <PARAM xsi:type="VALUE" SEMANTIC="DATA">
+         <SHORT-NAME>Param_IpMacAddre</SHORT-NAME>
+         <LONG-NAME TI="IDE09467">Ip_Mac_address</LONG-NAME>
+         <BYTE-POSITION>0</BYTE-POSITION>
+         <DOP-REF ID-REF="DOP_BYTEFIELD6Bytes"/>
+        </PARAM>
+       </PARAMS>
+      </STRUCTURE>
+      <STRUCTURE ID="STRUC_EOPFWRAPPSTRUCLevel0IpVlansList" IS-VISIBLE="true">
+       <SHORT-NAME>STRUC_EOPFWRAPPSTRUCLevel0IpVlansList</SHORT-NAME>
+       <LONG-NAME>EOPF WRAPPER STRUCTURE Level 0 Ip_vlans_list</LONG-NAME>
+       <BYTE-SIZE>2</BYTE-SIZE>
+       <PARAMS>
+        <PARAM xsi:type="VALUE" SEMANTIC="DATA">
+         <SHORT-NAME>Param_IpVLAN</SHORT-NAME>
+         <LONG-NAME TI="MAS14856">Ip_VLAN</LONG-NAME>
+         <BYTE-POSITION>0</BYTE-POSITION>
+         <DOP-REF ID-REF="DOP_UINTDEC2Bytes04095"/>
+        </PARAM>
+       </PARAMS>
+      </STRUCTURE>
+      <STRUCTURE ID="STRUC_EtherInterAndCountDroppEtherFrame" IS-VISIBLE="true">
+       <SHORT-NAME>STRUC_EtherInterAndCountDroppEtherFrame</SHORT-NAME>
+       <LONG-NAME>Ethernet_interface_and_counter_dropped_ethernet_frames</LONG-NAME>
+       <BYTE-SIZE>3</BYTE-SIZE>
+       <PARAMS>
+        <PARAM xsi:type="VALUE" SEMANTIC="DATA">
+         <SHORT-NAME>Param_IpEtherInter</SHORT-NAME>
+         <LONG-NAME TI="MAS19481">Ip_ethernet_interface</LONG-NAME>
+         <BYTE-POSITION>0</BYTE-POSITION>
+         <DOP-REF ID-REF="DOP_UINTDEC1Byte"/>
+        </PARAM>
+        <PARAM xsi:type="VALUE" SEMANTIC="DATA">
+         <SHORT-NAME>Param_IpCountDroppEtherFrameSwitcLayer2</SHORT-NAME>
+         <LONG-NAME TI="IDE14884">Ip_counter_dropped_ethernet_frames_switch_layer_2</LONG-NAME>
+         <BYTE-POSITION>1</BYTE-POSITION>
+         <DOP-REF ID-REF="DOP_UINTDEC2Bytes"/>
+        </PARAM>
+       </PARAMS>
+      </STRUCTURE>
+      <STRUCTURE ID="STRUC_EtherInterAndCountDroppEtherMirroFrame" IS-VISIBLE="true">
+       <SHORT-NAME>STRUC_EtherInterAndCountDroppEtherMirroFrame</SHORT-NAME>
+       <LONG-NAME>Ethernet_interface_and_counter_dropped_ethernet_mirror_frames</LONG-NAME>
+       <BYTE-SIZE>4</BYTE-SIZE>
+       <PARAMS>
+        <PARAM xsi:type="VALUE" SEMANTIC="DATA">
+         <SHORT-NAME>Param_EtherInter</SHORT-NAME>
+         <LONG-NAME TI="MAS19481">Ethernet_interface</LONG-NAME>
+         <BYTE-POSITION>0</BYTE-POSITION>
+         <DOP-REF ID-REF="DOP_UINTDEC1Byte"/>
+        </PARAM>
+        <PARAM xsi:type="VALUE" SEMANTIC="DATA">
+         <SHORT-NAME>Param_CountDroppEtherMirroFrameSwitcLayer2</SHORT-NAME>
+         <LONG-NAME TI="MAS00194">Counter_dropped_ethernet_mirror_frames_switch_layer_2</LONG-NAME>
+         <BYTE-POSITION>1</BYTE-POSITION>
+         <DOP-REF ID-REF="DOP_UINTDEC3Bytes"/>
+        </PARAM>
+       </PARAMS>
+      </STRUCTURE>
+      <STRUCTURE ID="STRUC_EtherInterAndMACAddre" IS-VISIBLE="true">
+       <SHORT-NAME>STRUC_EtherInterAndMACAddre</SHORT-NAME>
+       <LONG-NAME>Ethernet_interface_and_MAC_address</LONG-NAME>
+       <BYTE-SIZE>7</BYTE-SIZE>
+       <PARAMS>
+        <PARAM xsi:type="VALUE" SEMANTIC="DATA">
+         <SHORT-NAME>Param_IpEtherInter</SHORT-NAME>
+         <LONG-NAME TI="MAS19481">Ip_ethernet_interface</LONG-NAME>
+         <BYTE-POSITION>0</BYTE-POSITION>
+         <DOP-REF ID-REF="DOP_UINTDEC1Byte"/>
+        </PARAM>
+        <PARAM xsi:type="VALUE" SEMANTIC="DATA">
+         <SHORT-NAME>Param_IpMacAddre</SHORT-NAME>
+         <LONG-NAME TI="IDE09467">Ip_Mac_address</LONG-NAME>
+         <BYTE-POSITION>1</BYTE-POSITION>
+         <DOP-REF ID-REF="DOP_BYTEFIELD6Bytes"/>
+        </PARAM>
+       </PARAMS>
+      </STRUCTURE>
+      <STRUCTURE ID="STRUC_EtherInterAndVLAN" IS-VISIBLE="true">
+       <SHORT-NAME>STRUC_EtherInterAndVLAN</SHORT-NAME>
+       <LONG-NAME>Ethernet_interface_and_VLAN</LONG-NAME>
+       <BYTE-SIZE>3</BYTE-SIZE>
+       <PARAMS>
+        <PARAM xsi:type="VALUE" SEMANTIC="DATA">
+         <SHORT-NAME>Param_IpEtherInter</SHORT-NAME>
+         <LONG-NAME TI="MAS19481">Ip_ethernet_interface</LONG-NAME>
+         <BYTE-POSITION>0</BYTE-POSITION>
+         <DOP-REF ID-REF="DOP_UINTDEC1Byte"/>
+        </PARAM>
+        <PARAM xsi:type="VALUE" SEMANTIC="DATA">
+         <SHORT-NAME>Param_IpVLAN</SHORT-NAME>
+         <LONG-NAME TI="MAS14856">Ip_VLAN</LONG-NAME>
+         <BYTE-POSITION>1</BYTE-POSITION>
+         <DOP-REF ID-REF="DOP_UINTDEC2Bytes04095"/>
+        </PARAM>
+       </PARAMS>
+      </STRUCTURE>
+      <STRUCTURE ID="STRUC_ResetIpCountWrongVlansOptio" IS-VISIBLE="true">
+       <SHORT-NAME>STRUC_ResetIpCountWrongVlansOptio</SHORT-NAME>
+       <LONG-NAME>Reset_ip_counter_wrong_vlans Options</LONG-NAME>
+       <BYTE-SIZE>3</BYTE-SIZE>
+       <PARAMS>
+        <PARAM xsi:type="VALUE" SEMANTIC="DATA">
+         <SHORT-NAME>Param_RoutiContrOptio</SHORT-NAME>
+         <LONG-NAME>Routine Control Option</LONG-NAME>
+         <BYTE-POSITION>0</BYTE-POSITION>
+         <PHYSICAL-DEFAULT-VALUE>Grundeinstellung</PHYSICAL-DEFAULT-VALUE>
+         <DOP-REF ID-REF="DOP_TEXTTABLEGrund"/>
+        </PARAM>
+       </PARAMS>
+      </STRUCTURE>
+      <STRUCTURE ID="STRUC_ResetIpCountWrongVlansRequeResul" IS-VISIBLE="false">
+       <SHORT-NAME>STRUC_ResetIpCountWrongVlansRequeResul</SHORT-NAME>
+       <LONG-NAME>Reset_ip_counter_wrong_vlans Request Results</LONG-NAME>
+       <BYTE-SIZE>3</BYTE-SIZE>
+       <PARAMS>
+        <PARAM xsi:type="VALUE" SEMANTIC="DATA">
+         <SHORT-NAME>Param_RoutiStatu</SHORT-NAME>
+         <LONG-NAME>Routine Status</LONG-NAME>
+         <BYTE-POSITION>0</BYTE-POSITION>
+         <DOP-REF ID-REF="DOP_TEXTTABLERoutiStatu"/>
+        </PARAM>
+        <PARAM xsi:type="VALUE" SEMANTIC="DATA">
+         <SHORT-NAME>Param_RoutiResul</SHORT-NAME>
+         <LONG-NAME>Routine Results</LONG-NAME>
+         <BYTE-POSITION>1</BYTE-POSITION>
+         <DOP-REF ID-REF="DOP_TEXTTABLERoutiResul"/>
+        </PARAM>
+       </PARAMS>
+      </STRUCTURE>
+      <STRUCTURE ID="STRUC_RoutiContrOptioResetCountDroppEtherMirroFrameSwitcLayer2" IS-VISIBLE="true">
+       <SHORT-NAME>STRUC_RoutiContrOptioResetCountDroppEtherMirroFrameSwitcLayer2</SHORT-NAME>
+       <LONG-NAME>Routine Control Option Reset_counter_dropped_ethernet_mirror_frames_switch_layer_2</LONG-NAME>
+       <BYTE-SIZE>3</BYTE-SIZE>
+       <PARAMS>
+        <PARAM xsi:type="PHYS-CONST" SEMANTIC="DATA">
+         <SHORT-NAME>Param_RoutiContrOptio</SHORT-NAME>
+         <LONG-NAME>Routine Control Option</LONG-NAME>
+         <BYTE-POSITION>0</BYTE-POSITION>
+         <PHYS-CONSTANT-VALUE>Counter_reset</PHYS-CONSTANT-VALUE>
+         <DOP-REF ID-REF="DOP_TEXTTABLECountReset"/>
+        </PARAM>
+       </PARAMS>
+      </STRUCTURE>
+      <STRUCTURE ID="STRUC_RoutiContrOptioResetIpCountDroppEtherFrameLayer2" IS-VISIBLE="true">
+       <SHORT-NAME>STRUC_RoutiContrOptioResetIpCountDroppEtherFrameLayer2</SHORT-NAME>
+       <LONG-NAME>Routine Control Option Reset_ip_counter_dropped_ethernet_frames_layer_2</LONG-NAME>
+       <BYTE-SIZE>3</BYTE-SIZE>
+       <PARAMS>
+        <PARAM xsi:type="PHYS-CONST" SEMANTIC="DATA">
+         <SHORT-NAME>Param_RoutiContrOptio</SHORT-NAME>
+         <LONG-NAME>Routine Control Option</LONG-NAME>
+         <BYTE-POSITION>0</BYTE-POSITION>
+         <PHYS-CONSTANT-VALUE>Counter_reset</PHYS-CONSTANT-VALUE>
+         <DOP-REF ID-REF="DOP_TEXTTABLECountReset"/>
+        </PARAM>
+       </PARAMS>
+      </STRUCTURE>
+      <STRUCTURE ID="STRUC_RoutiContrOptioResetIpCountDroppEtherFrameSwitcLayer2" IS-VISIBLE="true">
+       <SHORT-NAME>STRUC_RoutiContrOptioResetIpCountDroppEtherFrameSwitcLayer2</SHORT-NAME>
+       <LONG-NAME>Routine Control Option Reset_ip_counter_dropped_ethernet_frames_switch_layer_2</LONG-NAME>
+       <BYTE-SIZE>3</BYTE-SIZE>
+       <PARAMS>
+        <PARAM xsi:type="PHYS-CONST" SEMANTIC="DATA">
+         <SHORT-NAME>Param_RoutiContrOptio</SHORT-NAME>
+         <LONG-NAME>Routine Control Option</LONG-NAME>
+         <BYTE-POSITION>0</BYTE-POSITION>
+         <PHYS-CONSTANT-VALUE>Counter_reset</PHYS-CONSTANT-VALUE>
+         <DOP-REF ID-REF="DOP_TEXTTABLECountReset"/>
+        </PARAM>
+       </PARAMS>
+      </STRUCTURE>
+      <STRUCTURE ID="STRUC_RoutiStatuRecorResetCountDroppEtherMirroFrameSwitcLayer2" IS-VISIBLE="false">
+       <SHORT-NAME>STRUC_RoutiStatuRecorResetCountDroppEtherMirroFrameSwitcLayer2</SHORT-NAME>
+       <LONG-NAME>Routine Status Record Reset_counter_dropped_ethernet_mirror_frames_switch_layer_2</LONG-NAME>
+       <BYTE-SIZE>3</BYTE-SIZE>
+       <PARAMS>
+        <PARAM xsi:type="VALUE" SEMANTIC="DATA">
+         <SHORT-NAME>Param_RoutiStatu</SHORT-NAME>
+         <LONG-NAME>Routine Status</LONG-NAME>
+         <BYTE-POSITION>0</BYTE-POSITION>
+         <DOP-REF ID-REF="DOP_TEXTTABLERoutiStatu"/>
+        </PARAM>
+        <PARAM xsi:type="VALUE" SEMANTIC="DATA">
+         <SHORT-NAME>Param_RoutiResul</SHORT-NAME>
+         <LONG-NAME>Routine Results</LONG-NAME>
+         <BYTE-POSITION>1</BYTE-POSITION>
+         <DOP-REF ID-REF="DOP_TEXTTABLERoutiResul"/>
+        </PARAM>
+       </PARAMS>
+      </STRUCTURE>
+      <STRUCTURE ID="STRUC_RoutiStatuRecorResetIpCountDroppEtherFrameLayer2" IS-VISIBLE="false">
+       <SHORT-NAME>STRUC_RoutiStatuRecorResetIpCountDroppEtherFrameLayer2</SHORT-NAME>
+       <LONG-NAME>Routine Status Record Reset_ip_counter_dropped_ethernet_frames_layer_2</LONG-NAME>
+       <BYTE-SIZE>3</BYTE-SIZE>
+       <PARAMS>
+        <PARAM xsi:type="VALUE" SEMANTIC="DATA">
+         <SHORT-NAME>Param_RoutiStatu</SHORT-NAME>
+         <LONG-NAME>Routine Status</LONG-NAME>
+         <BYTE-POSITION>0</BYTE-POSITION>
+         <DOP-REF ID-REF="DOP_TEXTTABLERoutiStatu"/>
+        </PARAM>
+        <PARAM xsi:type="VALUE" SEMANTIC="DATA">
+         <SHORT-NAME>Param_RoutiResul</SHORT-NAME>
+         <LONG-NAME>Routine Results</LONG-NAME>
+         <BYTE-POSITION>1</BYTE-POSITION>
+         <DOP-REF ID-REF="DOP_TEXTTABLERoutiResul"/>
+        </PARAM>
+       </PARAMS>
+      </STRUCTURE>
+      <STRUCTURE ID="STRUC_RoutiStatuRecorResetIpCountDroppEtherFrameSwitcLayer2" IS-VISIBLE="false">
+       <SHORT-NAME>STRUC_RoutiStatuRecorResetIpCountDroppEtherFrameSwitcLayer2</SHORT-NAME>
+       <LONG-NAME>Routine Status Record Reset_ip_counter_dropped_ethernet_frames_switch_layer_2</LONG-NAME>
+       <BYTE-SIZE>3</BYTE-SIZE>
+       <PARAMS>
+        <PARAM xsi:type="VALUE" SEMANTIC="DATA">
+         <SHORT-NAME>Param_RoutiStatu</SHORT-NAME>
+         <LONG-NAME>Routine Status</LONG-NAME>
+         <BYTE-POSITION>0</BYTE-POSITION>
+         <DOP-REF ID-REF="DOP_TEXTTABLERoutiStatu"/>
+        </PARAM>
+        <PARAM xsi:type="VALUE" SEMANTIC="DATA">
+         <SHORT-NAME>Param_RoutiResul</SHORT-NAME>
+         <LONG-NAME>Routine Results</LONG-NAME>
+         <BYTE-POSITION>1</BYTE-POSITION>
+         <DOP-REF ID-REF="DOP_TEXTTABLERoutiResul"/>
+        </PARAM>
+       </PARAMS>
+      </STRUCTURE>
+      <STRUCTURE ID="STRUC_STRUCIpCountWrongVlans" IS-VISIBLE="false">
+       <SHORT-NAME>STRUC_STRUCIpCountWrongVlans</SHORT-NAME>
+       <LONG-NAME>STRUCTURE Ip_counter_wrong_vlans</LONG-NAME>
+       <BYTE-SIZE>2</BYTE-SIZE>
+       <PARAMS>
+        <PARAM xsi:type="VALUE" SEMANTIC="DATA">
+         <SHORT-NAME>Param_IpCountWrongVlans</SHORT-NAME>
+         <LONG-NAME TI="MAS00194">Ip_counter_wrong_vlans</LONG-NAME>
+         <BYTE-POSITION>0</BYTE-POSITION>
+         <DOP-REF ID-REF="DOP_UINTDEC2Bytes"/>
+        </PARAM>
+       </PARAMS>
+      </STRUCTURE>
+      <STRUCTURE ID="STRUC_STRUCIpMacAddreList" IS-VISIBLE="false">
+       <SHORT-NAME>STRUC_STRUCIpMacAddreList</SHORT-NAME>
+       <LONG-NAME>STRUCTURE Ip_mac_addresses_list</LONG-NAME>
+       <PARAMS>
+        <PARAM xsi:type="VALUE" SEMANTIC="DATA">
+         <SHORT-NAME>Param_Param</SHORT-NAME>
+         <LONG-NAME TI="IDE09467">Parameter</LONG-NAME>
+         <BYTE-POSITION>0</BYTE-POSITION>
+         <DOP-REF ID-REF="EOPDUF_EOPFIpMacAddreList"/>
+        </PARAM>
+       </PARAMS>
+      </STRUCTURE>
+      <STRUCTURE ID="STRUC_STRUCIpVlansList" IS-VISIBLE="false">
+       <SHORT-NAME>STRUC_STRUCIpVlansList</SHORT-NAME>
+       <LONG-NAME>STRUCTURE Ip_vlans_list</LONG-NAME>
+       <PARAMS>
+        <PARAM xsi:type="VALUE" SEMANTIC="DATA">
+         <SHORT-NAME>Param_Param</SHORT-NAME>
+         <LONG-NAME TI="MAS14856">Parameter</LONG-NAME>
+         <BYTE-POSITION>0</BYTE-POSITION>
+         <DOP-REF ID-REF="EOPDUF_EOPFIpVlansList"/>
+        </PARAM>
+       </PARAMS>
+      </STRUCTURE>
+     </STRUCTURES>
+     <DYNAMIC-LENGTH-FIELDS>
+      <DYNAMIC-LENGTH-FIELD ID="DYNLF_EtherInterAndCountDroppEtherMirroFrame">
+       <SHORT-NAME>DYNLF_EtherInterAndCountDroppEtherMirroFrame</SHORT-NAME>
+       <LONG-NAME>Ethernet_interface_and_counter_dropped_ethernet_mirror_frames</LONG-NAME>
+       <BASIC-STRUCTURE-REF ID-REF="STRUC_EtherInterAndCountDroppEtherMirroFrame"/>
+       <OFFSET>1</OFFSET>
+       <DETERMINE-NUMBER-OF-ITEMS>
+        <BYTE-POSITION>0</BYTE-POSITION>
+        <DATA-OBJECT-PROP-REF ID-REF="DOP_UINTDEC1Byte"/>
+       </DETERMINE-NUMBER-OF-ITEMS>
+      </DYNAMIC-LENGTH-FIELD>
+      <DYNAMIC-LENGTH-FIELD ID="DYNLF_IpCountDroppEtherFrameSwitcLayer2">
+       <SHORT-NAME>DYNLF_IpCountDroppEtherFrameSwitcLayer2</SHORT-NAME>
+       <LONG-NAME>Ip_counter_dropped_ethernet_frames_switch_layer_2</LONG-NAME>
+       <BASIC-STRUCTURE-REF ID-REF="STRUC_EtherInterAndCountDroppEtherFrame"/>
+       <OFFSET>1</OFFSET>
+       <DETERMINE-NUMBER-OF-ITEMS>
+        <BYTE-POSITION>0</BYTE-POSITION>
+        <DATA-OBJECT-PROP-REF ID-REF="DOP_UINTDEC1Byte"/>
+       </DETERMINE-NUMBER-OF-ITEMS>
+      </DYNAMIC-LENGTH-FIELD>
+      <DYNAMIC-LENGTH-FIELD ID="DYNLF_IPNetwoMACAdresTable">
+       <SHORT-NAME>DYNLF_IPNetwoMACAdresTable</SHORT-NAME>
+       <LONG-NAME>IP_network_MAC_adress_table</LONG-NAME>
+       <BASIC-STRUCTURE-REF ID-REF="STRUC_EtherInterAndMACAddre"/>
+       <OFFSET>2</OFFSET>
+       <DETERMINE-NUMBER-OF-ITEMS>
+        <BYTE-POSITION>0</BYTE-POSITION>
+        <DATA-OBJECT-PROP-REF ID-REF="DOP_UINTDEC2Bytes"/>
+       </DETERMINE-NUMBER-OF-ITEMS>
+      </DYNAMIC-LENGTH-FIELD>
+      <DYNAMIC-LENGTH-FIELD ID="DYNLF_IPNetwoVLANTable">
+       <SHORT-NAME>DYNLF_IPNetwoVLANTable</SHORT-NAME>
+       <LONG-NAME>IP_network_VLAN_table</LONG-NAME>
+       <BASIC-STRUCTURE-REF ID-REF="STRUC_EtherInterAndVLAN"/>
+       <OFFSET>1</OFFSET>
+       <DETERMINE-NUMBER-OF-ITEMS>
+        <BYTE-POSITION>0</BYTE-POSITION>
+        <DATA-OBJECT-PROP-REF ID-REF="DOP_UINTDEC1Byte"/>
+       </DETERMINE-NUMBER-OF-ITEMS>
+      </DYNAMIC-LENGTH-FIELD>
+     </DYNAMIC-LENGTH-FIELDS>
+     <END-OF-PDU-FIELDS>
+      <END-OF-PDU-FIELD ID="EOPDUF_EOPFIpMacAddreList">
+       <SHORT-NAME>EOPDUF_EOPFIpMacAddreList</SHORT-NAME>
+       <LONG-NAME>EOPF Ip_mac_addresses_list</LONG-NAME>
+       <BASIC-STRUCTURE-REF ID-REF="STRUC_EOPFWRAPPSTRUCLevel0IpMacAddreList"/>
+       <MIN-NUMBER-OF-ITEMS>1</MIN-NUMBER-OF-ITEMS>
+      </END-OF-PDU-FIELD>
+      <END-OF-PDU-FIELD ID="EOPDUF_EOPFIpVlansList">
+       <SHORT-NAME>EOPDUF_EOPFIpVlansList</SHORT-NAME>
+       <LONG-NAME>EOPF Ip_vlans_list</LONG-NAME>
+       <BASIC-STRUCTURE-REF ID-REF="STRUC_EOPFWRAPPSTRUCLevel0IpVlansList"/>
+       <MIN-NUMBER-OF-ITEMS>1</MIN-NUMBER-OF-ITEMS>
+      </END-OF-PDU-FIELD>
+     </END-OF-PDU-FIELDS>
+     <TABLES>
+      <TABLE SEMANTIC="MEASUREMENT" ID="TAB_RecorDataIdentMeasuValue">
+       <SHORT-NAME>TAB_RecorDataIdentMeasuValue</SHORT-NAME>
+       <LONG-NAME>Record Data Identifier Measurement Value</LONG-NAME>
+       <KEY-DOP-REF ID-REF="DOP_TEXTTABLERecorDataIdentMeasuValue"/>
+       <TABLE-ROW ID="TAB_RecorDataIdentMeasuValue.TABROW_CountDroppEtherMirroFrameSwitcLayer2">
+        <SHORT-NAME>TABROW_CountDroppEtherMirroFrameSwitcLayer2</SHORT-NAME>
+        <LONG-NAME>Counter_dropped_ethernet_mirror_frames_switch_layer_2</LONG-NAME>
+        <KEY>Counter_dropped_ethernet_mirror_frames_switch_layer_2</KEY>
+        <STRUCTURE-REF ID-REF="STRUC_DataRecorCountDroppEtherMirroFrameSwitcLayer2"/>
+       </TABLE-ROW>
+       <TABLE-ROW ID="TAB_RecorDataIdentMeasuValue.TABROW_IpCountDroppEtherFrameLayer2">
+        <SHORT-NAME>TABROW_IpCountDroppEtherFrameLayer2</SHORT-NAME>
+        <LONG-NAME>Ip_counter_dropped_ethernet_frames_layer_2</LONG-NAME>
+        <KEY>Ip_counter_dropped_ethernet_frames_layer_2</KEY>
+        <STRUCTURE-REF ID-REF="STRUC_DataRecorIpCountDroppEtherFrameLayer2"/>
+       </TABLE-ROW>
+       <TABLE-ROW ID="TAB_RecorDataIdentMeasuValue.TABROW_IpCountDroppEtherFrameSwitcLayer2">
+        <SHORT-NAME>TABROW_IpCountDroppEtherFrameSwitcLayer2</SHORT-NAME>
+        <LONG-NAME>Ip_counter_dropped_ethernet_frames_switch_layer_2</LONG-NAME>
+        <KEY>Ip_counter_dropped_ethernet_frames_switch_layer_2</KEY>
+        <STRUCTURE-REF ID-REF="STRUC_DataRecorIpCountDroppEtherFrameSwitcLayer2"/>
+       </TABLE-ROW>
+       <TABLE-ROW ID="TAB_RecorDataIdentMeasuValue.TABROW_IpCountWrongVlans">
+        <SHORT-NAME>TABROW_IpCountWrongVlans</SHORT-NAME>
+        <LONG-NAME>Ip_counter_wrong_vlans</LONG-NAME>
+        <KEY>Ip_counter_wrong_vlans</KEY>
+        <STRUCTURE-REF ID-REF="STRUC_STRUCIpCountWrongVlans"/>
+       </TABLE-ROW>
+       <TABLE-ROW ID="TAB_RecorDataIdentMeasuValue.TABROW_IpMacAddreList">
+        <SHORT-NAME>TABROW_IpMacAddreList</SHORT-NAME>
+        <LONG-NAME>Ip_mac_addresses_list</LONG-NAME>
+        <KEY>Ip_mac_addresses_list</KEY>
+        <STRUCTURE-REF ID-REF="STRUC_STRUCIpMacAddreList"/>
+       </TABLE-ROW>
+       <TABLE-ROW ID="TAB_RecorDataIdentMeasuValue.TABROW_IPNetwoMACAdresTable">
+        <SHORT-NAME>TABROW_IPNetwoMACAdresTable</SHORT-NAME>
+        <LONG-NAME>IP_network_MAC_adress_table</LONG-NAME>
+        <KEY>IP_network_MAC_adress_table</KEY>
+        <STRUCTURE-REF ID-REF="STRUC_DataRecorIPNetwoMACAdresTable"/>
+       </TABLE-ROW>
+       <TABLE-ROW ID="TAB_RecorDataIdentMeasuValue.TABROW_IPNetwoVLANTable">
+        <SHORT-NAME>TABROW_IPNetwoVLANTable</SHORT-NAME>
+        <LONG-NAME>IP_network_VLAN_table</LONG-NAME>
+        <KEY>IP_network_VLAN_table</KEY>
+        <STRUCTURE-REF ID-REF="STRUC_DataRecorIPNetwoVLANTable"/>
+       </TABLE-ROW>
+       <TABLE-ROW ID="TAB_RecorDataIdentMeasuValue.TABROW_IpVlansList">
+        <SHORT-NAME>TABROW_IpVlansList</SHORT-NAME>
+        <LONG-NAME>Ip_vlans_list</LONG-NAME>
+        <KEY>Ip_vlans_list</KEY>
+        <STRUCTURE-REF ID-REF="STRUC_STRUCIpVlansList"/>
+       </TABLE-ROW>
+      </TABLE>
+      <TABLE SEMANTIC="ROUTINE" ID="TAB_RoutiContrBasicSetti">
+       <SHORT-NAME>TAB_RoutiContrBasicSetti</SHORT-NAME>
+       <LONG-NAME>Routine Control Basic Settings</LONG-NAME>
+       <KEY-DOP-REF ID-REF="DOP_TEXTTABLERoutiContrBasicSetti"/>
+       <TABLE-ROW ID="TAB_RoutiContrBasicSetti.TABROW_ResetCountDroppEtherMirroFrameSwitcLayer2">
+        <SHORT-NAME>TABROW_ResetCountDroppEtherMirroFrameSwitcLayer2</SHORT-NAME>
+        <LONG-NAME>Reset_counter_dropped_ethernet_mirror_frames_switch_layer_2</LONG-NAME>
+        <KEY>Reset_counter_dropped_ethernet_mirror_frames_switch_layer_2</KEY>
+        <STRUCTURE-REF ID-REF="STRUC_RoutiContrOptioResetCountDroppEtherMirroFrameSwitcLayer2"/>
+       </TABLE-ROW>
+       <TABLE-ROW ID="TAB_RoutiContrBasicSetti.TABROW_ResetIpCountDroppEtherFrameLayer2">
+        <SHORT-NAME>TABROW_ResetIpCountDroppEtherFrameLayer2</SHORT-NAME>
+        <LONG-NAME>Reset_ip_counter_dropped_ethernet_frames_layer_2</LONG-NAME>
+        <KEY>Reset_ip_counter_dropped_ethernet_frames_layer_2</KEY>
+        <STRUCTURE-REF ID-REF="STRUC_RoutiContrOptioResetIpCountDroppEtherFrameLayer2"/>
+       </TABLE-ROW>
+       <TABLE-ROW ID="TAB_RoutiContrBasicSetti.TABROW_ResetIpCountDroppEtherFrameSwitcLayer2">
+        <SHORT-NAME>TABROW_ResetIpCountDroppEtherFrameSwitcLayer2</SHORT-NAME>
+        <LONG-NAME>Reset_ip_counter_dropped_ethernet_frames_switch_layer_2</LONG-NAME>
+        <KEY>Reset_ip_counter_dropped_ethernet_frames_switch_layer_2</KEY>
+        <STRUCTURE-REF ID-REF="STRUC_RoutiContrOptioResetIpCountDroppEtherFrameSwitcLayer2"/>
+       </TABLE-ROW>
+       <TABLE-ROW ID="TAB_RoutiContrBasicSetti.TABROW_ResetIpCountWrongVlans">
+        <SHORT-NAME>TABROW_ResetIpCountWrongVlans</SHORT-NAME>
+        <LONG-NAME>Reset_ip_counter_wrong_vlans</LONG-NAME>
+        <KEY>Reset_ip_counter_wrong_vlans</KEY>
+        <STRUCTURE-REF ID-REF="STRUC_ResetIpCountWrongVlansOptio"/>
+       </TABLE-ROW>
+      </TABLE>
+      <TABLE SEMANTIC="ROUTINE" ID="TAB_RoutiStatuRecorRequeRoutiResulBasicSetti">
+       <SHORT-NAME>TAB_RoutiStatuRecorRequeRoutiResulBasicSetti</SHORT-NAME>
+       <LONG-NAME>Routine Status Records: Request Routine Results / Basic Setting</LONG-NAME>
+       <KEY-DOP-REF ID-REF="DOP_TEXTTABLERoutiContrBasicSetti"/>
+       <TABLE-ROW ID="TAB_RoutiStatuRecorRequeRoutiResulBasicSetti.TABROW_ResetCountDroppEtherMirroFrameSwitcLayer2">
+        <SHORT-NAME>TABROW_ResetCountDroppEtherMirroFrameSwitcLayer2</SHORT-NAME>
+        <LONG-NAME>Reset_counter_dropped_ethernet_mirror_frames_switch_layer_2</LONG-NAME>
+        <KEY>Reset_counter_dropped_ethernet_mirror_frames_switch_layer_2</KEY>
+        <STRUCTURE-REF ID-REF="STRUC_RoutiStatuRecorResetCountDroppEtherMirroFrameSwitcLayer2"/>
+       </TABLE-ROW>
+       <TABLE-ROW ID="TAB_RoutiStatuRecorRequeRoutiResulBasicSetti.TABROW_ResetIpCountDroppEtherFrameLayer2">
+        <SHORT-NAME>TABROW_ResetIpCountDroppEtherFrameLayer2</SHORT-NAME>
+        <LONG-NAME>Reset_ip_counter_dropped_ethernet_frames_layer_2</LONG-NAME>
+        <KEY>Reset_ip_counter_dropped_ethernet_frames_layer_2</KEY>
+        <STRUCTURE-REF ID-REF="STRUC_RoutiStatuRecorResetIpCountDroppEtherFrameLayer2"/>
+       </TABLE-ROW>
+       <TABLE-ROW ID="TAB_RoutiStatuRecorRequeRoutiResulBasicSetti.TABROW_ResetIpCountDroppEtherFrameSwitcLayer2">
+        <SHORT-NAME>TABROW_ResetIpCountDroppEtherFrameSwitcLayer2</SHORT-NAME>
+        <LONG-NAME>Reset_ip_counter_dropped_ethernet_frames_switch_layer_2</LONG-NAME>
+        <KEY>Reset_ip_counter_dropped_ethernet_frames_switch_layer_2</KEY>
+        <STRUCTURE-REF ID-REF="STRUC_RoutiStatuRecorResetIpCountDroppEtherFrameSwitcLayer2"/>
+       </TABLE-ROW>
+       <TABLE-ROW ID="TAB_RoutiStatuRecorRequeRoutiResulBasicSetti.TABROW_ResetIpCountWrongVlans">
+        <SHORT-NAME>TABROW_ResetIpCountWrongVlans</SHORT-NAME>
+        <LONG-NAME>Reset_ip_counter_wrong_vlans</LONG-NAME>
+        <KEY>Reset_ip_counter_wrong_vlans</KEY>
+        <STRUCTURE-REF ID-REF="STRUC_ResetIpCountWrongVlansRequeResul"/>
+       </TABLE-ROW>
+      </TABLE>
+     </TABLES>
+    </DIAG-DATA-DICTIONARY-SPEC>
+   </ECU-SHARED-DATA>
+  </ECU-SHARED-DATAS>
+ </DIAG-LAYER-CONTAINER>
+</ODX>

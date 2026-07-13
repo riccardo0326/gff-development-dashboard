@@ -1,0 +1,875 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ODX MODEL-VERSION="2.0.1" xsi:noNamespaceSchemaLocation="odx.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <DIAG-LAYER-CONTAINER ID="DLC_BV_BatteChargContrModulUDS">
+    <SHORT-NAME>DLC_BV_BatteChargContrModulUDS</SHORT-NAME>
+    <LONG-NAME TI="SFT000C6">Battery Charger Control Module UDS</LONG-NAME>
+    <BASE-VARIANTS>
+      <BASE-VARIANT ID="BV_BatteChargContrModulUDS">
+        <SHORT-NAME>BV_BatteChargContrModulUDS</SHORT-NAME>
+        <LONG-NAME TI="SFT000C6">Battery Charger Control Module UDS</LONG-NAME>
+        <DESC>
+          <p>Basis-Variante für Hochvolt-Batterieladegerät-Steuergeräte mit UDS-Diagnoseschnittstelle (VW80124)</p>
+        </DESC>
+        <ADMIN-DATA>
+          <LANGUAGE>deu</LANGUAGE>
+          <DOC-REVISIONS>
+            <DOC-REVISION>
+              <TEAM-MEMBER-REF ID-REF="Compy_ElektAutomGmbH.TM_WolfgRethe" DOCREF="ES_DataLibra" DOCTYPE="LAYER"/>
+              <REVISION-LABEL>002001</REVISION-LABEL>
+              <STATE>RELEASE</STATE>
+              <DATE>2011-07-20T01:00:00+02:00</DATE>
+              <TOOL>XMLSPY</TOOL>
+              <MODIFICATIONS>
+                <MODIFICATION>
+                  <CHANGE>erstellt</CHANGE>
+                  <REASON>für OBC im AU914/7</REASON>
+                </MODIFICATION>
+              </MODIFICATIONS>
+            </DOC-REVISION>
+            <DOC-REVISION>
+              <TEAM-MEMBER-REF ID-REF="Compy_ElektAutomGmbH.TM_WolfgRethe" DOCREF="ES_DataLibra" DOCTYPE="LAYER"/>
+              <REVISION-LABEL>002002</REVISION-LABEL>
+              <STATE>RELEASE</STATE>
+              <DATE>2012-03-30T01:00:00+02:00</DATE>
+              <TOOL>XMLSPY</TOOL>
+              <MODIFICATIONS>
+                <MODIFICATION>
+                  <CHANGE>IMPORT-REF und DIAG-COMM-REFs auf BL_LIBTheftProte eingefügt</CHANGE>
+                  <REASON>OBC = KS-Slave</REASON>
+                </MODIFICATION>
+              </MODIFICATIONS>
+            </DOC-REVISION>
+            <DOC-REVISION>
+              <TEAM-MEMBER-REF ID-REF="Compy_CARMEGmbH.TM_DominGlane"/>
+              <REVISION-LABEL>003001</REVISION-LABEL>
+              <STATE>RELEASE</STATE>
+              <DATE>2013-02-11T22:53:00</DATE>
+              <TOOL>DatabaseDesigner 1.06.011</TOOL>
+              <MODIFICATIONS>
+                <MODIFICATION>
+                  <CHANGE>Übernahme der BV_BatteChargContrModulUDS_002002 aus dem S42.</CHANGE>
+                  <REASON>Gemeinsame BV_ im Konzern  (gem Auftrag EEIF/3 ( M.Hanft [CQ]))</REASON>
+                </MODIFICATION>
+                <MODIFICATION>
+                  <CHANGE>Einfügen der COMPARAMS &gt; PR_OBDOnCAN:   CP_CanPhysReqId, CP_CanRespUSDTId </CHANGE>
+                  <REASON>OBD-Umfänge eingefügt (gem Auftrag EEIF/3 ( M.Hanft [CQ]))</REASON>
+                </MODIFICATION>
+                <MODIFICATION>
+                  <CHANGE>Eliminieren DiagnoseDienste:   DiagnServi_RequeCurrePowerDiagnData(UDSonCAN), DiagnServi_ClearResetEmissRelatDiagnInfor(OBDonCAN) </CHANGE>
+                  <REASON>OBD-Umfänge eingefügt  (gem Auftrag EEIF/3 ( M.Hanft [CQ]))</REASON>
+                </MODIFICATION>
+                <MODIFICATION>
+                  <CHANGE>ParentRef auf: FG_AllOBDSyste, FG_AllEmissRelatUDSSyste</CHANGE>
+                  <REASON>OBD-Umfänge eingefügt (gem Auftrag EEIF/3 ( M.Hanft [CQ]))</REASON>
+                </MODIFICATION>
+              </MODIFICATIONS>
+            </DOC-REVISION>
+            <DOC-REVISION>
+              <TEAM-MEMBER-REF ID-REF="Compy_CARMEGmbH.TM_DominGlane"/>
+              <REVISION-LABEL>003002</REVISION-LABEL>
+              <STATE>RELEASE</STATE>
+              <DATE>2013-06-12T21:43:00</DATE>
+              <TOOL>DatabaseDesigner 1.06.011</TOOL>
+              <MODIFICATIONS>
+                <MODIFICATION>
+                  <CHANGE>DOP_TEXTTABLEProgrPreco aus PR_UDSOnCAN_002007 eingefügt und um folgende COMPU-SCALEs aus UDS_Protocol_Annex_A2_Version_10-10.xls erweitert: - $8C/MAS04531 Drive_motor_engine_not_free_of_voltage - $8D/MAS05466 Readiness_code_not_resetted - $8E/MAS05212 Critical_DTC_error_entry - $8F/MAS01778 HV_battery_current_too_high </CHANGE>
+                  <REASON>Bugfix für nicht interpretierbare Programmiervorbedingungen mit PR_UDSOnCAN_002007</REASON>
+                </MODIFICATION>
+              </MODIFICATIONS>
+            </DOC-REVISION>
+            <DOC-REVISION>
+              <TEAM-MEMBER-REF ID-REF="Compy_Audi.TM_WolfgRethe" DOCREF="ES_DataLibra" DOCTYPE="LAYER"/>
+              <REVISION-LABEL>003003</REVISION-LABEL>
+              <STATE>RELEASE</STATE>
+              <DATE>2016-12-15T01:00:00+01:00</DATE>
+              <TOOL>XMLSPY</TOOL>
+              <MODIFICATIONS>
+                <MODIFICATION>
+                  <CHANGE>PARENT-REF auf FG_AllUDSDistrSysteVW80127 eingefügt und Identifikation aufgrund Mehrfeachvererbung lokal überschrieben</CHANGE>
+                  <REASON>OBC = DK4</REASON>
+                </MODIFICATION>
+                <MODIFICATION>
+                  <CHANGE>DOP_TEXTTABLEProgrPreco wieder entfernt</CHANGE>
+                  <REASON>Wiederherstellung der Vererbung der vollständigen Tabelle aus PR_UDSOnCAN</REASON>
+                </MODIFICATION>
+              </MODIFICATIONS>
+            </DOC-REVISION>
+            <DOC-REVISION>
+              <TEAM-MEMBER-REF ID-REF="Compy_VolksAG.TM_DVRKonve"/>
+              <REVISION-LABEL>003003</REVISION-LABEL>
+              <STATE>DRAFT</STATE>
+              <DATE>2026-05-20T12:08:35</DATE>
+              <TOOL>DVRKonverter, 11.00.000, Tarvos</TOOL>
+              <MODIFICATIONS>
+                <MODIFICATION>
+                  <CHANGE>COMPARAM-REF | Added PROTOCOL-SNREF=PR_UDSOnCAN for ISO_15765_2.CP_CanPhysReqId</CHANGE>
+                  <REASON>DVRKonverter</REASON>
+                </MODIFICATION>
+                <MODIFICATION>
+                  <CHANGE>COMPARAM-REF | Added PROTOCOL-SNREF=PR_UDSOnCAN for ISO_15765_2.CP_CanRespUSDTId</CHANGE>
+                  <REASON>DVRKonverter</REASON>
+                </MODIFICATION>
+                <MODIFICATION>
+                  <CHANGE>COMPARAM-REF | ISO_15765_2.CP_CanPhysReqId set to "1860" (PR_VWOBDOnCAN)</CHANGE>
+                  <REASON>DVRKonverter</REASON>
+                </MODIFICATION>
+                <MODIFICATION>
+                  <CHANGE>COMPARAM-REF | ISO_15765_2.CP_CanPhysReqFormat set to "normal segmented 11-bit transmit with FC" (PR_VWOBDOnCAN)</CHANGE>
+                  <REASON>DVRKonverter</REASON>
+                </MODIFICATION>
+                <MODIFICATION>
+                  <CHANGE>COMPARAM-REF | ISO_15765_2.CP_CanRespUSDTId set to "1966" (PR_VWOBDOnCAN)</CHANGE>
+                  <REASON>DVRKonverter</REASON>
+                </MODIFICATION>
+                <MODIFICATION>
+                  <CHANGE>COMPARAM-REF | ISO_15765_2.CP_CanRespUSDTFormat set to "normal segmented 11-bit receive with FC" (PR_VWOBDOnCAN)</CHANGE>
+                  <REASON>DVRKonverter</REASON>
+                </MODIFICATION>
+              </MODIFICATIONS>
+            </DOC-REVISION>
+            <DOC-REVISION>
+              <TEAM-MEMBER-REF ID-REF="Compy_VolksAG.TM_DVRKonve"/>
+              <REVISION-LABEL>003003</REVISION-LABEL>
+              <STATE>DRAFT</STATE>
+              <DATE>2026-05-20T12:08:40</DATE>
+              <TOOL>DVRKonverter, 11.00.000, Tarvos</TOOL>
+              <MODIFICATIONS>
+                <MODIFICATION>
+                  <CHANGE>Datei wurde aufgrund des angegebenen DVRELEASE angepasst.</CHANGE>
+                  <REASON>DVRELEASE: DVR 88 (CAN Jobs 2025KW48)</REASON>
+                </MODIFICATION>
+              </MODIFICATIONS>
+            </DOC-REVISION>
+            <DOC-REVISION>
+              <TEAM-MEMBER-REF ID-REF="Compy_VolksAG.TM_DVRKonve"/>
+              <REVISION-LABEL>003003</REVISION-LABEL>
+              <STATE>DRAFT</STATE>
+              <DATE>2026-05-20T12:09:34</DATE>
+              <TOOL>DVRKonverter, 11.00.000, Tarvos</TOOL>
+              <MODIFICATIONS>
+                <MODIFICATION>
+                  <CHANGE>FUNCT-CLASS-REF | FunctClass_DataTrans | ES_LIBVW80124V1X eingetragen und PR_UDSOnCAN entfernt.</CHANGE>
+                  <REASON>DVRKonverter, 11.00.000, Tarvos</REASON>
+                </MODIFICATION>
+                <MODIFICATION>
+                  <CHANGE>NEG-RESPONSE-REF | NegatResp_ReadDataByIdentNegatRespo | ES_LIBVW80124V1X eingetragen und PR_UDSOnCAN entfernt.</CHANGE>
+                  <REASON>DVRKonverter, 11.00.000, Tarvos</REASON>
+                </MODIFICATION>
+                <MODIFICATION>
+                  <CHANGE>RELATED-DIAG-COMM-REF | DiagnServi_DiagnSessiContrDevelSessi | ES_LIBVW80124V1X eingetragen und PR_UDSOnCAN entfernt.</CHANGE>
+                  <REASON>DVRKonverter, 11.00.000, Tarvos</REASON>
+                </MODIFICATION>
+                <MODIFICATION>
+                  <CHANGE>RELATED-DIAG-COMM-REF | DiagnServi_DiagnSessiContrECUProgrSessi | ES_LIBVW80124V1X eingetragen und PR_UDSOnCAN entfernt.</CHANGE>
+                  <REASON>DVRKonverter, 11.00.000, Tarvos</REASON>
+                </MODIFICATION>
+                <MODIFICATION>
+                  <CHANGE>RELATED-DIAG-COMM-REF | DiagnServi_DiagnSessiContrExtenSessi | ES_LIBVW80124V1X eingetragen und PR_UDSOnCAN entfernt.</CHANGE>
+                  <REASON>DVRKonverter, 11.00.000, Tarvos</REASON>
+                </MODIFICATION>
+                <MODIFICATION>
+                  <CHANGE>RELATED-DIAG-COMM-REF | DiagnServi_DiagnSessiContrOBDIIAndVWDefauSessi | ES_LIBVW80124V1X eingetragen und PR_UDSOnCAN entfernt.</CHANGE>
+                  <REASON>DVRKonverter, 11.00.000, Tarvos</REASON>
+                </MODIFICATION>
+                <MODIFICATION>
+                  <CHANGE>RELATED-DIAG-COMM-REF | DiagnServi_DiagnSessiContrVWEndOfLineSessi | ES_LIBVW80124V1X eingetragen und PR_UDSOnCAN entfernt.</CHANGE>
+                  <REASON>DVRKonverter, 11.00.000, Tarvos</REASON>
+                </MODIFICATION>
+                <MODIFICATION>
+                  <CHANGE>REQUEST-REF | Req_ReadDataByIdentECUIdent | ES_LIBVW80124V1X eingetragen und PR_UDSOnCAN entfernt.</CHANGE>
+                  <REASON>DVRKonverter, 11.00.000, Tarvos</REASON>
+                </MODIFICATION>
+                <MODIFICATION>
+                  <CHANGE>TABLE-ROW-REF | TAB_RecorDataIdentECUIdent.TABROW_VWDataCountOfProgrAttem | ES_LIBVW80124V1X eingetragen und PR_UDSOnCAN entfernt.</CHANGE>
+                  <REASON>DVRKonverter, 11.00.000, Tarvos</REASON>
+                </MODIFICATION>
+                <MODIFICATION>
+                  <CHANGE>TABLE-ROW-REF | TAB_RecorDataIdentECUIdent.TABROW_VWDataCountOfSucceProgrAttem | ES_LIBVW80124V1X eingetragen und PR_UDSOnCAN entfernt.</CHANGE>
+                  <REASON>DVRKonverter, 11.00.000, Tarvos</REASON>
+                </MODIFICATION>
+                <MODIFICATION>
+                  <CHANGE>COMPARAM-REF | ISO_13400_2.CP_DoIPLogicalEcuAddress set to "16452"</CHANGE>
+                  <REASON>DVRKonverter</REASON>
+                </MODIFICATION>
+              </MODIFICATIONS>
+            </DOC-REVISION>
+            <DOC-REVISION>
+              <TEAM-MEMBER-REF ID-REF="Compy_VolksAG.TM_DVRKonve"/>
+              <REVISION-LABEL>003003</REVISION-LABEL>
+              <STATE>DRAFT</STATE>
+              <DATE>2026-05-20T12:10:31</DATE>
+              <TOOL>DVRKonverter, 11.00.000, Tarvos</TOOL>
+              <MODIFICATIONS>
+                <MODIFICATION>
+                  <CHANGE>Datei wurde aufgrund des angegebenen DVRELEASE angepasst.</CHANGE>
+                  <REASON>DVRELEASE: DVR 89 (CAN CAN-FD DoIP Jobs 2025KW48)</REASON>
+                </MODIFICATION>
+              </MODIFICATIONS>
+            </DOC-REVISION>
+          </DOC-REVISIONS>
+        </ADMIN-DATA>
+        <COMPANY-DATAS>
+          <COMPANY-DATA ID="Compy_CARMEGmbH">
+            <SHORT-NAME>Compy_CARMEGmbH</SHORT-NAME>
+            <LONG-NAME>CARMEQ GmbH</LONG-NAME>
+            <TEAM-MEMBERS>
+              <TEAM-MEMBER ID="Compy_CARMEGmbH.TM_DominGlane">
+                <SHORT-NAME>TM_DominGlane</SHORT-NAME>
+                <LONG-NAME>Dominik Glanemann</LONG-NAME>
+                <ROLES>
+                  <ROLE>contact person OEM/supplier</ROLE>
+                </ROLES>
+                <DEPARTMENT>DNA (Diagnose)</DEPARTMENT>
+                <ADDRESS>Carnotstr. 4</ADDRESS>
+                <ZIP>10587</ZIP>
+                <CITY>Berlin</CITY>
+                <PHONE>030.3983 357-10823</PHONE>
+                <EMAIL>dominik.glanemann@carmeq.com</EMAIL>
+              </TEAM-MEMBER>
+            </TEAM-MEMBERS>
+          </COMPANY-DATA>
+          <COMPANY-DATA ID="Compy_VolksAG">
+            <SHORT-NAME>Compy_VolksAG</SHORT-NAME>
+            <LONG-NAME>Volkswagen AG</LONG-NAME>
+            <TEAM-MEMBERS>
+              <TEAM-MEMBER ID="Compy_VolksAG.TM_DVRKonve">
+                <SHORT-NAME>TM_DVRKonve</SHORT-NAME>
+                <LONG-NAME>DVR Konverter</LONG-NAME>
+                <ROLES>
+                  <ROLE>EEXA/2 Tooling</ROLE>
+                </ROLES>
+              </TEAM-MEMBER>
+            </TEAM-MEMBERS>
+          </COMPANY-DATA>
+        </COMPANY-DATAS>
+        <DIAG-DATA-DICTIONARY-SPEC>
+          <DATA-OBJECT-PROPS>
+            <DATA-OBJECT-PROP ID="DOP_TEXTTABLERecorDataIdentECUIdent">
+              <SHORT-NAME>DOP_TEXTTABLERecorDataIdentECUIdent</SHORT-NAME>
+              <LONG-NAME>TEXT TABLE Record Data Identifier ECU Identification</LONG-NAME>
+              <DESC>
+                <p>Liste der dataIdentifier für die (lesbaren) Identifikationsdaten</p>
+              </DESC>
+              <COMPU-METHOD>
+                <CATEGORY>TEXTTABLE</CATEGORY>
+                <COMPU-INTERNAL-TO-PHYS>
+                  <COMPU-SCALES>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$0407</SHORT-LABEL>
+                      <LOWER-LIMIT>1031</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00050">VW Logical Software Block Counter Of Programming Attempts</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$0409</SHORT-LABEL>
+                      <LOWER-LIMIT>1033</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00052">VW Data Counter Of Programming Attempts</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$040A</SHORT-LABEL>
+                      <LOWER-LIMIT>1034</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00053">VW Data Counter Of Successful Programming Attempts</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$040F</SHORT-LABEL>
+                      <LOWER-LIMIT>1039</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00721">VW Logical Software Block Lock Value</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$0410</SHORT-LABEL>
+                      <LOWER-LIMIT>1040</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE02639">Bootloader TP Blocksize</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$2A2F</SHORT-LABEL>
+                      <LOWER-LIMIT>10799</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE02644">Busmaster Identification</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$2A30</SHORT-LABEL>
+                      <LOWER-LIMIT>10800</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE02645">Subsystem Identification</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$2A45</SHORT-LABEL>
+                      <LOWER-LIMIT>10821</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE05738">Supported_Systems_Diag_Class</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F15B</SHORT-LABEL>
+                      <LOWER-LIMIT>61787</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00723">Fingerprint And Programming Date Of Logical Software Blocks</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F179</SHORT-LABEL>
+                      <LOWER-LIMIT>61817</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00726">ECU Supplier Number</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F17B</SHORT-LABEL>
+                      <LOWER-LIMIT>61819</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00006">VW Coding Date</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F17C</SHORT-LABEL>
+                      <LOWER-LIMIT>61820</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00034">VW FAZIT Identification String</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F17D</SHORT-LABEL>
+                      <LOWER-LIMIT>61821</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00725">ECU Production Test System Number</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F17E</SHORT-LABEL>
+                      <LOWER-LIMIT>61822</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00035">ECU Production Change Number</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F17F</SHORT-LABEL>
+                      <LOWER-LIMIT>61823</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE03205">VW Supplier Number</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F182</SHORT-LABEL>
+                      <LOWER-LIMIT>61826</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00550">VW Application Data Identification</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F186</SHORT-LABEL>
+                      <LOWER-LIMIT>61830</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00325">Active Diagnostic Session</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F187</SHORT-LABEL>
+                      <LOWER-LIMIT>61831</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00007">VW Spare Part Number</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F189</SHORT-LABEL>
+                      <LOWER-LIMIT>61833</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00008">VW Application Software Version Number</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F18B</SHORT-LABEL>
+                      <LOWER-LIMIT>61835</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00009">ECU Manufacturing Date</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F18C</SHORT-LABEL>
+                      <LOWER-LIMIT>61836</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00010">ECU Serial Number</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F190</SHORT-LABEL>
+                      <LOWER-LIMIT>61840</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00011">Vehicle Identification Number</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F191</SHORT-LABEL>
+                      <LOWER-LIMIT>61841</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00012">VW ECU Hardware Number</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F196</SHORT-LABEL>
+                      <LOWER-LIMIT>61846</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE06580">Exhaust Regulation Or Type Approval Number</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F197</SHORT-LABEL>
+                      <LOWER-LIMIT>61847</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00013">VW System Name Or Engine Type</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F19A</SHORT-LABEL>
+                      <LOWER-LIMIT>61850</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00044">VW Calibration Repair Shop Code Or Serial Number</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F19B</SHORT-LABEL>
+                      <LOWER-LIMIT>61851</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00032">VW Calibration Date</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F19E</SHORT-LABEL>
+                      <LOWER-LIMIT>61854</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00072">ASAM ODX File Identifier</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F1A0</SHORT-LABEL>
+                      <LOWER-LIMIT>61856</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00048">VW Data Set Number Or ECU Data Container Number</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F1A1</SHORT-LABEL>
+                      <LOWER-LIMIT>61857</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00047">VW Data Set Version Number</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F1A2</SHORT-LABEL>
+                      <LOWER-LIMIT>61858</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00073">ASAM ODX File Version</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F1A3</SHORT-LABEL>
+                      <LOWER-LIMIT>61859</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00016">VW ECU Hardware Version Number</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F1A4</SHORT-LABEL>
+                      <LOWER-LIMIT>61860</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00036">Vehicle Equipment Code And PR Number Combination</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F1A5</SHORT-LABEL>
+                      <LOWER-LIMIT>61861</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00045">VW Coding Repair Shop Code Or Serial Number</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F1A8</SHORT-LABEL>
+                      <LOWER-LIMIT>61864</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00046">VW Data Set Repair Shop Code Or Serial Number</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F1A9</SHORT-LABEL>
+                      <LOWER-LIMIT>61865</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00040">VW Data Set Programming Date</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F1AA</SHORT-LABEL>
+                      <LOWER-LIMIT>61866</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00017">VW Workshop System Name</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F1AB</SHORT-LABEL>
+                      <LOWER-LIMIT>61867</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00318">VW Logical Software Block Version</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F1AD</SHORT-LABEL>
+                      <LOWER-LIMIT>61869</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00552">Engine Code Letters</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F1AF</SHORT-LABEL>
+                      <LOWER-LIMIT>61871</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE03404">AUTOSAR_standard_application_software_identification</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F1B0</SHORT-LABEL>
+                      <LOWER-LIMIT>61872</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE07015">VWClear_diagnostic_information_date_functional</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F1D5</SHORT-LABEL>
+                      <LOWER-LIMIT>61909</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE03403">FDS_project_data</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F1DF</SHORT-LABEL>
+                      <LOWER-LIMIT>61919</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00037">ECU Programming Information</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F1E0</SHORT-LABEL>
+                      <LOWER-LIMIT>61920</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00320">ECU Data Programming Information</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                  </COMPU-SCALES>
+                </COMPU-INTERNAL-TO-PHYS>
+              </COMPU-METHOD>
+              <DIAG-CODED-TYPE xsi:type="STANDARD-LENGTH-TYPE" BASE-DATA-TYPE="A_UINT32">
+                <BIT-LENGTH>16</BIT-LENGTH>
+              </DIAG-CODED-TYPE>
+              <PHYSICAL-TYPE BASE-DATA-TYPE="A_UNICODE2STRING"/>
+              <INTERNAL-CONSTR>
+                <LOWER-LIMIT>0</LOWER-LIMIT>
+                <UPPER-LIMIT>65535</UPPER-LIMIT>
+                <SCALE-CONSTRS>
+                  <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+                    <LOWER-LIMIT>0</LOWER-LIMIT>
+                    <UPPER-LIMIT>1030</UPPER-LIMIT>
+                  </SCALE-CONSTR>
+                  <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+                    <LOWER-LIMIT>1032</LOWER-LIMIT>
+                    <UPPER-LIMIT>1032</UPPER-LIMIT>
+                  </SCALE-CONSTR>
+                  <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+                    <LOWER-LIMIT>1035</LOWER-LIMIT>
+                    <UPPER-LIMIT>1038</UPPER-LIMIT>
+                  </SCALE-CONSTR>
+                  <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+                    <LOWER-LIMIT>1041</LOWER-LIMIT>
+                    <UPPER-LIMIT>10798</UPPER-LIMIT>
+                  </SCALE-CONSTR>
+                  <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+                    <LOWER-LIMIT>10801</LOWER-LIMIT>
+                    <UPPER-LIMIT>10820</UPPER-LIMIT>
+                  </SCALE-CONSTR>
+                  <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+                    <LOWER-LIMIT>10822</LOWER-LIMIT>
+                    <UPPER-LIMIT>61786</UPPER-LIMIT>
+                  </SCALE-CONSTR>
+                  <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+                    <LOWER-LIMIT>61788</LOWER-LIMIT>
+                    <UPPER-LIMIT>61816</UPPER-LIMIT>
+                  </SCALE-CONSTR>
+                  <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+                    <LOWER-LIMIT>61818</LOWER-LIMIT>
+                    <UPPER-LIMIT>61818</UPPER-LIMIT>
+                  </SCALE-CONSTR>
+                  <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+                    <LOWER-LIMIT>61824</LOWER-LIMIT>
+                    <UPPER-LIMIT>61825</UPPER-LIMIT>
+                  </SCALE-CONSTR>
+                  <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+                    <LOWER-LIMIT>61827</LOWER-LIMIT>
+                    <UPPER-LIMIT>61829</UPPER-LIMIT>
+                  </SCALE-CONSTR>
+                  <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+                    <LOWER-LIMIT>61832</LOWER-LIMIT>
+                    <UPPER-LIMIT>61832</UPPER-LIMIT>
+                  </SCALE-CONSTR>
+                  <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+                    <LOWER-LIMIT>61834</LOWER-LIMIT>
+                    <UPPER-LIMIT>61834</UPPER-LIMIT>
+                  </SCALE-CONSTR>
+                  <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+                    <LOWER-LIMIT>61837</LOWER-LIMIT>
+                    <UPPER-LIMIT>61839</UPPER-LIMIT>
+                  </SCALE-CONSTR>
+                  <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+                    <LOWER-LIMIT>61842</LOWER-LIMIT>
+                    <UPPER-LIMIT>61845</UPPER-LIMIT>
+                  </SCALE-CONSTR>
+                  <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+                    <LOWER-LIMIT>61848</LOWER-LIMIT>
+                    <UPPER-LIMIT>61849</UPPER-LIMIT>
+                  </SCALE-CONSTR>
+                  <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+                    <LOWER-LIMIT>61852</LOWER-LIMIT>
+                    <UPPER-LIMIT>61853</UPPER-LIMIT>
+                  </SCALE-CONSTR>
+                  <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+                    <LOWER-LIMIT>61855</LOWER-LIMIT>
+                    <UPPER-LIMIT>61855</UPPER-LIMIT>
+                  </SCALE-CONSTR>
+                  <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+                    <LOWER-LIMIT>61862</LOWER-LIMIT>
+                    <UPPER-LIMIT>61863</UPPER-LIMIT>
+                  </SCALE-CONSTR>
+                  <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+                    <LOWER-LIMIT>61868</LOWER-LIMIT>
+                    <UPPER-LIMIT>61868</UPPER-LIMIT>
+                  </SCALE-CONSTR>
+                  <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+                    <LOWER-LIMIT>61870</LOWER-LIMIT>
+                    <UPPER-LIMIT>61870</UPPER-LIMIT>
+                  </SCALE-CONSTR>
+                  <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+                    <LOWER-LIMIT>61873</LOWER-LIMIT>
+                    <UPPER-LIMIT>61908</UPPER-LIMIT>
+                  </SCALE-CONSTR>
+                  <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+                    <LOWER-LIMIT>61910</LOWER-LIMIT>
+                    <UPPER-LIMIT>61918</UPPER-LIMIT>
+                  </SCALE-CONSTR>
+                  <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+                    <LOWER-LIMIT>61921</LOWER-LIMIT>
+                    <UPPER-LIMIT>65535</UPPER-LIMIT>
+                  </SCALE-CONSTR>
+                </SCALE-CONSTRS>
+              </INTERNAL-CONSTR>
+            </DATA-OBJECT-PROP>
+          </DATA-OBJECT-PROPS>
+          <TABLES>
+            <TABLE ID="TAB_RecorDataIdentECUIdent" SEMANTIC="IDENTIFICATION">
+              <SHORT-NAME>TAB_RecorDataIdentECUIdent</SHORT-NAME>
+              <LONG-NAME>Record Data Identifier ECU Identification</LONG-NAME>
+              <KEY-DOP-REF ID-REF="DOP_TEXTTABLERecorDataIdentECUIdent"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_ActivDiagnSessi" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_ASAMODXFileIdent" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_ASAMODXFileVersi" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_AUTOSStandAppliSoftwIdent" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_BootlTPBlock" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_BusmaIdent" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_ECUDataProgrInfor" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_ECUManufDate" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_ECUProduChangNumbe" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_ECUProduTestSysteNumbe" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_ECUProgrInfor" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_ECUSeriaNumbe" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_ECUSupplNumbe" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_EnginCodeLette" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_ExhauRegulOrTypeApproNumbe" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_FDSProjeData" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_FingeAndProgrDateOfLogicSoftwBlock" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_SubsyIdent" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_SuppoSysteDiagClass" DOCREF="ES_LIBUDSDistrSysteVW80127V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_VehicEquipCodeAndPRNumbeCombi" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_VehicIdentNumbe" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_VWAppliDataIdent" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_VWAppliSoftwVersiNumbe" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_VWCalibDate" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_VWCalibRepaiShopCodeOrSeriaNumbe" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_VWCleDiagnInforDateFunct" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_VWCodinDate" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_VWCodinRepaiShopCodeOrSeriaNumbe" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_VWDataCountOfProgrAttem" DOCREF="ES_LIBVW80124V1X" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_VWDataCountOfSucceProgrAttem" DOCREF="ES_LIBVW80124V1X" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_VWDataSetNumbeOrECUDataContaNumbe" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_VWDataSetProgrDate" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_VWDataSetRepaiShopCodeOrSeriaNumbe" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_VWDataSetVersiNumbe" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_VWECUHardwNumbe" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_VWECUHardwVersiNumbe" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_VWFAZITIdentStrin" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_VWLogicSoftwBlockCountOfProgrAttem" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_VWLogicSoftwBlockLockValue" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_VWLogicSoftwBlockVersi" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_VWSparePartNumbe" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_VWSupplNumbe" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_VWSysteNameOrEnginType" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_VWWorksSysteName" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+            </TABLE>
+          </TABLES>
+        </DIAG-DATA-DICTIONARY-SPEC>
+        <DIAG-COMMS>
+          <DIAG-SERVICE ADDRESSING="FUNCTIONAL-OR-PHYSICAL" ID="DiagnServi_ReadDataByIdentECUIdent" SEMANTIC="IDENTIFICATION">
+            <SHORT-NAME>DiagnServi_ReadDataByIdentECUIdent</SHORT-NAME>
+            <LONG-NAME TI="SER00010">Read Data By Identifier / ECU Identification</LONG-NAME>
+            <DESC>
+              <p>Dienst zum Lesen von Steuergeräte-Identifikationsdaten</p>
+            </DESC>
+            <FUNCT-CLASS-REFS>
+              <FUNCT-CLASS-REF ID-REF="FunctClass_DataTrans" DOCREF="ES_LIBVW80124V1X" DOCTYPE="LAYER"/>
+            </FUNCT-CLASS-REFS>
+            <AUDIENCE/>
+            <RELATED-DIAG-COMM-REFS>
+              <RELATED-DIAG-COMM-REF ID-REF="DiagnServi_DiagnSessiContrDevelSessi" DOCREF="ES_LIBVW80124V1X" DOCTYPE="LAYER">
+                <RELATION-TYPE>SESSION</RELATION-TYPE>
+              </RELATED-DIAG-COMM-REF>
+              <RELATED-DIAG-COMM-REF ID-REF="DiagnServi_DiagnSessiContrECUProgrSessi" DOCREF="ES_LIBVW80124V1X" DOCTYPE="LAYER">
+                <RELATION-TYPE>SESSION</RELATION-TYPE>
+              </RELATED-DIAG-COMM-REF>
+              <RELATED-DIAG-COMM-REF ID-REF="DiagnServi_DiagnSessiContrExtenSessi" DOCREF="ES_LIBVW80124V1X" DOCTYPE="LAYER">
+                <RELATION-TYPE>SESSION</RELATION-TYPE>
+              </RELATED-DIAG-COMM-REF>
+              <RELATED-DIAG-COMM-REF ID-REF="DiagnServi_DiagnSessiContrOBDIIAndVWDefauSessi" DOCREF="ES_LIBVW80124V1X" DOCTYPE="LAYER">
+                <RELATION-TYPE>SESSION</RELATION-TYPE>
+              </RELATED-DIAG-COMM-REF>
+              <RELATED-DIAG-COMM-REF ID-REF="DiagnServi_DiagnSessiContrVWEndOfLineSessi" DOCREF="ES_LIBVW80124V1X" DOCTYPE="LAYER">
+                <RELATION-TYPE>SESSION</RELATION-TYPE>
+              </RELATED-DIAG-COMM-REF>
+            </RELATED-DIAG-COMM-REFS>
+            <REQUEST-REF ID-REF="Req_ReadDataByIdentECUIdent" DOCREF="ES_LIBVW80124V1X" DOCTYPE="LAYER"/>
+            <POS-RESPONSE-REFS>
+              <POS-RESPONSE-REF ID-REF="Resp_ReadDataByIdentECUIdent"/>
+            </POS-RESPONSE-REFS>
+            <NEG-RESPONSE-REFS>
+              <NEG-RESPONSE-REF ID-REF="NegatResp_ReadDataByIdentNegatRespo" DOCREF="ES_LIBVW80124V1X" DOCTYPE="LAYER"/>
+            </NEG-RESPONSE-REFS>
+          </DIAG-SERVICE>
+          <DIAG-COMM-REF ID-REF="DiagnServi_ReadDataByIdentTheftProteData" DOCREF="BL_LIBTheftProte" DOCTYPE="LAYER"/>
+          <DIAG-COMM-REF ID-REF="DiagnServi_WriteDataByIdentTheftProteData" DOCREF="BL_LIBTheftProte" DOCTYPE="LAYER"/>
+        </DIAG-COMMS>
+        <POS-RESPONSES>
+          <POS-RESPONSE ID="Resp_ReadDataByIdentECUIdent">
+            <SHORT-NAME>Resp_ReadDataByIdentECUIdent</SHORT-NAME>
+            <LONG-NAME>Read Data By Identifier / ECU Identification</LONG-NAME>
+            <PARAMS>
+              <PARAM xsi:type="CODED-CONST" SEMANTIC="SERVICE-ID">
+                <SHORT-NAME>Param_RespoServiId</SHORT-NAME>
+                <LONG-NAME>Response Service Id</LONG-NAME>
+                <BYTE-POSITION>0</BYTE-POSITION>
+                <CODED-VALUE>98</CODED-VALUE>
+                <DIAG-CODED-TYPE xsi:type="STANDARD-LENGTH-TYPE" BASE-DATA-TYPE="A_UINT32">
+                  <BIT-LENGTH>8</BIT-LENGTH>
+                </DIAG-CODED-TYPE>
+              </PARAM>
+              <PARAM xsi:type="TABLE-KEY" ID="Resp_ReadDataByIdentECUIdent.Param_RecorDataIdent" SEMANTIC="DATA-ID">
+                <SHORT-NAME>Param_RecorDataIdent</SHORT-NAME>
+                <LONG-NAME>Record Data Identifier</LONG-NAME>
+                <BYTE-POSITION>1</BYTE-POSITION>
+                <TABLE-REF ID-REF="TAB_RecorDataIdentECUIdent"/>
+              </PARAM>
+              <PARAM xsi:type="TABLE-STRUCT" SEMANTIC="DATA">
+                <SHORT-NAME>Param_DataRecor</SHORT-NAME>
+                <LONG-NAME>Data Record</LONG-NAME>
+                <BYTE-POSITION>3</BYTE-POSITION>
+                <TABLE-KEY-REF ID-REF="Resp_ReadDataByIdentECUIdent.Param_RecorDataIdent"/>
+              </PARAM>
+              <PARAM xsi:type="MATCHING-REQUEST-PARAM" SEMANTIC="DATA-ID">
+                <SHORT-NAME>Param_MatchRecorDataIdent</SHORT-NAME>
+                <LONG-NAME>Matching Record Data Identifier</LONG-NAME>
+                <BYTE-POSITION>1</BYTE-POSITION>
+                <REQUEST-BYTE-POS>1</REQUEST-BYTE-POS>
+                <BYTE-LENGTH>2</BYTE-LENGTH>
+              </PARAM>
+            </PARAMS>
+          </POS-RESPONSE>
+        </POS-RESPONSES>
+        <COMPARAM-REFS>
+          <COMPARAM-REF ID-REF="ISO_15765_2.CP_CanPhysReqId" DOCREF="ISO_15765_3_on_ISO_15765_2" DOCTYPE="COMPARAM-SPEC">
+            <VALUE>1860</VALUE>
+            <PROTOCOL-SNREF SHORT-NAME="PR_UDSOnCAN"/>
+          </COMPARAM-REF>
+          <COMPARAM-REF ID-REF="ISO_15765_2.CP_CanRespUSDTId" DOCREF="ISO_15765_3_on_ISO_15765_2" DOCTYPE="COMPARAM-SPEC">
+            <VALUE>1966</VALUE>
+            <PROTOCOL-SNREF SHORT-NAME="PR_UDSOnCAN"/>
+          </COMPARAM-REF>
+          <COMPARAM-REF ID-REF="ISO_15765_4.CP_CanPhysReqId" DOCREF="ISO_OBD_on_ISO_15765_4" DOCTYPE="COMPARAM-SPEC">
+            <VALUE>1860</VALUE>
+            <PROTOCOL-SNREF SHORT-NAME="PR_OBDOnCAN"/>
+          </COMPARAM-REF>
+          <COMPARAM-REF ID-REF="ISO_15765_4.CP_CanRespUSDTId" DOCREF="ISO_OBD_on_ISO_15765_4" DOCTYPE="COMPARAM-SPEC">
+            <VALUE>1966</VALUE>
+            <PROTOCOL-SNREF SHORT-NAME="PR_OBDOnCAN"/>
+          </COMPARAM-REF>
+          <COMPARAM-REF ID-REF="ISO_15765_2.CP_CanPhysReqId" DOCREF="ISO_15765_3_on_ISO_15765_2" DOCTYPE="COMPARAM-SPEC">
+            <VALUE>1860</VALUE>
+            <PROTOCOL-SNREF SHORT-NAME="PR_VWOBDOnCAN"/>
+          </COMPARAM-REF>
+          <COMPARAM-REF ID-REF="ISO_15765_2.CP_CanPhysReqFormat" DOCREF="ISO_15765_3_on_ISO_15765_2" DOCTYPE="COMPARAM-SPEC">
+            <VALUE>normal segmented 11-bit transmit with FC</VALUE>
+            <PROTOCOL-SNREF SHORT-NAME="PR_VWOBDOnCAN"/>
+          </COMPARAM-REF>
+          <COMPARAM-REF ID-REF="ISO_15765_2.CP_CanRespUSDTId" DOCREF="ISO_15765_3_on_ISO_15765_2" DOCTYPE="COMPARAM-SPEC">
+            <VALUE>1966</VALUE>
+            <PROTOCOL-SNREF SHORT-NAME="PR_VWOBDOnCAN"/>
+          </COMPARAM-REF>
+          <COMPARAM-REF ID-REF="ISO_15765_2.CP_CanRespUSDTFormat" DOCREF="ISO_15765_3_on_ISO_15765_2" DOCTYPE="COMPARAM-SPEC">
+            <VALUE>normal segmented 11-bit receive with FC</VALUE>
+            <PROTOCOL-SNREF SHORT-NAME="PR_VWOBDOnCAN"/>
+          </COMPARAM-REF>
+          <COMPARAM-REF ID-REF="ISO_13400_2.CP_DoIPLogicalEcuAddress" DOCREF="ISO_14229_5_on_ISO_13400_2" DOCTYPE="COMPARAM-SPEC">
+            <VALUE>16452</VALUE>
+          </COMPARAM-REF>
+        </COMPARAM-REFS>
+        <IMPORT-REFS>
+          <IMPORT-REF ID-REF="BL_LIBTheftProte" DOCREF="BL_LIBTheftProte" DOCTYPE="LAYER"/>
+          <IMPORT-REF ID-REF="ES_DataLibra" DOCREF="ES_DataLibra" DOCTYPE="LAYER"/>
+          <IMPORT-REF ID-REF="ES_LIBUDSDistrSysteVW80127V40" DOCREF="ES_LIBUDSDistrSysteVW80127V40" DOCTYPE="LAYER"/>
+          <IMPORT-REF ID-REF="ES_LIBUDSIdentVW80125V40" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+        </IMPORT-REFS>
+        <PARENT-REFS>
+          <PARENT-REF xsi:type="FUNCTIONAL-GROUP-REF" ID-REF="FG_AllEmissRelatUDSSyste" DOCREF="FG_AllEmissRelatUDSSyste" DOCTYPE="LAYER"/>
+          <PARENT-REF xsi:type="FUNCTIONAL-GROUP-REF" ID-REF="FG_AllOBDSyste" DOCREF="FG_AllOBDSyste" DOCTYPE="LAYER">
+            <NOT-INHERITED-DIAG-COMMS>
+              <NOT-INHERITED-DIAG-COMM>
+                <DIAG-COMM-SNREF SHORT-NAME="DiagnServi_ClearResetEmissRelatDiagnInfor"/>
+              </NOT-INHERITED-DIAG-COMM>
+            </NOT-INHERITED-DIAG-COMMS>
+          </PARENT-REF>
+          <PARENT-REF xsi:type="FUNCTIONAL-GROUP-REF" ID-REF="FG_AllUDSDistrSysteVW80127" DOCREF="FG_AllUDSDistrSysteVW80127" DOCTYPE="LAYER">
+            <NOT-INHERITED-DIAG-COMMS>
+              <NOT-INHERITED-DIAG-COMM>
+                <DIAG-COMM-SNREF SHORT-NAME="DiagnServi_ReadDataByIdentECUIdent"/>
+              </NOT-INHERITED-DIAG-COMM>
+            </NOT-INHERITED-DIAG-COMMS>
+          </PARENT-REF>
+          <PARENT-REF xsi:type="FUNCTIONAL-GROUP-REF" ID-REF="FG_AllUDSSyste" DOCREF="FG_AllUDSSyste" DOCTYPE="LAYER">
+            <NOT-INHERITED-DIAG-COMMS>
+              <NOT-INHERITED-DIAG-COMM>
+                <DIAG-COMM-SNREF SHORT-NAME="DiagnServi_RequeCurrePowerDiagnData"/>
+              </NOT-INHERITED-DIAG-COMM>
+              <NOT-INHERITED-DIAG-COMM>
+                <DIAG-COMM-SNREF SHORT-NAME="DiagnServi_ReadDataByIdentTheftProteData"/>
+              </NOT-INHERITED-DIAG-COMM>
+              <NOT-INHERITED-DIAG-COMM>
+                <DIAG-COMM-SNREF SHORT-NAME="DiagnServi_WriteDataByIdentTheftProteData"/>
+              </NOT-INHERITED-DIAG-COMM>
+            </NOT-INHERITED-DIAG-COMMS>
+          </PARENT-REF>
+        </PARENT-REFS>
+      </BASE-VARIANT>
+    </BASE-VARIANTS>
+  </DIAG-LAYER-CONTAINER>
+</ODX>

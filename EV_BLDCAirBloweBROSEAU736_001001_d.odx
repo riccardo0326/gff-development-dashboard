@@ -1,0 +1,645 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ODX MODEL-VERSION="2.0.1" xsi:noNamespaceSchemaLocation="odx.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <DIAG-LAYER-CONTAINER ID="DLC_EV_BLDCAirBloweBROSEAU736_001">
+    <SHORT-NAME>DLC_EV_BLDCAirBloweBROSEAU736_001</SHORT-NAME>
+    <LONG-NAME>BLDC Air Blower BROSE AU736</LONG-NAME>
+    <ECU-VARIANTS>
+      <ECU-VARIANT ID="EV_BLDCAirBloweBROSEAU736_001">
+        <SHORT-NAME>EV_BLDCAirBloweBROSEAU736_001</SHORT-NAME>
+        <LONG-NAME>BLDC Air Blower BROSE AU736</LONG-NAME>
+        <DESC>
+          <p>ECU-Variante für das Frischluftgebläse (vorn) mit UDS-Diagnoseschnittstelle (VW80124)</p>
+        </DESC>
+        <ADMIN-DATA>
+          <DOC-REVISIONS>
+            <DOC-REVISION>
+              <TEAM-MEMBER-REF ID-REF="Compy_ElektAutomGmbH.TM_WolfgRethe" DOCREF="ES_DataLibra" DOCTYPE="LAYER"/>
+              <REVISION-LABEL>001001</REVISION-LABEL>
+              <STATE>RELEASE</STATE>
+              <DATE>2012-08-17T01:00:00+02:00</DATE>
+              <TOOL>XMLSPY</TOOL>
+              <MODIFICATIONS>
+                <MODIFICATION>
+                  <CHANGE>erstellt</CHANGE>
+                  <REASON>für BLDC im AU736</REASON>
+                </MODIFICATION>
+              </MODIFICATIONS>
+            </DOC-REVISION>
+            <DOC-REVISION>
+              <TEAM-MEMBER-REF ID-REF="Compy_VolksAG.TM_DVRKonve"/>
+              <REVISION-LABEL>001001</REVISION-LABEL>
+              <STATE>DRAFT</STATE>
+              <DATE>2026-05-20T12:08:45</DATE>
+              <TOOL>DVRKonverter, 11.00.000, Tarvos</TOOL>
+              <MODIFICATIONS>
+                <MODIFICATION>
+                  <CHANGE>Datei wurde aufgrund des angegebenen DVRELEASE angepasst.</CHANGE>
+                  <REASON>DVRELEASE: DVR 88 (CAN Jobs 2025KW48)</REASON>
+                </MODIFICATION>
+              </MODIFICATIONS>
+            </DOC-REVISION>
+            <DOC-REVISION>
+              <TEAM-MEMBER-REF ID-REF="Compy_VolksAG.TM_DVRKonve"/>
+              <REVISION-LABEL>001001</REVISION-LABEL>
+              <STATE>DRAFT</STATE>
+              <DATE>2026-05-20T12:09:42</DATE>
+              <TOOL>DVRKonverter, 11.00.000, Tarvos</TOOL>
+              <MODIFICATIONS>
+                <MODIFICATION>
+                  <CHANGE>DOP-REF | STRUC_LogicSoftwBlockFingeAndState | ES_LIBVW80124V1X eingetragen und PR_UDSOnCAN entfernt.</CHANGE>
+                  <REASON>DVRKonverter, 11.00.000, Tarvos</REASON>
+                </MODIFICATION>
+                <MODIFICATION>
+                  <CHANGE>FUNCT-CLASS-REF | FunctClass_DataTrans | ES_LIBVW80124V1X eingetragen und PR_UDSOnCAN entfernt.</CHANGE>
+                  <REASON>DVRKonverter, 11.00.000, Tarvos</REASON>
+                </MODIFICATION>
+                <MODIFICATION>
+                  <CHANGE>NEG-RESPONSE-REF | NegatResp_ReadDataByIdentNegatRespo | ES_LIBVW80124V1X eingetragen und PR_UDSOnCAN entfernt.</CHANGE>
+                  <REASON>DVRKonverter, 11.00.000, Tarvos</REASON>
+                </MODIFICATION>
+                <MODIFICATION>
+                  <CHANGE>NEG-RESPONSE-REF | NegatResp_WriteDataByIdentNegatRespo | ES_LIBVW80124V1X eingetragen und PR_UDSOnCAN entfernt.</CHANGE>
+                  <REASON>DVRKonverter, 11.00.000, Tarvos</REASON>
+                </MODIFICATION>
+                <MODIFICATION>
+                  <CHANGE>POS-RESPONSE-REF | Resp_WriteDataByIdent | ES_LIBVW80124V1X eingetragen und PR_UDSOnCAN entfernt.</CHANGE>
+                  <REASON>DVRKonverter, 11.00.000, Tarvos</REASON>
+                </MODIFICATION>
+                <MODIFICATION>
+                  <CHANGE>RELATED-DIAG-COMM-REF | DiagnServi_DiagnSessiContrDevelSessi | ES_LIBVW80124V1X eingetragen und PR_UDSOnCAN entfernt.</CHANGE>
+                  <REASON>DVRKonverter, 11.00.000, Tarvos</REASON>
+                </MODIFICATION>
+                <MODIFICATION>
+                  <CHANGE>RELATED-DIAG-COMM-REF | DiagnServi_DiagnSessiContrECUProgrSessi | ES_LIBVW80124V1X eingetragen und PR_UDSOnCAN entfernt.</CHANGE>
+                  <REASON>DVRKonverter, 11.00.000, Tarvos</REASON>
+                </MODIFICATION>
+                <MODIFICATION>
+                  <CHANGE>RELATED-DIAG-COMM-REF | DiagnServi_DiagnSessiContrExtenSessi | ES_LIBVW80124V1X eingetragen und PR_UDSOnCAN entfernt.</CHANGE>
+                  <REASON>DVRKonverter, 11.00.000, Tarvos</REASON>
+                </MODIFICATION>
+                <MODIFICATION>
+                  <CHANGE>RELATED-DIAG-COMM-REF | DiagnServi_DiagnSessiContrOBDIIAndVWDefauSessi | ES_LIBVW80124V1X eingetragen und PR_UDSOnCAN entfernt.</CHANGE>
+                  <REASON>DVRKonverter, 11.00.000, Tarvos</REASON>
+                </MODIFICATION>
+                <MODIFICATION>
+                  <CHANGE>RELATED-DIAG-COMM-REF | DiagnServi_DiagnSessiContrVWEndOfLineSessi | ES_LIBVW80124V1X eingetragen und PR_UDSOnCAN entfernt.</CHANGE>
+                  <REASON>DVRKonverter, 11.00.000, Tarvos</REASON>
+                </MODIFICATION>
+                <MODIFICATION>
+                  <CHANGE>REQUEST-REF | Req_ReadDataByIdentECUIdent | ES_LIBVW80124V1X eingetragen und PR_UDSOnCAN entfernt.</CHANGE>
+                  <REASON>DVRKonverter, 11.00.000, Tarvos</REASON>
+                </MODIFICATION>
+              </MODIFICATIONS>
+            </DOC-REVISION>
+            <DOC-REVISION>
+              <TEAM-MEMBER-REF ID-REF="Compy_VolksAG.TM_DVRKonve"/>
+              <REVISION-LABEL>001001</REVISION-LABEL>
+              <STATE>DRAFT</STATE>
+              <DATE>2026-05-20T12:10:39</DATE>
+              <TOOL>DVRKonverter, 11.00.000, Tarvos</TOOL>
+              <MODIFICATIONS>
+                <MODIFICATION>
+                  <CHANGE>Datei wurde aufgrund des angegebenen DVRELEASE angepasst.</CHANGE>
+                  <REASON>DVRELEASE: DVR 89 (CAN CAN-FD DoIP Jobs 2025KW48)</REASON>
+                </MODIFICATION>
+              </MODIFICATIONS>
+            </DOC-REVISION>
+          </DOC-REVISIONS>
+        </ADMIN-DATA>
+        <COMPANY-DATAS>
+          <COMPANY-DATA ID="Compy_VolksAG">
+            <SHORT-NAME>Compy_VolksAG</SHORT-NAME>
+            <LONG-NAME>Volkswagen AG</LONG-NAME>
+            <TEAM-MEMBERS>
+              <TEAM-MEMBER ID="Compy_VolksAG.TM_DVRKonve">
+                <SHORT-NAME>TM_DVRKonve</SHORT-NAME>
+                <LONG-NAME>DVR Konverter</LONG-NAME>
+                <ROLES>
+                  <ROLE>EEXA/2 Tooling</ROLE>
+                </ROLES>
+              </TEAM-MEMBER>
+            </TEAM-MEMBERS>
+          </COMPANY-DATA>
+        </COMPANY-DATAS>
+        <DIAG-DATA-DICTIONARY-SPEC>
+          <DATA-OBJECT-PROPS>
+            <DATA-OBJECT-PROP ID="DOP_TEXTTABLERecorDataIdentECUIdent">
+              <SHORT-NAME>DOP_TEXTTABLERecorDataIdentECUIdent</SHORT-NAME>
+              <LONG-NAME>TEXT TABLE Record Data Identifier ECU Identification</LONG-NAME>
+              <DESC>
+                <p>Record Data Identifier use within the services - InputOutputControlByIdentifier - ReadDataByIdentifier - Writ...</p>
+              </DESC>
+              <COMPU-METHOD>
+                <CATEGORY>TEXTTABLE</CATEGORY>
+                <COMPU-INTERNAL-TO-PHYS>
+                  <COMPU-SCALES>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$0407</SHORT-LABEL>
+                      <LOWER-LIMIT>1031</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00050">VW Logical Software Block Counter Of Programming Attempts</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$040F</SHORT-LABEL>
+                      <LOWER-LIMIT>1039</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00721">VW Logical Software Block Lock Value</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F15B</SHORT-LABEL>
+                      <LOWER-LIMIT>61787</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00723">Fingerprint And Programming Date Of Logical Software Blocks</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F17C</SHORT-LABEL>
+                      <LOWER-LIMIT>61820</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00034">VW FAZIT Identification String</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F186</SHORT-LABEL>
+                      <LOWER-LIMIT>61830</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00325">Active Diagnostic Session</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F187</SHORT-LABEL>
+                      <LOWER-LIMIT>61831</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00007">VW Spare Part Number</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F189</SHORT-LABEL>
+                      <LOWER-LIMIT>61833</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00008">VW Application Software Version Number</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F18C</SHORT-LABEL>
+                      <LOWER-LIMIT>61836</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00010">ECU Serial Number</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F191</SHORT-LABEL>
+                      <LOWER-LIMIT>61841</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00012">VW ECU Hardware Number</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F197</SHORT-LABEL>
+                      <LOWER-LIMIT>61847</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00013">VW System Name Or Engine Type</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F19E</SHORT-LABEL>
+                      <LOWER-LIMIT>61854</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00072">ASAM ODX File Identifier</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F1A2</SHORT-LABEL>
+                      <LOWER-LIMIT>61858</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00073">ASAM ODX File Version</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F1A3</SHORT-LABEL>
+                      <LOWER-LIMIT>61859</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00016">VW ECU Hardware Version Number</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F1AB</SHORT-LABEL>
+                      <LOWER-LIMIT>61867</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00318">VW Logical Software Block Version</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F1DF</SHORT-LABEL>
+                      <LOWER-LIMIT>61919</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00037">ECU Programming Information</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                  </COMPU-SCALES>
+                </COMPU-INTERNAL-TO-PHYS>
+              </COMPU-METHOD>
+              <DIAG-CODED-TYPE xsi:type="STANDARD-LENGTH-TYPE" BASE-DATA-TYPE="A_UINT32">
+                <BIT-LENGTH>16</BIT-LENGTH>
+              </DIAG-CODED-TYPE>
+              <PHYSICAL-TYPE BASE-DATA-TYPE="A_UNICODE2STRING"/>
+              <INTERNAL-CONSTR>
+                <LOWER-LIMIT>0</LOWER-LIMIT>
+                <UPPER-LIMIT>65535</UPPER-LIMIT>
+                <SCALE-CONSTRS>
+                  <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+                    <LOWER-LIMIT>0</LOWER-LIMIT>
+                    <UPPER-LIMIT>1029</UPPER-LIMIT>
+                  </SCALE-CONSTR>
+                  <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+                    <LOWER-LIMIT>1030</LOWER-LIMIT>
+                    <UPPER-LIMIT>1030</UPPER-LIMIT>
+                  </SCALE-CONSTR>
+                  <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+                    <LOWER-LIMIT>1032</LOWER-LIMIT>
+                    <UPPER-LIMIT>1038</UPPER-LIMIT>
+                  </SCALE-CONSTR>
+                  <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+                    <LOWER-LIMIT>1040</LOWER-LIMIT>
+                    <UPPER-LIMIT>61786</UPPER-LIMIT>
+                  </SCALE-CONSTR>
+                  <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+                    <LOWER-LIMIT>61788</LOWER-LIMIT>
+                    <UPPER-LIMIT>61819</UPPER-LIMIT>
+                  </SCALE-CONSTR>
+                  <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+                    <LOWER-LIMIT>61821</LOWER-LIMIT>
+                    <UPPER-LIMIT>61829</UPPER-LIMIT>
+                  </SCALE-CONSTR>
+                  <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+                    <LOWER-LIMIT>61832</LOWER-LIMIT>
+                    <UPPER-LIMIT>61832</UPPER-LIMIT>
+                  </SCALE-CONSTR>
+                  <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+                    <LOWER-LIMIT>61834</LOWER-LIMIT>
+                    <UPPER-LIMIT>61835</UPPER-LIMIT>
+                  </SCALE-CONSTR>
+                  <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+                    <LOWER-LIMIT>61837</LOWER-LIMIT>
+                    <UPPER-LIMIT>61840</UPPER-LIMIT>
+                  </SCALE-CONSTR>
+                  <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+                    <LOWER-LIMIT>61842</LOWER-LIMIT>
+                    <UPPER-LIMIT>61846</UPPER-LIMIT>
+                  </SCALE-CONSTR>
+                  <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+                    <LOWER-LIMIT>61848</LOWER-LIMIT>
+                    <UPPER-LIMIT>61853</UPPER-LIMIT>
+                  </SCALE-CONSTR>
+                  <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+                    <LOWER-LIMIT>61855</LOWER-LIMIT>
+                    <UPPER-LIMIT>61857</UPPER-LIMIT>
+                  </SCALE-CONSTR>
+                  <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+                    <LOWER-LIMIT>61860</LOWER-LIMIT>
+                    <UPPER-LIMIT>61866</UPPER-LIMIT>
+                  </SCALE-CONSTR>
+                  <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+                    <LOWER-LIMIT>61868</LOWER-LIMIT>
+                    <UPPER-LIMIT>61918</UPPER-LIMIT>
+                  </SCALE-CONSTR>
+                  <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+                    <LOWER-LIMIT>61920</LOWER-LIMIT>
+                    <UPPER-LIMIT>65535</UPPER-LIMIT>
+                  </SCALE-CONSTR>
+                </SCALE-CONSTRS>
+              </INTERNAL-CONSTR>
+            </DATA-OBJECT-PROP>
+            <DATA-OBJECT-PROP ID="DOP_TEXTTABLERecorDataIdentECUIdentWrita">
+              <SHORT-NAME>DOP_TEXTTABLERecorDataIdentECUIdentWrita</SHORT-NAME>
+              <LONG-NAME>TEXT TABLE Record Data Identifier ECU Identification Writable</LONG-NAME>
+              <DESC>
+                <p>Record Data Identifier use within the services - InputOutputControlByIdentifier - ReadDataByIdentifier - Writ...</p>
+              </DESC>
+              <COMPU-METHOD>
+                <CATEGORY>TEXTTABLE</CATEGORY>
+                <COMPU-INTERNAL-TO-PHYS>
+                  <COMPU-SCALES>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F15A</SHORT-LABEL>
+                      <LOWER-LIMIT>61786</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00722">Fingerprint</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F198</SHORT-LABEL>
+                      <LOWER-LIMIT>61848</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00319">Repair Shop Code Or Tester Serial Number</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                    <COMPU-SCALE>
+                      <SHORT-LABEL>$F199</SHORT-LABEL>
+                      <LOWER-LIMIT>61849</LOWER-LIMIT>
+                      <COMPU-CONST>
+                        <VT TI="IDE00038">Programming Date</VT>
+                      </COMPU-CONST>
+                    </COMPU-SCALE>
+                  </COMPU-SCALES>
+                </COMPU-INTERNAL-TO-PHYS>
+              </COMPU-METHOD>
+              <DIAG-CODED-TYPE xsi:type="STANDARD-LENGTH-TYPE" BASE-DATA-TYPE="A_UINT32">
+                <BIT-LENGTH>16</BIT-LENGTH>
+              </DIAG-CODED-TYPE>
+              <PHYSICAL-TYPE BASE-DATA-TYPE="A_UNICODE2STRING"/>
+              <INTERNAL-CONSTR>
+                <LOWER-LIMIT>0</LOWER-LIMIT>
+                <UPPER-LIMIT>65535</UPPER-LIMIT>
+                <SCALE-CONSTRS>
+                  <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+                    <LOWER-LIMIT>0</LOWER-LIMIT>
+                    <UPPER-LIMIT>61785</UPPER-LIMIT>
+                  </SCALE-CONSTR>
+                  <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+                    <LOWER-LIMIT>61787</LOWER-LIMIT>
+                    <UPPER-LIMIT>61847</UPPER-LIMIT>
+                  </SCALE-CONSTR>
+                  <SCALE-CONSTR VALIDITY="NOT-DEFINED">
+                    <LOWER-LIMIT>61850</LOWER-LIMIT>
+                    <UPPER-LIMIT>65535</UPPER-LIMIT>
+                  </SCALE-CONSTR>
+                </SCALE-CONSTRS>
+              </INTERNAL-CONSTR>
+            </DATA-OBJECT-PROP>
+          </DATA-OBJECT-PROPS>
+          <STRUCTURES>
+            <STRUCTURE IS-VISIBLE="false" ID="STRUC_DataRecorLogicSoftwBlockFingeAndState">
+              <SHORT-NAME>STRUC_DataRecorLogicSoftwBlockFingeAndState</SHORT-NAME>
+              <LONG-NAME>Data Record Logical Software Block Fingerprints And States</LONG-NAME>
+              <BYTE-SIZE>20</BYTE-SIZE>
+              <PARAMS>
+                <PARAM xsi:type="VALUE" SEMANTIC="DATA">
+                  <SHORT-NAME>Param_DataBlock0</SHORT-NAME>
+                  <LONG-NAME TI="IDE01000">data block 0</LONG-NAME>
+                  <BYTE-POSITION>0</BYTE-POSITION>
+                  <DOP-REF ID-REF="STRUC_LogicSoftwBlockFingeAndState" DOCREF="ES_LIBVW80124V1X" DOCTYPE="LAYER"/>
+                </PARAM>
+                <PARAM xsi:type="VALUE" SEMANTIC="DATA">
+                  <SHORT-NAME>Param_DataBlock1</SHORT-NAME>
+                  <LONG-NAME TI="IDE01001">data block 1</LONG-NAME>
+                  <BYTE-POSITION>10</BYTE-POSITION>
+                  <DOP-REF ID-REF="STRUC_LogicSoftwBlockFingeAndState" DOCREF="ES_LIBVW80124V1X" DOCTYPE="LAYER"/>
+                </PARAM>
+              </PARAMS>
+            </STRUCTURE>
+            <STRUCTURE IS-VISIBLE="false" ID="STRUC_DataRecorVWLogicSoftwBlockCountOfProgrAttem">
+              <SHORT-NAME>STRUC_DataRecorVWLogicSoftwBlockCountOfProgrAttem</SHORT-NAME>
+              <LONG-NAME>Data Record VW Logical Software Block Counter Of Programming Attempts</LONG-NAME>
+              <BYTE-SIZE>4</BYTE-SIZE>
+              <PARAMS>
+                <PARAM xsi:type="VALUE" SEMANTIC="DATA">
+                  <SHORT-NAME>Param_DataBlock0</SHORT-NAME>
+                  <LONG-NAME TI="IDE01000">data block 0</LONG-NAME>
+                  <BYTE-POSITION>0</BYTE-POSITION>
+                  <DOP-REF ID-REF="DOP_UINTDEC2Bytes" DOCREF="ES_DataLibra" DOCTYPE="LAYER"/>
+                </PARAM>
+                <PARAM xsi:type="VALUE" SEMANTIC="DATA">
+                  <SHORT-NAME>Param_DataBlock1</SHORT-NAME>
+                  <LONG-NAME TI="IDE01001">data block 1</LONG-NAME>
+                  <BYTE-POSITION>2</BYTE-POSITION>
+                  <DOP-REF ID-REF="DOP_UINTDEC2Bytes" DOCREF="ES_DataLibra" DOCTYPE="LAYER"/>
+                </PARAM>
+              </PARAMS>
+            </STRUCTURE>
+            <STRUCTURE IS-VISIBLE="false" ID="STRUC_DataRecorVWLogicSoftwBlockLockValue">
+              <SHORT-NAME>STRUC_DataRecorVWLogicSoftwBlockLockValue</SHORT-NAME>
+              <LONG-NAME>Data Record VW Logical Software Block Lock Value</LONG-NAME>
+              <BYTE-SIZE>4</BYTE-SIZE>
+              <PARAMS>
+                <PARAM xsi:type="VALUE" SEMANTIC="DATA">
+                  <SHORT-NAME>Param_DataBlock0</SHORT-NAME>
+                  <LONG-NAME TI="IDE01000">data block 0</LONG-NAME>
+                  <BYTE-POSITION>0</BYTE-POSITION>
+                  <DOP-REF ID-REF="DOP_UINTDEC2BytesLockValue" DOCREF="ES_DataLibra" DOCTYPE="LAYER"/>
+                </PARAM>
+                <PARAM xsi:type="VALUE" SEMANTIC="DATA">
+                  <SHORT-NAME>Param_DataBlock1</SHORT-NAME>
+                  <LONG-NAME TI="IDE01001">data block 1</LONG-NAME>
+                  <BYTE-POSITION>2</BYTE-POSITION>
+                  <DOP-REF ID-REF="DOP_UINTDEC2BytesLockValue" DOCREF="ES_DataLibra" DOCTYPE="LAYER"/>
+                </PARAM>
+              </PARAMS>
+            </STRUCTURE>
+            <STRUCTURE IS-VISIBLE="false" ID="STRUC_DataRecorVWLogicSoftwBlockVersi">
+              <SHORT-NAME>STRUC_DataRecorVWLogicSoftwBlockVersi</SHORT-NAME>
+              <LONG-NAME>Data Record VW Logical Software Block Version</LONG-NAME>
+              <BYTE-SIZE>8</BYTE-SIZE>
+              <PARAMS>
+                <PARAM xsi:type="VALUE" SEMANTIC="DATA">
+                  <SHORT-NAME>Param_DataBlock0</SHORT-NAME>
+                  <LONG-NAME TI="IDE01000">data block 0</LONG-NAME>
+                  <BYTE-POSITION>0</BYTE-POSITION>
+                  <DOP-REF ID-REF="DOP_ASCII4Bytes" DOCREF="ES_DataLibra" DOCTYPE="LAYER"/>
+                </PARAM>
+                <PARAM xsi:type="VALUE" SEMANTIC="DATA">
+                  <SHORT-NAME>Param_DataBlock1</SHORT-NAME>
+                  <LONG-NAME TI="IDE01001">data block 1</LONG-NAME>
+                  <BYTE-POSITION>4</BYTE-POSITION>
+                  <DOP-REF ID-REF="DOP_ASCII4Bytes" DOCREF="ES_DataLibra" DOCTYPE="LAYER"/>
+                </PARAM>
+              </PARAMS>
+            </STRUCTURE>
+          </STRUCTURES>
+          <TABLES>
+            <TABLE ID="TAB_RecorDataIdentECUIdent" SEMANTIC="IDENTIFICATION-READ">
+              <SHORT-NAME>TAB_RecorDataIdentECUIdent</SHORT-NAME>
+              <LONG-NAME>Record Data Identifier ECU Identification</LONG-NAME>
+              <KEY-DOP-REF ID-REF="DOP_TEXTTABLERecorDataIdentECUIdent"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_ActivDiagnSessi" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_ASAMODXFileIdent" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_ASAMODXFileVersi" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_ECUProgrInfor" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_ECUSeriaNumbe" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_FingeAndProgrDateOfLogicSoftwBlock" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_VWAppliSoftwVersiNumbe" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_VWECUHardwNumbe" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_VWECUHardwVersiNumbe" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_VWFAZITIdentStrin" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_VWLogicSoftwBlockCountOfProgrAttem" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_VWLogicSoftwBlockLockValue" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_VWLogicSoftwBlockVersi" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_VWSparePartNumbe" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdent.TABROW_VWSysteNameOrEnginType" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+            </TABLE>
+            <TABLE ID="TAB_RecorDataIdentECUIdentWrita" SEMANTIC="IDENTIFICATION-WRITE">
+              <SHORT-NAME>TAB_RecorDataIdentECUIdentWrita</SHORT-NAME>
+              <LONG-NAME>Record Data Identifier ECU Identification Writable</LONG-NAME>
+              <KEY-DOP-REF ID-REF="DOP_TEXTTABLERecorDataIdentECUIdentWrita"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdentWrita.TABROW_Finge" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdentWrita.TABROW_ProgrDate" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+              <TABLE-ROW-REF ID-REF="TAB_RecorDataIdentECUIdentWrita.TABROW_RepaiShopCodeOrTesteSeriaNumbe" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+            </TABLE>
+          </TABLES>
+        </DIAG-DATA-DICTIONARY-SPEC>
+        <DIAG-COMMS>
+          <DIAG-SERVICE ADDRESSING="FUNCTIONAL-OR-PHYSICAL" ID="DiagnServi_ReadDataByIdentECUIdent" SEMANTIC="IDENTIFICATION">
+            <SHORT-NAME>DiagnServi_ReadDataByIdentECUIdent</SHORT-NAME>
+            <LONG-NAME TI="SER00010">Read Data By Identifier / ECU Identification</LONG-NAME>
+            <DESC>
+              <p>Service zum Lesen von Steuergeräte-Identifikationsdaten.</p>
+            </DESC>
+            <FUNCT-CLASS-REFS>
+              <FUNCT-CLASS-REF ID-REF="FunctClass_DataTrans" DOCREF="ES_LIBVW80124V1X" DOCTYPE="LAYER"/>
+            </FUNCT-CLASS-REFS>
+            <AUDIENCE/>
+            <RELATED-DIAG-COMM-REFS>
+              <RELATED-DIAG-COMM-REF ID-REF="DiagnServi_DiagnSessiContrDevelSessi" DOCREF="ES_LIBVW80124V1X" DOCTYPE="LAYER">
+                <RELATION-TYPE>SESSION</RELATION-TYPE>
+              </RELATED-DIAG-COMM-REF>
+              <RELATED-DIAG-COMM-REF ID-REF="DiagnServi_DiagnSessiContrECUProgrSessi" DOCREF="ES_LIBVW80124V1X" DOCTYPE="LAYER">
+                <RELATION-TYPE>SESSION</RELATION-TYPE>
+              </RELATED-DIAG-COMM-REF>
+              <RELATED-DIAG-COMM-REF ID-REF="DiagnServi_DiagnSessiContrExtenSessi" DOCREF="ES_LIBVW80124V1X" DOCTYPE="LAYER">
+                <RELATION-TYPE>SESSION</RELATION-TYPE>
+              </RELATED-DIAG-COMM-REF>
+              <RELATED-DIAG-COMM-REF ID-REF="DiagnServi_DiagnSessiContrOBDIIAndVWDefauSessi" DOCREF="ES_LIBVW80124V1X" DOCTYPE="LAYER">
+                <RELATION-TYPE>SESSION</RELATION-TYPE>
+              </RELATED-DIAG-COMM-REF>
+              <RELATED-DIAG-COMM-REF ID-REF="DiagnServi_DiagnSessiContrVWEndOfLineSessi" DOCREF="ES_LIBVW80124V1X" DOCTYPE="LAYER">
+                <RELATION-TYPE>SESSION</RELATION-TYPE>
+              </RELATED-DIAG-COMM-REF>
+            </RELATED-DIAG-COMM-REFS>
+            <REQUEST-REF ID-REF="Req_ReadDataByIdentECUIdent" DOCREF="ES_LIBVW80124V1X" DOCTYPE="LAYER"/>
+            <POS-RESPONSE-REFS>
+              <POS-RESPONSE-REF ID-REF="Resp_ReadDataByIdentECUIdent"/>
+            </POS-RESPONSE-REFS>
+            <NEG-RESPONSE-REFS>
+              <NEG-RESPONSE-REF ID-REF="NegatResp_ReadDataByIdentNegatRespo" DOCREF="ES_LIBVW80124V1X" DOCTYPE="LAYER"/>
+            </NEG-RESPONSE-REFS>
+          </DIAG-SERVICE>
+          <DIAG-SERVICE ADDRESSING="PHYSICAL" ID="DiagnServi_WriteDataByIdentECUIdent" SEMANTIC="STOREDDATAWRITE">
+            <SHORT-NAME>DiagnServi_WriteDataByIdentECUIdent</SHORT-NAME>
+            <LONG-NAME>Write Data By Identifier / ECU Identification</LONG-NAME>
+            <DESC>
+              <p>Service zum Schreiben von Steuergeräte-Identifikationsdaten.</p>
+            </DESC>
+            <FUNCT-CLASS-REFS>
+              <FUNCT-CLASS-REF ID-REF="FunctClass_DataTrans" DOCREF="ES_LIBVW80124V1X" DOCTYPE="LAYER"/>
+            </FUNCT-CLASS-REFS>
+            <AUDIENCE/>
+            <RELATED-DIAG-COMM-REFS>
+              <RELATED-DIAG-COMM-REF ID-REF="DiagnServi_DiagnSessiContrDevelSessi" DOCREF="ES_LIBVW80124V1X" DOCTYPE="LAYER">
+                <RELATION-TYPE>SESSION</RELATION-TYPE>
+              </RELATED-DIAG-COMM-REF>
+              <RELATED-DIAG-COMM-REF ID-REF="DiagnServi_DiagnSessiContrECUProgrSessi" DOCREF="ES_LIBVW80124V1X" DOCTYPE="LAYER">
+                <RELATION-TYPE>SESSION</RELATION-TYPE>
+              </RELATED-DIAG-COMM-REF>
+              <RELATED-DIAG-COMM-REF ID-REF="DiagnServi_DiagnSessiContrExtenSessi" DOCREF="ES_LIBVW80124V1X" DOCTYPE="LAYER">
+                <RELATION-TYPE>SESSION</RELATION-TYPE>
+              </RELATED-DIAG-COMM-REF>
+              <RELATED-DIAG-COMM-REF ID-REF="DiagnServi_DiagnSessiContrOBDIIAndVWDefauSessi" DOCREF="ES_LIBVW80124V1X" DOCTYPE="LAYER">
+                <RELATION-TYPE>SESSION</RELATION-TYPE>
+              </RELATED-DIAG-COMM-REF>
+              <RELATED-DIAG-COMM-REF ID-REF="DiagnServi_DiagnSessiContrVWEndOfLineSessi" DOCREF="ES_LIBVW80124V1X" DOCTYPE="LAYER">
+                <RELATION-TYPE>SESSION</RELATION-TYPE>
+              </RELATED-DIAG-COMM-REF>
+            </RELATED-DIAG-COMM-REFS>
+            <REQUEST-REF ID-REF="Req_WriteDataByIdentECUIdent"/>
+            <POS-RESPONSE-REFS>
+              <POS-RESPONSE-REF ID-REF="Resp_WriteDataByIdent" DOCREF="ES_LIBVW80124V1X" DOCTYPE="LAYER"/>
+            </POS-RESPONSE-REFS>
+            <NEG-RESPONSE-REFS>
+              <NEG-RESPONSE-REF ID-REF="NegatResp_WriteDataByIdentNegatRespo" DOCREF="ES_LIBVW80124V1X" DOCTYPE="LAYER"/>
+            </NEG-RESPONSE-REFS>
+          </DIAG-SERVICE>
+        </DIAG-COMMS>
+        <REQUESTS>
+          <REQUEST ID="Req_WriteDataByIdentECUIdent">
+            <SHORT-NAME>Req_WriteDataByIdentECUIdent</SHORT-NAME>
+            <LONG-NAME>Write Data By Identifier / ECU Identification</LONG-NAME>
+            <PARAMS>
+              <PARAM xsi:type="CODED-CONST" SEMANTIC="SERVICE-ID">
+                <SHORT-NAME>Param_RequeServiId</SHORT-NAME>
+                <LONG-NAME>Request Service Id</LONG-NAME>
+                <BYTE-POSITION>0</BYTE-POSITION>
+                <CODED-VALUE>46</CODED-VALUE>
+                <DIAG-CODED-TYPE xsi:type="STANDARD-LENGTH-TYPE" BASE-DATA-TYPE="A_UINT32">
+                  <BIT-LENGTH>8</BIT-LENGTH>
+                </DIAG-CODED-TYPE>
+              </PARAM>
+              <PARAM xsi:type="TABLE-KEY" ID="Req_WriteDataByIdentECUIdent.Param_RecorDataIdent" SEMANTIC="DATA-ID">
+                <SHORT-NAME>Param_RecorDataIdent</SHORT-NAME>
+                <LONG-NAME>Record Data Identifier</LONG-NAME>
+                <BYTE-POSITION>1</BYTE-POSITION>
+                <TABLE-REF ID-REF="TAB_RecorDataIdentECUIdentWrita"/>
+              </PARAM>
+              <PARAM xsi:type="TABLE-STRUCT" SEMANTIC="DATA">
+                <SHORT-NAME>Param_DataRecor</SHORT-NAME>
+                <LONG-NAME>Data Record</LONG-NAME>
+                <BYTE-POSITION>3</BYTE-POSITION>
+                <TABLE-KEY-REF ID-REF="Req_WriteDataByIdentECUIdent.Param_RecorDataIdent"/>
+              </PARAM>
+            </PARAMS>
+          </REQUEST>
+        </REQUESTS>
+        <POS-RESPONSES>
+          <POS-RESPONSE ID="Resp_ReadDataByIdentECUIdent">
+            <SHORT-NAME>Resp_ReadDataByIdentECUIdent</SHORT-NAME>
+            <LONG-NAME>Read Data By Identifier / ECU Identification</LONG-NAME>
+            <PARAMS>
+              <PARAM xsi:type="CODED-CONST" SEMANTIC="SERVICE-ID">
+                <SHORT-NAME>Param_RespoServiId</SHORT-NAME>
+                <LONG-NAME>Response Service Id</LONG-NAME>
+                <BYTE-POSITION>0</BYTE-POSITION>
+                <CODED-VALUE>98</CODED-VALUE>
+                <DIAG-CODED-TYPE xsi:type="STANDARD-LENGTH-TYPE" BASE-DATA-TYPE="A_UINT32">
+                  <BIT-LENGTH>8</BIT-LENGTH>
+                </DIAG-CODED-TYPE>
+              </PARAM>
+              <PARAM xsi:type="TABLE-KEY" ID="Resp_ReadDataByIdentECUIdent.Param_RecorDataIdent" SEMANTIC="DATA-ID">
+                <SHORT-NAME>Param_RecorDataIdent</SHORT-NAME>
+                <LONG-NAME>Record Data Identifier</LONG-NAME>
+                <BYTE-POSITION>1</BYTE-POSITION>
+                <TABLE-REF ID-REF="TAB_RecorDataIdentECUIdent"/>
+              </PARAM>
+              <PARAM xsi:type="TABLE-STRUCT" SEMANTIC="DATA">
+                <SHORT-NAME>Param_DataRecor</SHORT-NAME>
+                <LONG-NAME>Data Record</LONG-NAME>
+                <BYTE-POSITION>3</BYTE-POSITION>
+                <TABLE-KEY-REF ID-REF="Resp_ReadDataByIdentECUIdent.Param_RecorDataIdent"/>
+              </PARAM>
+              <PARAM xsi:type="MATCHING-REQUEST-PARAM" SEMANTIC="DATA-ID">
+                <SHORT-NAME>Param_MatchRecorDataIdent</SHORT-NAME>
+                <LONG-NAME>Matching Record Data Identifier</LONG-NAME>
+                <BYTE-POSITION>1</BYTE-POSITION>
+                <REQUEST-BYTE-POS>1</REQUEST-BYTE-POS>
+                <BYTE-LENGTH>2</BYTE-LENGTH>
+              </PARAM>
+            </PARAMS>
+          </POS-RESPONSE>
+        </POS-RESPONSES>
+        <IMPORT-REFS>
+          <IMPORT-REF ID-REF="ES_DataLibra" DOCREF="ES_DataLibra" DOCTYPE="LAYER"/>
+          <IMPORT-REF ID-REF="ES_LIBUDSIdentVW80125V40" DOCREF="ES_LIBUDSIdentVW80125V40" DOCTYPE="LAYER"/>
+        </IMPORT-REFS>
+        <ECU-VARIANT-PATTERNS>
+          <ECU-VARIANT-PATTERN>
+            <MATCHING-PARAMETERS>
+              <MATCHING-PARAMETER>
+                <EXPECTED-VALUE>EV_BLDCAirBloweBROSEAU736</EXPECTED-VALUE>
+                <DIAG-COMM-SNREF SHORT-NAME="DiagnServi_ReadDataByIdentASAMODXFileIdent"/>
+                <OUT-PARAM-IF-SNREF SHORT-NAME="Param_DataRecor"/>
+              </MATCHING-PARAMETER>
+              <MATCHING-PARAMETER>
+                <EXPECTED-VALUE>001</EXPECTED-VALUE>
+                <DIAG-COMM-SNREF SHORT-NAME="DiagnServi_ReadDataByIdentASAMODXFileVersi"/>
+                <OUT-PARAM-IF-SNREF SHORT-NAME="Param_DataRecor"/>
+              </MATCHING-PARAMETER>
+            </MATCHING-PARAMETERS>
+          </ECU-VARIANT-PATTERN>
+        </ECU-VARIANT-PATTERNS>
+        <PARENT-REFS>
+          <PARENT-REF xsi:type="BASE-VARIANT-REF" ID-REF="BV_FreshAirBloweFrontUDS" DOCREF="BV_FreshAirBloweFrontUDS" DOCTYPE="LAYER"/>
+        </PARENT-REFS>
+      </ECU-VARIANT>
+    </ECU-VARIANTS>
+  </DIAG-LAYER-CONTAINER>
+</ODX>
